@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Macau Casino Operators Chart</title>
+    <script src="./echarts.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            margin: 20px;
+            background: #181c24;
+            color: #f5f6fa;
+            min-height: calc(100vh - 40px);
+        }
+        /* Removed .dashboard-card styles */
+        h2 {
+            font-weight: 600;
+            font-size: 2.1rem;
+            margin-bottom: 2.5rem;
+            color: #00bcd4;
+            letter-spacing: 0.01em;
+            text-align: center;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            gap: 2.5rem;
+            margin-bottom: 0.5rem;
+            padding-left: 2.5rem;
+            padding-right: 2.5rem;
+        }
+        @media (max-width: 900px) {
+            .main-content {
+                margin: 0;
+                padding: 0 0.5rem;
+            }
+            h2 {
+                font-size: 1.2rem;
+                margin-bottom: 0.7rem;
+            }
+            .controls {
+                flex-direction: column;
+                gap: 1.2rem;
+                margin-bottom: 1rem;
+                padding-left: 1.2rem;
+                padding-right: 1.2rem;
+            }
+            .checkbox-group {
+                min-width: 0;
+                padding: 0.7em 0.7em 0.7em 0.7em;
+                font-size: 0.98em;
+            }
+            #chart-container {
+                height: 45vh;
+                min-height: 260px;
+            }
+        }
+        @media (max-width: 600px) {
+            body {
+                margin: 6px;
+            }
+            .main-content {
+                padding: 0 0.2rem;
+            }
+            h2 {
+                font-size: 1rem;
+            }
+            .checkbox-group label {
+                font-size: 0.95em;
+            }
+            #chart-container {
+                height: 32vh;
+                min-height: 160px;
+            }
+        }
+        .checkbox-group {
+            background: #232837;
+            border-radius: 12px;
+            padding: 1.1em 1.5em 1.1em 1.2em;
+            margin-bottom: 0.5em;
+            box-shadow: 0 1px 4px 0 rgba(0,0,0,0.10);
+            display: flex;
+            flex-direction: column;
+            min-width: 220px;
+            border: 1px solid #2e3448;
+        }
+
+        .checkbox-group b {
+            display: block;
+            margin-bottom: 0.6em;
+        }
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5em;
+            font-size: 1.08em;
+            font-weight: 500;
+            color: #b0b4c1;
+            cursor: pointer;
+            border-radius: 6px;
+            padding: 0.2em 0.7em 0.2em 0.2em;
+            transition: background 0.18s, color 0.18s;
+        }
+        .checkbox-group label:hover, .checkbox-group input[type=checkbox]:focus + label {
+            background: #00bcd4;
+            color: #181c24;
+        }
+        .checkbox-group input[type=checkbox] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 1.25em;
+            height: 1.25em;
+            border: 2.5px solid #b0b4c180;
+            border-radius: 50%;
+            margin-right: 0.7em;
+            background: #23283780;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 2px 8px 0 rgba(0,0,0,0.08);
+            transition: border-color 0.22s, box-shadow 0.22s, background 0.22s;
+            vertical-align: middle;
+            outline: none;
+            display: inline-block;
+        }
+        .checkbox-group input[type=checkbox]:hover, .checkbox-group input[type=checkbox]:focus {
+            box-shadow: 0 0 0 3px rgba(0,188,212,0.18);
+            border-color: currentColor;
+        }
+        .checkbox-group input[type=checkbox]:checked {
+            border-color: currentColor;
+            background: currentColor;
+        }
+        .checkbox-group input[type=checkbox]:checked::after {
+            content: '';
+            position: absolute;
+            left: 0.36em;
+            top: 0.13em;
+            width: 0.35em;
+            height: 0.7em;
+            border-right: 3px solid #fff;
+            border-bottom: 3px solid #fff;
+            border-radius: 1px;
+            transform: scale(1) rotate(45deg);
+            opacity: 1;
+            transition: all 0.18s cubic-bezier(.4,2,.6,1);
+            background: none;
+            z-index: 2;
+        }
+        .checkbox-group input[type=checkbox]::after {
+            content: '';
+            position: absolute;
+            left: 0.36em;
+            top: 0.13em;
+            width: 0.35em;
+            height: 0.7em;
+            border-right: 3px solid currentColor;
+            border-bottom: 3px solid currentColor;
+            border-radius: 1px;
+            transform: scale(0.2) rotate(45deg);
+            opacity: 0;
+            transition: all 0.18s cubic-bezier(.4,2,.6,1);
+            background: none;
+            z-index: 2;
+        }
+        .normalize-label {
+            color: #b0b4c1;
+            font-size: 1.08em;
+            font-weight: 500;
+            margin-left: 0.5em;
+            cursor: pointer;
+        }
+        #chart-container {
+            width: 100%;
+            height: 70vh;
+            margin: 0;
+            border-radius: 12px;
+            overflow: visible !important;
+            background: #181c24;
+            position: relative;
+            z-index: 1;
+        }
+        /* ECharts dataZoom slider interactivity fix */
+        .echarts, .echarts-container, .echarts-for-react {
+            position: relative !important;
+            z-index: 2 !important;
+            pointer-events: auto !important;
+        }
+        .ec-extension-datazoom-slider, .echarts-datazoom {
+            z-index: 1000 !important;
+            pointer-events: auto !important;
+        }
+        /* Make ECharts dataZoom slider always interactive */
+        .echarts { position: relative; z-index: 1; }
+        .echarts datazoom, .echarts .ec-extension-datazoom-slider {
+            z-index: 10 !important;
+            pointer-events: auto !important;
+        }
+        #casinoChart {
+            width: 100% !important;
+            height: 100% !important;
+            min-height: 400px;
+            display: block;
+        }
+        @media (max-width: 900px) {
+            .dashboard-card { padding: 1.2rem 0.5rem 1.2rem 0.5rem; }
+            h2 { font-size: 1.2rem; }
+            .controls { gap: 1rem; flex-direction: column; }
+            .checkbox-group { min-width: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <h2>Macau Casino Operators - Adjusted Close & Volume</h2>
+        <div class="controls">
+            <div class="checkbox-group" id="company-checkboxes"></div>
+            <div class="checkbox-group" id="index-checkboxes"></div>
+            <div style="align-self: flex-start; margin-left: auto; display: flex; gap: 1.2em;">
+                <select id="mode-select" style="font-size:1.08em;padding:0.2em 0.7em;border-radius:6px;background:#232837;color:#fff;border:1px solid #2e3448;">
+                    <option value="normal">Normal View</option>
+                    <option value="indexed">Indexed View</option>
+                    <option value="normalized">Normalized View</option>
+                </select>
+            </div>
+        </div>
+        <div id="chart-container">
+            <div id="casinoChart"></div>
+        </div>
+    </div>
+    <script>
+        // Map of ticker to company abbreviation
+        const symbolNames = {
+            '0027.HK': 'Galaxy',
+            '0880.HK': 'SJM',
+            '1128.HK': 'Wynn',
+            '1928.HK': 'Sands',
+            '2282.HK': 'MGM',
+            '0200.HK': 'Melco',
+            '^HSI': 'Hang Seng',
+            '000001.SS': 'Shanghai',
+            '399001.SZ': 'Shenzhen'
+        };
+
+        async function fetchData() {
+            const res = await fetch('/api/data');
+            return await res.json();
+        }
+
+        function getColor(idx) {
+            // High-contrast, colorblind-friendly palette for dark backgrounds
+            const colors = [
+                '#FFD600', // Galaxy - Vivid Yellow
+                '#00E676', // SJM - Bright Green
+                '#FF1744', // Wynn - Vivid Red
+                '#2979FF', // Sands - Bright Blue
+                '#F500A3', // MGM - Magenta
+                '#FF9100', // Melco - Orange
+                '#00B8D4', // Hang Seng - Cyan
+                '#C51162', // Shanghai - Deep Pink
+                '#AEEA00'  // Shenzhen - Lime
+            ];
+            return colors[idx % colors.length];
+        }
+
+    function prepareEChartsOption(selectedSymbols, data, normalized, indexed, opts = {}) {
+            // Always use the full union of all dates from all symbols for a stable x-axis
+            const allDates = new Set();
+            Object.values(data).forEach(symbolData => {
+                Object.keys(symbolData).forEach(date => allDates.add(date));
+            });
+            const sortedDates = Array.from(allDates).sort();
+            // Prepare series for each symbol
+            const series = selectedSymbols.map((symbol, idx) => {
+                const entries = Object.entries(data[symbol]);
+                // Only use 'Adj Close', never fallback to 'Close'
+                const dateToAdjClose = Object.fromEntries(entries.map(([date, v]) => [date, v['Adj Close'] ?? null]));
+                let values = sortedDates.map(date => dateToAdjClose[date] ?? null);
+                let actualValues = values.slice();
+                if (normalized && values.filter(v => v != null).length > 0) {
+                    // Min-max normalization: (value - min) / (max - min) within zoom window
+                    let min, max, range;
+                    if (opts.windowRange) {
+                        const [start, end] = opts.windowRange;
+                        const windowVals = values.slice(start, end + 1).filter(v => v != null);
+                        min = windowVals.length ? Math.min(...windowVals) : 0;
+                        max = windowVals.length ? Math.max(...windowVals) : 0;
+                        range = max - min;
+                        values = values.map((v, i) => {
+                            if (v == null) return null;
+                            if (i < start || i > end) return null;
+                            return range === 0 ? 0 : (v - min) / range;
+                        });
+                    } else {
+                        const valid = values.filter(v => v != null);
+                        min = Math.min(...valid);
+                        max = Math.max(...valid);
+                        range = max - min;
+                        values = values.map(v => v == null ? null : (range === 0 ? 0 : (v - min) / range));
+                    }
+                } else if (indexed && values.filter(v => v != null).length > 0 && opts.windowRange) {
+                    // Indexed mode: divide by first non-null value in the current window
+                    const [start, end] = opts.windowRange;
+                    const windowVals = values.slice(start, end + 1);
+                    const firstIdxInWindow = windowVals.findIndex(v => v != null);
+                    const base = firstIdxInWindow !== -1 ? windowVals[firstIdxInWindow] : null;
+                    values = values.map((v, i) => {
+                        if (v == null) return null;
+                        if (base == null) return null;
+                        return i >= start && i <= end ? v / base : null;
+                    });
+                }
+                return {
+                    name: symbol + ' (' + (symbolNames[symbol] || symbol) + ') Adj Close',
+                    type: 'line',
+                    data: values,
+                    yAxisIndex: 0,
+                    showSymbol: false,
+                    lineStyle: { width: 2, color: getColor(idx) },
+                    itemStyle: { color: getColor(idx) },
+                    emphasis: { focus: 'series' },
+                    tooltip: {
+                        valueFormatter: function (value, i) {
+                            if ((normalized || indexed) && typeof value === 'number' && typeof actualValues[i] === 'number') {
+                                return value.toFixed(3) + ' (actual: ' + actualValues[i].toFixed(2) + ')';
+                            } else if (typeof value === 'number') {
+                                return value.toFixed(2);
+                            } else {
+                                return 'N/A';
+                            }
+                        }
+                    }
+                };
+            });
+            // Show volume bars for any single selected symbol (company or index) if volume data exists
+            if (selectedSymbols.length === 1) {
+                const symbol = selectedSymbols[0];
+                const entries = Object.entries(data[symbol]);
+                // Try both 'Volume' and 'volume' keys for robustness
+                const dateToVolume = Object.fromEntries(entries.map(([date, v]) => [date, v['Volume'] ?? v['volume'] ?? null]));
+                // Debug: log volume data for selected symbol
+                if (['^HSI','000001.SS','399001.SZ'].includes(symbol)) {
+                    console.log('Volume for', symbol, dateToVolume);
+                }
+                // Only add if there is at least some volume data
+                if (Object.values(dateToVolume).some(v => v != null)) {
+                    // Outlier filter: if a value is >10x the previous max, treat as null
+                    let prevMax = null;
+                    const filteredVolumeArray = sortedDates.map(date => {
+                        const v = dateToVolume[date] ?? null;
+                        if (v == null) return null;
+                        if (prevMax === null) {
+                            prevMax = v;
+                            return v;
+                        }
+                        if (v > prevMax * 10) {
+                            return null;
+                        }
+                        if (v > prevMax) prevMax = v;
+                        return v;
+                    });
+                    if (['^HSI','000001.SS','399001.SZ'].includes(symbol)) {
+                        console.log('Filtered volume array for', symbol, filteredVolumeArray);
+                    }
+                    series.push({
+                        name: symbol + ' (' + (symbolNames[symbol] || symbol) + ') Volume',
+                        type: 'bar',
+                        data: filteredVolumeArray,
+                        yAxisIndex: 1,
+                        itemStyle: {
+                            color: (symbol === '^HSI') ? '#00B8D4' : (symbol === '000001.SS') ? '#C51162' : (symbol === '399001.SZ') ? '#AEEA00' : '#FFD600',
+                            opacity: 0.25
+                        },
+                        emphasis: { focus: 'series' },
+                        tooltip: { valueFormatter: v => v != null ? v.toLocaleString() : 'N/A' }
+                    });
+                }
+            }
+            // Always use linear scale for volume, and set min/max dynamically for visible volume data
+            let volumeMin = null, volumeMax = null;
+            if (selectedSymbols.length === 1) {
+                const symbol = selectedSymbols[0];
+                const entries = Object.entries(data[symbol]);
+                const volumes = entries.map(([date, v]) => v['Volume'] ?? v['volume']).filter(v => v != null);
+                if (volumes.length > 0) {
+                    volumeMin = Math.min(...volumes);
+                    volumeMax = Math.max(...volumes);
+                }
+            }
+            return {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { type: 'cross' },
+                    backgroundColor: '#232837',
+                    borderColor: '#fff',
+                    textStyle: { color: '#fff' }
+                },
+                legend: { show: false },
+                grid: { left: 60, right: 60, top: 85, bottom: 90 },
+                dataZoom: [
+                    {
+                        type: 'slider',
+                        show: true,
+                        xAxisIndex: 0,
+                        // Show only the most recent 12 months (about 252 trading days) by default
+                        start: sortedDates.length > 252 ? Math.round((sortedDates.length - 252) / sortedDates.length * 100) : 0,
+                        end: 100,
+                        height: 22,
+                        bottom: null,
+                        top: 0, // Place slider at the very top of the chart area
+                        backgroundColor: '#232837',
+                        borderColor: '#333',
+                        fillerColor: 'rgba(0,188,212,0.18)',
+                        handleIcon: 'M8.7,11.3v-8.6h2.6v8.6H8.7z',
+                        handleSize: '120%',
+                        moveHandleSize: '100%',
+                        showDetail: true,
+                        handleStyle: { color: '#00bcd4' },
+                        textStyle: { color: '#fff' }
+                    }
+                ],
+                xAxis: {
+                    type: 'category',
+                    data: sortedDates,
+                    axisLabel: {
+                        rotate: 45,
+                        color: '#fff',
+                        fontWeight: 500,
+                        interval: 'auto',
+                    },
+                    axisLine: { lineStyle: { color: '#fff' } }
+                },
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: normalized ? 'Normalized Adj Close' : 'Adj Close',
+                        position: 'left',
+                        axisLine: { show: true, lineStyle: { color: '#fff' } },
+                        axisLabel: { formatter: v => normalized ? v.toFixed(2) : v, color: '#fff', fontWeight: 500 },
+                        nameTextStyle: { color: '#fff', fontWeight: 600 },
+                        splitLine: { lineStyle: { color: '#333' } }
+                    },
+                    {
+                        type: 'value',
+                        name: 'Volume',
+                        position: 'right',
+                        axisLine: { show: true, lineStyle: { color: '#fff' } },
+                        axisLabel: { formatter: v => v != null ? v.toLocaleString() : '', color: '#fff', fontWeight: 500 },
+                        nameTextStyle: { color: '#fff', fontWeight: 600 },
+                        splitLine: { show: false },
+                        min: 0,
+                        max: undefined
+                    }
+                ],
+                series: series.map(s => s.type === 'bar' ? { ...s, barMinWidth: 3 } : s)
+            };
+        }
+
+        async function main() {
+            const data = await fetchData();
+            const symbols = Object.keys(data);
+            // No checkboxes needed; all series are always shown and controlled by legend
+
+            function getSelectedSymbols() {
+                return Array.from(checkboxDiv.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
+            }
+
+
+
+            // Separate company and index symbols
+            const companySymbols = [
+                '0027.HK','0880.HK','1128.HK','1928.HK','2282.HK','0200.HK'
+            ].filter(sym => data[sym]);
+            const indexSymbols = [
+                '^HSI','000001.SS','399001.SZ'
+            ].filter(sym => data[sym]);
+
+            // Company checkboxes
+            const companyDiv = document.getElementById('company-checkboxes');
+            companyDiv.innerHTML = '<b>Companies:</b> ';
+            companySymbols.forEach((sym, idx) => {
+                const label = document.createElement('label');
+                label.style.marginRight = '1em';
+                label.setAttribute('data-symbol', sym);
+                const cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.value = sym;
+                cb.checked = (sym === '0027.HK');
+                label.appendChild(cb);
+                label.appendChild(document.createTextNode(' ' + sym + ' (' + (symbolNames[sym] || sym) + ')'));
+                companyDiv.appendChild(label);
+            });
+
+            // Index checkboxes
+            const indexDiv = document.getElementById('index-checkboxes');
+            indexDiv.innerHTML = '<b>Market Indexes:</b> ';
+            indexSymbols.forEach((sym, idx) => {
+                const label = document.createElement('label');
+                label.style.marginRight = '1em';
+                label.setAttribute('data-symbol', sym);
+                const cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.value = sym;
+                cb.checked = false;
+                label.appendChild(cb);
+                label.appendChild(document.createTextNode(' ' + sym + ' (' + (symbolNames[sym] || sym) + ')'));
+                indexDiv.appendChild(label);
+            });
+
+            function getSelectedSymbols() {
+                const companyDiv = document.getElementById('company-checkboxes');
+                const indexDiv = document.getElementById('index-checkboxes');
+                const companyChecked = Array.from(companyDiv.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
+                const indexChecked = Array.from(indexDiv.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
+                return [...companyChecked, ...indexChecked];
+            }
+
+            function getModeStates() {
+                const mode = document.getElementById('mode-select').value;
+                return {
+                    normalized: mode === 'normalized',
+                    indexed: mode === 'indexed'
+                };
+            }
+            let chartOption = prepareEChartsOption(
+                getSelectedSymbols(),
+                data,
+                getModeStates().normalized,
+                getModeStates().indexed
+            );
+            const casinoChart = echarts.init(document.getElementById('casinoChart'));
+            casinoChart.setOption(chartOption);
+            // Responsive: resize chart on window resize
+            window.addEventListener('resize', () => {
+                casinoChart.resize();
+            });
+
+            function updateCheckboxColors() {
+                // Get current selected symbols in order
+                const selected = getSelectedSymbols();
+                // For each selected symbol, set its label color to the palette color for its current index
+                selected.forEach((sym, idx) => {
+                    const label = document.querySelector('label[data-symbol="' + sym + '"]');
+                    if (label) label.style.color = getColor(idx);
+                });
+                // For unselected, set color to #b0b4c1 (default)
+                [...companySymbols, ...indexSymbols].forEach(sym => {
+                    if (!selected.includes(sym)) {
+                        const label = document.querySelector('label[data-symbol="' + sym + '"]');
+                        if (label) label.style.color = '#b0b4c1';
+                    }
+                });
+            }
+            function getCurrentWindowRange() {
+                // Get current dataZoom window (returns [startIdx, endIdx])
+                const option = casinoChart.getOption();
+                const dz = option.dataZoom && option.dataZoom[0];
+                const total = option.xAxis[0].data.length;
+                const start = dz ? Math.round((dz.start / 100) * (total - 1)) : 0;
+                const end = dz ? Math.round((dz.end / 100) * (total - 1)) : total - 1;
+                return [start, end];
+            }
+            function updateChart() {
+                const selected = getSelectedSymbols();
+                const { normalized, indexed } = getModeStates();
+                // Always get the current window range for indexed or normalized mode
+                let windowRange = undefined;
+                if (indexed || normalized) {
+                    windowRange = getCurrentWindowRange();
+                }
+                const newOption = prepareEChartsOption(selected, data, normalized, !normalized && indexed, { windowRange });
+                // Always preserve the current dataZoom window
+                const option = casinoChart.getOption();
+                if (option.dataZoom && option.dataZoom[0]) {
+                    newOption.dataZoom[0].start = option.dataZoom[0].start;
+                    newOption.dataZoom[0].end = option.dataZoom[0].end;
+                }
+                casinoChart.setOption(newOption, true);
+                updateCheckboxColors();
+            }
+            // Listen for zoom events to update rebasing
+            let chartReady = false;
+            casinoChart.on('dataZoom', function() {
+                if (chartReady) updateChart();
+            });
+            chartReady = true;
+            // Initial color sync
+            updateCheckboxColors();
+            companyDiv.addEventListener('change', updateChart);
+            indexDiv.addEventListener('change', updateChart);
+            document.getElementById('mode-select').addEventListener('change', updateChart);
+        }
+        main();
+    </script>
+</body>
+</html>
