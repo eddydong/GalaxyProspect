@@ -9,7 +9,8 @@ import pandas as pd
 import sys
 from datetime import datetime, timedelta
 
-# List of 6 Macau casino operators traded in Hong Kong + 3 indexes
+
+# List of 6 Macau casino operators traded in Hong Kong + 3 indexes + USD/HKD FX
 symbols = [
     '0027.HK',  # Galaxy Entertainment
     '0880.HK',  # SJM Holdings
@@ -19,7 +20,12 @@ symbols = [
     '0200.HK',  # Melco International Development
     '^HSI',     # Hang Seng Index (Hong Kong)
     '000001.SS',# Shanghai Composite
-    '399001.SZ' # Shenzhen Component
+    '399001.SZ',# Shenzhen Component
+    'HKD=X',    # USD/HKD FX rate
+    'CNY=X',    # USD/CNY FX rate
+    'DX-Y.NYB', # USD Index (DXY)
+    'GC=F',     # Gold Futures
+    'SI=F'      # Silver Futures
 ]
 
 output = {}

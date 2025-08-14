@@ -218,11 +218,11 @@
         <div class="controls">
             <div class="checkbox-group" id="company-checkboxes"></div>
             <div class="checkbox-group" id="index-checkboxes"></div>
-            <div style="align-self: flex-start; margin-left: auto; display: flex; gap: 1.2em;">
+            <div style="flex: 1 1 100%; display: flex; justify-content: center; margin-top: 16px;">
                 <select id="mode-select" style="font-size:1.08em;padding:0.2em 0.7em;border-radius:6px;background:#232837;color:#fff;border:1px solid #2e3448;">
-                    <option value="normal">Normal View</option>
-                    <option value="indexed">Indexed View</option>
+                    <option value="raw">Raw View</option>
                     <option value="normalized">Normalized View</option>
+                    <option value="indexed">Indexed View</option>
                 </select>
             </div>
         </div>
@@ -241,12 +241,24 @@
             '0200.HK': 'Melco',
             '^HSI': 'Hang Seng',
             '000001.SS': 'Shanghai',
-            '399001.SZ': 'Shenzhen'
+            '399001.SZ': 'Shenzhen',
+            'HKD=X': 'USD/HKD',
+            'CNY=X': 'USD/CNY',
+            'DX-Y.NYB': 'USD Index',
+            'GC=F': 'Gold',
+            'SI=F': 'Silver'
         };
 
         async function fetchData() {
-            const res = await fetch('/api/data');
-            return await res.json();
+            // Fetch both main and macro data, merge for charting
+            const [mainRes, macroRes] = await Promise.all([
+                fetch('/api/data'),
+                fetch('macro.json')
+            ]);
+            const mainData = await mainRes.json();
+            const macroData = await macroRes.json();
+            // Merge macroData into mainData (no symbol overlap)
+            return { ...mainData, ...macroData };
         }
 
         function getColor(idx) {
@@ -267,13 +279,58 @@
 
     function prepareEChartsOption(selectedSymbols, data, normalized, indexed, opts = {}) {
             // Always use the full union of all dates from all symbols for a stable x-axis
-            const allDates = new Set();
+            // Generate a complete calendar date range from min to max date in the data
+            let minDate = null, maxDate = null;
             Object.values(data).forEach(symbolData => {
-                Object.keys(symbolData).forEach(date => allDates.add(date));
+                Object.keys(symbolData).forEach(date => {
+                    const d = new Date(date);
+                    if (!minDate || d < minDate) minDate = d;
+                    if (!maxDate || d > maxDate) maxDate = d;
+                });
             });
-            const sortedDates = Array.from(allDates).sort();
+            function formatDate(d) {
+                const m = (d.getMonth() + 1).toString().padStart(2, '0');
+                const day = d.getDate().toString().padStart(2, '0');
+                return `${d.getFullYear()}-${m}-${day}`;
+            }
+            const sortedDates = [];
+            if (minDate && maxDate) {
+                for (let d = new Date(minDate); d <= maxDate; d.setDate(d.getDate() + 1)) {
+                    sortedDates.push(formatDate(d));
+                }
+            }
+            // Compute y-axis min/max based on visible (non-null) values in the current window for selected series
+            let yMin = undefined, yMax = undefined;
+            if (normalized) {
+                yMin = 0;
+                yMax = 1.05;
+            } else if (indexed) {
+                yMin = 0;
+                yMax = undefined;
+            } else if (selectedSymbols.length > 0) {
+                let windowRange = opts.windowRange || [0, sortedDates.length - 1];
+                let allVisible = [];
+                selectedSymbols.filter(symbol => data[symbol]).forEach(symbol => {
+                    const entries = Object.entries(data[symbol]);
+                    const dateToAdjClose = Object.fromEntries(entries.map(([date, v]) => [date, v['Adj Close'] ?? null]));
+                    let values = sortedDates.map(date => dateToAdjClose[date] ?? null);
+                    // Only consider values in the current window
+                    values = values.slice(windowRange[0], windowRange[1] + 1);
+                    allVisible.push(...values.filter(v => v != null && isFinite(v)));
+                });
+                if (allVisible.length > 0) {
+                    yMin = Math.min(...allVisible);
+                    yMax = Math.max(...allVisible);
+                    if (yMin === yMax) {
+                        // Add a small buffer if all values are the same
+                        yMin = yMin * 0.98;
+                        yMax = yMax * 1.02;
+                    }
+                }
+            }
             // Prepare series for each symbol
             const series = selectedSymbols.map((symbol, idx) => {
+                if (!data[symbol]) return null; // skip if data missing
                 const entries = Object.entries(data[symbol]);
                 // Only use 'Adj Close', never fallback to 'Close'
                 const dateToAdjClose = Object.fromEntries(entries.map(([date, v]) => [date, v['Adj Close'] ?? null]));
@@ -288,6 +345,8 @@
                         min = windowVals.length ? Math.min(...windowVals) : 0;
                         max = windowVals.length ? Math.max(...windowVals) : 0;
                         range = max - min;
+                        // Store actual values for tooltip
+                        actualValues = values.slice();
                         values = values.map((v, i) => {
                             if (v == null) return null;
                             if (i < start || i > end) return null;
@@ -298,6 +357,8 @@
                         min = Math.min(...valid);
                         max = Math.max(...valid);
                         range = max - min;
+                        // Store actual values for tooltip
+                        actualValues = values.slice();
                         values = values.map(v => v == null ? null : (range === 0 ? 0 : (v - min) / range));
                     }
                 } else if (indexed && values.filter(v => v != null).length > 0 && opts.windowRange) {
@@ -306,6 +367,8 @@
                     const windowVals = values.slice(start, end + 1);
                     const firstIdxInWindow = windowVals.findIndex(v => v != null);
                     const base = firstIdxInWindow !== -1 ? windowVals[firstIdxInWindow] : null;
+                    // Store actual values for tooltip
+                    actualValues = values.slice();
                     values = values.map((v, i) => {
                         if (v == null) return null;
                         if (base == null) return null;
@@ -318,6 +381,7 @@
                     data: values,
                     yAxisIndex: 0,
                     showSymbol: false,
+                    connectNulls: true,
                     lineStyle: { width: 2, color: getColor(idx) },
                     itemStyle: { color: getColor(idx) },
                     emphasis: { focus: 'series' },
@@ -333,7 +397,7 @@
                         }
                     }
                 };
-            });
+            }).filter(Boolean);
             // Show volume bars for any single selected symbol (company or index) if volume data exists
             if (selectedSymbols.length === 1) {
                 const symbol = selectedSymbols[0];
@@ -341,9 +405,6 @@
                 // Try both 'Volume' and 'volume' keys for robustness
                 const dateToVolume = Object.fromEntries(entries.map(([date, v]) => [date, v['Volume'] ?? v['volume'] ?? null]));
                 // Debug: log volume data for selected symbol
-                if (['^HSI','000001.SS','399001.SZ'].includes(symbol)) {
-                    console.log('Volume for', symbol, dateToVolume);
-                }
                 // Only add if there is at least some volume data
                 if (Object.values(dateToVolume).some(v => v != null)) {
                     // Outlier filter: if a value is >10x the previous max, treat as null
@@ -392,7 +453,24 @@
             return {
                 tooltip: {
                     trigger: 'axis',
-                    axisPointer: { type: 'cross' },
+                    axisPointer: {
+                        type: 'cross',
+                        crossStyle: {
+                            color: '#00bcd4',
+                            width: 1.5
+                        },
+                        label: {
+                            backgroundColor: '#232837',
+                            color: '#fff',
+                            borderColor: '#00bcd4',
+                            borderWidth: 1,
+                            fontWeight: 'bold',
+                            fontSize: 13,
+                            padding: [6, 12],
+                            shadowColor: '#000',
+                            shadowBlur: 6
+                        }
+                    },
                     backgroundColor: '#232837',
                     borderColor: '#fff',
                     textStyle: { color: '#fff' }
@@ -440,7 +518,9 @@
                         axisLine: { show: true, lineStyle: { color: '#fff' } },
                         axisLabel: { formatter: v => normalized ? v.toFixed(2) : v, color: '#fff', fontWeight: 500 },
                         nameTextStyle: { color: '#fff', fontWeight: 600 },
-                        splitLine: { lineStyle: { color: '#333' } }
+                        splitLine: { lineStyle: { color: '#333' } },
+                        min: yMin,
+                        max: yMax
                     },
                     {
                         type: 'value',
@@ -469,17 +549,25 @@
 
 
 
-            // Separate company and index symbols
+
+            // Separate company, index, FX, and commodity symbols
             const companySymbols = [
                 '0027.HK','0880.HK','1128.HK','1928.HK','2282.HK','0200.HK'
             ].filter(sym => data[sym]);
             const indexSymbols = [
                 '^HSI','000001.SS','399001.SZ'
             ].filter(sym => data[sym]);
+            const fxSymbols = [
+                'HKD=X','CNY=X','DX-Y.NYB'
+            ].filter(sym => data[sym]);
+            const commoditySymbols = [
+                'GC=F','SI=F'
+            ].filter(sym => data[sym]);
+
 
             // Company checkboxes
             const companyDiv = document.getElementById('company-checkboxes');
-            companyDiv.innerHTML = '<b>Companies:</b> ';
+            companyDiv.innerHTML = '<label class="category-label" style="font-weight:600;cursor:pointer;"><input type="checkbox" class="category-checkbox" data-category="company" style="margin-right:0.5em;">Companies:</label> ';
             companySymbols.forEach((sym, idx) => {
                 const label = document.createElement('label');
                 label.style.marginRight = '1em';
@@ -495,7 +583,7 @@
 
             // Index checkboxes
             const indexDiv = document.getElementById('index-checkboxes');
-            indexDiv.innerHTML = '<b>Market Indexes:</b> ';
+            indexDiv.innerHTML = '<label class="category-label" style="font-weight:600;cursor:pointer;"><input type="checkbox" class="category-checkbox" data-category="index" style="margin-right:0.5em;">Market Indexes:</label> ';
             indexSymbols.forEach((sym, idx) => {
                 const label = document.createElement('label');
                 label.style.marginRight = '1em';
@@ -509,12 +597,140 @@
                 indexDiv.appendChild(label);
             });
 
+            // FX checkboxes
+            let fxDiv = document.getElementById('fx-checkboxes'); // keep this declaration only
+            if (!fxDiv) {
+                fxDiv = document.createElement('div');
+                fxDiv.className = 'checkbox-group';
+                fxDiv.id = 'fx-checkboxes';
+                indexDiv.parentNode.insertBefore(fxDiv, indexDiv.nextSibling);
+            }
+            fxDiv.innerHTML = '<label class="category-label" style="font-weight:600;cursor:pointer;"><input type="checkbox" class="category-checkbox" data-category="fx" style="margin-right:0.5em;">FX:</label> ';
+            fxSymbols.forEach((sym, idx) => {
+                const label = document.createElement('label');
+                label.style.marginRight = '1em';
+                label.setAttribute('data-symbol', sym);
+                const cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.value = sym;
+                cb.checked = false;
+                label.appendChild(cb);
+                label.appendChild(document.createTextNode(' ' + sym + ' (' + (symbolNames[sym] || sym) + ')'));
+                fxDiv.appendChild(label);
+            });
+
+            // Commodity checkboxes
+            let commodityDiv = document.getElementById('commodity-checkboxes'); // keep this declaration only
+            if (!commodityDiv) {
+                commodityDiv = document.createElement('div');
+                commodityDiv.className = 'checkbox-group';
+                commodityDiv.id = 'commodity-checkboxes';
+                fxDiv.parentNode.insertBefore(commodityDiv, fxDiv.nextSibling);
+            }
+            commodityDiv.innerHTML = '<label class="category-label" style="font-weight:600;cursor:pointer;"><input type="checkbox" class="category-checkbox" data-category="commodity" style="margin-right:0.5em;">Commodities:</label> ';
+            commoditySymbols.forEach((sym, idx) => {
+                const label = document.createElement('label');
+                label.style.marginRight = '1em';
+                label.setAttribute('data-symbol', sym);
+                const cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.value = sym;
+                cb.checked = false;
+                label.appendChild(cb);
+                label.appendChild(document.createTextNode(' ' + sym + ' (' + (symbolNames[sym] || sym) + ')'));
+                commodityDiv.appendChild(label);
+            });
+
+            // Macro checkboxes
+            let macroDiv = document.getElementById('macro-checkboxes'); // keep this declaration only
+            if (!macroDiv) {
+                macroDiv = document.createElement('div');
+                macroDiv.className = 'checkbox-group';
+                macroDiv.id = 'macro-checkboxes';
+                commodityDiv.parentNode.insertBefore(macroDiv, commodityDiv.nextSibling);
+            }
+            macroDiv.innerHTML = '<label class="category-label" style="font-weight:600;cursor:pointer;"><input type="checkbox" class="category-checkbox" data-category="macro" style="margin-right:0.5em;">Macro:</label> ';
+            // Macro symbols (must be defined before setupCategoryBatchToggle)
+            const macroSymbols = Object.keys(data).filter(sym => {
+                // Heuristic: macro series are those present in macro.json (not in mainData)
+                return !companySymbols.includes(sym) && !indexSymbols.includes(sym) && !fxSymbols.includes(sym) && !commoditySymbols.includes(sym);
+            });
+            // Helper: batch check/uncheck children when category label is toggled
+            function setupCategoryBatchToggle(category, symbols, div) {
+                const catCheckbox = div.querySelector('input.category-checkbox[data-category="' + category + '"]');
+                catCheckbox.addEventListener('change', function() {
+                    const checked = catCheckbox.checked;
+                    symbols.forEach(sym => {
+                        // Only check if data exists for this symbol
+                        if (!data[sym]) return;
+                        const cb = div.querySelector('input[type=checkbox][value="' + sym + '"]');
+                        if (cb) cb.checked = checked;
+                    });
+                    updateChart();
+                });
+                // Sync category checkbox state if all/none/some children are checked
+                function syncCatCheckbox() {
+                    const cbs = symbols.map(sym => div.querySelector('input[type=checkbox][value="' + sym + '"]')).filter(Boolean);
+                    const checkedCount = cbs.filter(cb => cb.checked).length;
+                    if (checkedCount === cbs.length && cbs.length > 0) {
+                        catCheckbox.checked = true;
+                        catCheckbox.indeterminate = false;
+                    } else if (checkedCount === 0) {
+                        catCheckbox.checked = false;
+                        catCheckbox.indeterminate = false;
+                    } else {
+                        catCheckbox.checked = false;
+                        catCheckbox.indeterminate = true;
+                    }
+                }
+                div.addEventListener('change', function(e) {
+                    if (!e.target.classList.contains('category-checkbox')) syncCatCheckbox();
+                });
+                syncCatCheckbox();
+            }
+            // Setup batch toggles for all categories
+            setupCategoryBatchToggle('company', companySymbols, companyDiv);
+            setupCategoryBatchToggle('index', indexSymbols, indexDiv);
+            setupCategoryBatchToggle('fx', fxSymbols, fxDiv);
+            setupCategoryBatchToggle('commodity', commoditySymbols, commodityDiv);
+            setupCategoryBatchToggle('macro', macroSymbols, macroDiv);
+            macroSymbols.forEach((sym, idx) => {
+                const label = document.createElement('label');
+                label.style.marginRight = '1em';
+                label.setAttribute('data-symbol', sym);
+                const cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.value = sym;
+                cb.checked = false;
+                label.appendChild(cb);
+        // Optionally, provide a human-readable label for known macro series
+        let labelText = sym;
+        const macroNames = {
+            'CHNCPIALLMINMEI': 'China CPI',
+            'MABMM201CNM189S': 'China M2',
+            'CSCICP02CNM460S': 'China Composite Consumer Confidence',
+            'EXPCH': 'US Exports to China',
+            'IR3TIB01CNM156N': 'China 3M Interest Rate',
+            'CHNLOLITOAASTSAM': 'OECD Composite Leading Indicator',
+            'CHNCSESFT02STSAM': 'OECD Future Tendency',
+            'CHNBSCICP02STSAM': 'OECD Business Tendency (Mfg)'
+        };
+        if (macroNames[sym]) labelText = macroNames[sym];
+        label.appendChild(document.createTextNode(' ' + sym + ' (' + labelText + ')'));
+                macroDiv.appendChild(label);
+            });
+
             function getSelectedSymbols() {
                 const companyDiv = document.getElementById('company-checkboxes');
                 const indexDiv = document.getElementById('index-checkboxes');
+                const fxDiv = document.getElementById('fx-checkboxes');
+                const commodityDiv = document.getElementById('commodity-checkboxes');
                 const companyChecked = Array.from(companyDiv.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
                 const indexChecked = Array.from(indexDiv.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
-                return [...companyChecked, ...indexChecked];
+                const fxChecked = Array.from(fxDiv.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
+                const commodityChecked = Array.from(commodityDiv.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
+                const macroChecked = Array.from(macroDiv.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
+                return [...companyChecked, ...indexChecked, ...fxChecked, ...commodityChecked, ...macroChecked];
             }
 
             function getModeStates() {
@@ -546,7 +762,7 @@
                     if (label) label.style.color = getColor(idx);
                 });
                 // For unselected, set color to #b0b4c1 (default)
-                [...companySymbols, ...indexSymbols].forEach(sym => {
+                [...companySymbols, ...indexSymbols, ...fxSymbols, ...commoditySymbols, ...macroSymbols].forEach(sym => {
                     if (!selected.includes(sym)) {
                         const label = document.querySelector('label[data-symbol="' + sym + '"]');
                         if (label) label.style.color = '#b0b4c1';
@@ -590,6 +806,9 @@
             updateCheckboxColors();
             companyDiv.addEventListener('change', updateChart);
             indexDiv.addEventListener('change', updateChart);
+            if (fxDiv) fxDiv.addEventListener('change', updateChart);
+            if (commodityDiv) commodityDiv.addEventListener('change', updateChart);
+            if (macroDiv) macroDiv.addEventListener('change', updateChart);
             document.getElementById('mode-select').addEventListener('change', updateChart);
         }
         main();
