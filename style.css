@@ -1,3 +1,31 @@
+/* Unified checkbox style for all category checkboxes */
+.category-block label input[type="checkbox"],
+.category-label input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1.15em;
+    height: 1.15em;
+    border: 2.2px solid #00bcd4;
+    border-radius: 5px;
+    background: #232837;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+    margin-right: 0.7em;
+    vertical-align: middle;
+    transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
+    flex-shrink: 0;
+    box-shadow: 0 1px 4px 0 rgba(0,188,212,0.08);
+    margin-left: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    display: inline-block !important;
+}
+.category-block label input[type="checkbox"]:checked,
+.category-label input[type="checkbox"]:checked {
+    border-color: #00bcd4;
+    background: #fff;
+}
 /* GalaxyProspect Styles */
 
 @font-face {
@@ -29,31 +57,47 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 2em;
+    justify-content: space-between;
     position: fixed;
     top: 0;
     left: 0;
-    height: 100vh;
+    top: 0;
+    bottom: 0;
+    left: 0;
     z-index: 10;
     box-shadow: 2px 0 16px 0 rgba(0,0,0,0.12);
+    padding-top: 29px;
+    padding-bottom: 29px;
+}
+
+.sidebar-top-icons,
+.sidebar-bottom-icons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 29px;
+}
+.sidebar-bottom-icons {
+    margin-top: auto;
 }
 .sidebar-icon {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.45em;
+    font-size: 1.25em;
     background: linear-gradient(135deg, #232837 70%, #222c38 100%);
-    border-radius: 12px;
+    border-radius: 11px;
     color: #888a92;
     cursor: pointer;
     transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.18s;
     box-shadow: 0 2px 8px 0 rgba(0,188,212,0.08);
     position: relative;
-    margin-bottom: 0.5em;
-    border: 1.5px solid #232837;
+    border: 1.2px solid #232837;
 }
+
+/* Remove margin-bottom from last sidebar icon (help) and add margin-bottom to ensure bottom margin matches top */
 .sidebar-icon:hover, .sidebar-icon.active {
     background: linear-gradient(135deg, #e0e0e0 80%, #bdbdbd 100%);
     color: #888a92;
@@ -95,7 +139,7 @@ body {
 
 /* Mode panel icon margin */
 .mode-panel-icon {
-    margin-bottom: 1.1em;
+    margin-bottom: 0;
 }
 
 /* Mode panel group styles */
@@ -143,14 +187,26 @@ body {
     width: auto;
     clear: both;
 }
+.category-block,
+.category-block label,
+.category-label {
+    width: 100%;
+    box-sizing: border-box;
+}
 .category-block {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 210px;
+    min-width: 210px;
+    max-width: 210px;
+    margin-bottom: 0.5em;
+    break-inside: avoid-column;
 }
 .category-block label {
-    width: 100%;
     height: 44px;
     min-height: 44px;
     max-height: 44px;
-    box-sizing: border-box;
     display: flex;
     align-items: center;
     background: #232837;
@@ -172,16 +228,6 @@ body {
     border-color: #00bcd4;
     box-shadow: 0 2px 8px 0 rgba(0,188,212,0.10);
 }
-.category-block {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    width: 210px;
-    min-width: 210px;
-    max-width: 210px;
-    margin-bottom: 0.5em;
-    break-inside: avoid-column;
-}
 
 .main-window {
     margin-left: 68px;
@@ -197,73 +243,42 @@ body {
 #chart-container {
     width: 100%;
     height: 100%;
-    min-height: 400px;
     margin: 0;
-        cursor: pointer; /* Ensuring cursor is pointer for clickable look */
+    cursor: pointer; /* Ensuring cursor is pointer for clickable look */
     background: #181c24;
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: relative;
     z-index: 1;
     display: flex;
+    flex-direction: column;
 }
 
 #casinoChart {
     width: 100% !important;
     height: 100% !important;
-    min-height: 400px;
-    min-width: 400px;
-    display: block;
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0 !important;
+    min-width: 0 !important;
 }
 .category-label {
-    width: 100%;
-    min-width: 0;
-    max-width: 100%;
-    box-sizing: border-box;
     display: flex;
     align-items: center;
     font-size: 1em;
     font-weight: 700;
-    margin-bottom: 0.4em;
-    margin-top: 0;
     letter-spacing: 1.5px;
     color: #fff;
     background: linear-gradient(90deg, #00bcd4 0%, #232837 100%);
     border-radius: 6px;
     border: 1.2px solid #2e3448;
-    padding: 0.38em 0.8em 0.38em 0.5em;
     box-shadow: 0 4px 16px 0 rgba(0,188,212,0.13);
     text-shadow: 0 2px 6px #181c24;
     text-transform: uppercase;
     z-index: 2;
     position: relative;
     gap: 0.5em;
+    margin-bottom: 0.4em;
+    margin-top: 0;
+    padding: 0.38em 0.8em 0.38em 0.5em;
     cursor: pointer;
 }
 
-/* Remove checkbox from category label if present */
-.category-label input[type="checkbox"] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 1.15em;
-    height: 1.15em;
-    border: 2.2px solid #00bcd4;
-    border-radius: 5px;
-    background: #232837;
-    outline: none;
-    cursor: pointer;
-    position: relative;
-    margin-right: 0.7em;
-    vertical-align: middle;
-    transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
-    flex-shrink: 0;
-    box-shadow: 0 1px 4px 0 rgba(0,188,212,0.08);
-    margin-left: 0;
-    margin-top: 0;
-    margin-bottom: 0;
-    display: inline-block !important;
-}
-.category-label input[type="checkbox"]:checked {
-    border-color: #00bcd4;
-    background: #00bcd4;
-}

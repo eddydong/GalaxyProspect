@@ -10,24 +10,48 @@
 <body>
         <div class="layout">
             <aside class="sidebar">
-                <!-- View Mode Icon -->
-                <div class="sidebar-icon mode-panel-icon" data-panel="mode" title="Chart Mode">
-                    <svg viewBox="0 0 32 32" fill="none">
-                        <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="3" fill="none"/>
-                        <g>
-                            <rect x="8" y="10" width="4" height="12" rx="1.2" fill="currentColor" opacity="0.7"/>
-                            <rect x="14" y="6" width="4" height="16" rx="1.2" fill="currentColor"/>
-                            <rect x="20" y="14" width="4" height="8" rx="1.2" fill="currentColor" opacity="0.7"/>
-                        </g>
-                    </svg>
+                <div class="sidebar-top-icons">
+                    <!-- View Mode Icon -->
+                    <div class="sidebar-icon mode-panel-icon" data-panel="mode" title="Chart Mode">
+                        <svg viewBox="0 0 32 32" fill="none" width="32" height="32">
+                            <circle cx="16" cy="16" r="12.5" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <g>
+                                <rect x="8.5" y="10.5" width="3" height="11" rx="1" fill="currentColor" opacity="0.7"/>
+                                <rect x="14" y="6.5" width="4" height="15" rx="1" fill="currentColor"/>
+                                <rect x="19.5" y="14.5" width="3" height="7" rx="1" fill="currentColor" opacity="0.7"/>
+                            </g>
+                        </svg>
+                    </div>
+                    <!-- Series Checkboxes Icon -->
+                    <div class="sidebar-icon" data-panel="series" title="Series Selection">
+                        <svg viewBox="0 0 32 32" fill="none" width="32" height="32">
+                            <rect x="5.5" y="13.5" width="4" height="13" rx="1.3" fill="currentColor"/>
+                            <rect x="13" y="7.5" width="5" height="17" rx="1.3" fill="currentColor"/>
+                            <rect x="22" y="17.5" width="4" height="9" rx="1.3" fill="currentColor"/>
+                        </svg>
+                    </div>
                 </div>
-                <!-- Series Checkboxes Icon -->
-                <div class="sidebar-icon" data-panel="series" title="Series Selection">
-                    <svg viewBox="0 0 32 32" fill="none">
-                        <rect x="3" y="13" width="6" height="16" rx="2" fill="currentColor"/>
-                        <rect x="13" y="7" width="6" height="22" rx="2" fill="currentColor"/>
-                        <rect x="23" y="17" width="6" height="12" rx="2" fill="currentColor"/>
-                    </svg>
+                <div class="sidebar-bottom-icons">
+                    <!-- Help Icon -->
+                    <div class="sidebar-icon" data-panel="help" title="Help">
+                        <svg viewBox="0 0 32 32" fill="none" width="32" height="32">
+                            <circle cx="16" cy="16" r="12.5" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <g>
+                                <path d="M16 22h0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M16 10a4 4 0 0 1 4 4c0 2-2 3-2 3s-2 1-2 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </g>
+                        </svg>
+                    </div>
+                    <!-- Settings Icon -->
+                    <div class="sidebar-icon" data-panel="settings" title="Settings">
+                        <svg viewBox="0 0 32 32" fill="none" width="32" height="32">
+                            <circle cx="16" cy="16" r="12.5" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <g>
+                                <circle cx="16" cy="16" r="3.5" fill="currentColor"/>
+                                <path d="M16 6v4M16 22v4M6 16h4M22 16h4M10.5 10.5l2.2 2.2M20 20l2.2 2.2M10.5 21.5l2.2-2.2M20 12l2.2-2.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </g>
+                        </svg>
+                    </div>
                 </div>
             </aside>
             <div class="main-window">
@@ -50,6 +74,61 @@
         </div>
 
     <script>
+    // Disable all default scroll, selection, and drag for the whole page
+    document.addEventListener('wheel', function(e) { e.preventDefault(); }, { passive: false });
+    document.addEventListener('selectstart', function(e) { e.preventDefault(); });
+    document.addEventListener('dragstart', function(e) { e.preventDefault(); });
+    document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
+        // Block all horizontal (sideways) scroll on sidebar and chart, only allow vertical for chart panning
+        function handleWheel(e) {
+            // Always block horizontal scroll (deltaX) to prevent browser history navigation
+            if (Math.abs(e.deltaX) > 0) {
+                e.preventDefault();
+                return;
+            }
+            // Only pan if NO modifier keys are held (pure scroll)
+            if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) {
+                // Do not pan chart if any modifier is held
+                return;
+            }
+            // Only pan if chart is initialized and vertical scroll
+            if (window.casinoChart && typeof casinoChart.dispatchAction === 'function' && Math.abs(e.deltaY) > 0) {
+                const pan = e.deltaY;
+                const option = casinoChart.getOption();
+                const dz = option.dataZoom && option.dataZoom[0];
+                if (dz) {
+                    const total = option.xAxis[0].data.length;
+                    const windowSize = Math.round((dz.end - dz.start) / 100 * total);
+                    // Pan by 5% of window size per wheel event
+                    const panStep = Math.max(1, Math.round(windowSize * 0.05));
+                    let start = Math.round(dz.start / 100 * (total - 1));
+                    let end = Math.round(dz.end / 100 * (total - 1));
+                    if (pan > 0) {
+                        // Pan right
+                        start = Math.min(total - windowSize, start + panStep);
+                        end = Math.min(total - 1, end + panStep);
+                    } else {
+                        // Pan left
+                        start = Math.max(0, start - panStep);
+                        end = Math.max(windowSize - 1, end - panStep);
+                    }
+                    const newStart = (start / (total - 1)) * 100;
+                    const newEnd = (end / (total - 1)) * 100;
+                    casinoChart.dispatchAction({
+                        type: 'dataZoom',
+                        start: newStart,
+                        end: newEnd
+                    });
+                    e.preventDefault();
+                }
+            }
+        }
+        document.querySelector('.sidebar').addEventListener('wheel', handleWheel, { passive: false });
+        document.getElementById('casinoChart').addEventListener('wheel', handleWheel, { passive: false });
+        // Also block horizontal scroll globally to prevent browser navigation
+        document.addEventListener('wheel', function(e) {
+            if (Math.abs(e.deltaX) > 0) e.preventDefault();
+        }, { passive: false });
 
         // Sidebar panel hover logic for two icons
         document.addEventListener('DOMContentLoaded', function() {
@@ -127,30 +206,29 @@
             return await res.json();
         }
 
+        // Shared color palette for all chart and UI coloring
+        const BASE_COLORS = [
+            '#FFD600', // Galaxy - Vivid Yellow
+            '#00E676', // SJM - Bright Green
+            '#FF1744', // Wynn - Vivid Red
+            '#2979FF', // Sands - Bright Blue
+            '#F500A3', // MGM - Magenta
+            '#FF9100', // Melco - Orange
+            '#00B8D4', // Hang Seng - Cyan
+            '#C51162', // Shanghai - Deep Pink
+            '#AEEA00'  // Shenzhen - Lime
+        ];
+        function hexToRgba(hex, alpha) {
+            hex = hex.replace('#', '');
+            if (hex.length === 3) hex = hex.split('').map(x => x + x).join('');
+            const num = parseInt(hex, 16);
+            const r = (num >> 16) & 255;
+            const g = (num >> 8) & 255;
+            const b = num & 255;
+            return `rgba(${r},${g},${b},${alpha})`;
+        }
         function getColor(idx) {
-            // High-contrast, colorblind-friendly palette for dark backgrounds
-            const baseColors = [
-                '#FFD600', // Galaxy - Vivid Yellow
-                '#00E676', // SJM - Bright Green
-                '#FF1744', // Wynn - Vivid Red
-                '#2979FF', // Sands - Bright Blue
-                '#F500A3', // MGM - Magenta
-                '#FF9100', // Melco - Orange
-                '#00B8D4', // Hang Seng - Cyan
-                '#C51162', // Shanghai - Deep Pink
-                '#AEEA00'  // Shenzhen - Lime
-            ];
-            // Convert hex to rgba with alpha 0.9
-            function hexToRgba(hex, alpha) {
-                hex = hex.replace('#', '');
-                if (hex.length === 3) hex = hex.split('').map(x => x + x).join('');
-                const num = parseInt(hex, 16);
-                const r = (num >> 16) & 255;
-                const g = (num >> 8) & 255;
-                const b = num & 255;
-                return `rgba(${r},${g},${b},${alpha})`;
-            }
-            return hexToRgba(baseColors[idx % baseColors.length], 0.9);
+            return hexToRgba(BASE_COLORS[idx % BASE_COLORS.length], 0.9);
         }
 
     function prepareEChartsOption(selectedSymbols, data, normalized, indexed, opts = {}) {
@@ -336,6 +414,7 @@
             const defaultDays = defaultMonths * 21; // ~21 trading days per month
             const defaultWindow = sortedDates.length > defaultDays ? Math.round((sortedDates.length - defaultDays) / sortedDates.length * 100) : 0;
             return {
+                animation: false,
                 tooltip: {
                     trigger: 'axis',
                     axisPointer: {
@@ -362,7 +441,7 @@
                     textStyle: { color: '#fff', fontFamily: 'MCI' }
                 },
                 legend: { show: false, textStyle: { fontFamily: 'MCI' } },
-                grid: { left: 60, right: 60, top: 85, bottom: 90 },
+                grid: { left: 36, right: 36, top: 85, bottom: 24 },
                 dataZoom: [
                     {
                         type: 'slider',
@@ -382,7 +461,16 @@
                         moveHandleSize: '100%',
                         showDetail: true,
                         handleStyle: { color: '#00bcd4' },
-                        textStyle: { color: '#fff' }
+                        textStyle: { color: '#fff' },
+                        minValueSpan: 30 // Minimum zoom window is 30 ticks
+                    },
+                    {
+                        type: 'inside',
+                        xAxisIndex: 0,
+                        zoomOnMouseWheel: 'shift', // vertical scroll with shift pans
+                        moveOnMouseWheel: true,    // horizontal scroll pans
+                        moveOnMouseMove: true,
+                        minValueSpan: 30 // Minimum zoom window is 30 ticks
                     }
                 ],
                 xAxis: {
@@ -390,15 +478,15 @@
                     data: sortedDates,
                     axisLabel: {
                         rotate: 0, // Print horizontally
-                        color: '#fff',
+                        color: 'rgba(255,255,255,0.8)',
                         fontWeight: 500,
                         interval: 'auto', // Let ECharts auto-calculate, but force minInterval below
                         minInterval: 1, // Allow every tick if space
                         hideOverlap: true, // Never overlap
                         fontFamily: 'MCI',
-                        letterSpacing: 2
+                        letterSpacing: 2,
                         // Always show at least 4 ticks: if ECharts shows fewer, force 4 evenly spaced
-                        ,formatter: function(value, index) {
+                        formatter: function(value, index) {
                             const total = sortedDates.length;
                             // If ECharts would show fewer than 4, force 4 evenly spaced
                             if (this.axis && this.axis.getViewLabels) {
@@ -411,30 +499,32 @@
                             return value;
                         }
                     },
-                    axisLine: { lineStyle: { color: '#fff' } }
+                    axisLine: { lineStyle: { color: 'rgba(255,255,255,0.8)' } }
                 },
                 yAxis: [
                     {
                         type: 'value',
                         name: normalized ? 'Normalized Adj Close' : 'Adj Close',
                         position: 'left',
-                        axisLine: { show: true, lineStyle: { color: '#fff' } },
-                        axisLabel: { formatter: v => normalized ? v.toFixed(2) : formatKMB(v), color: '#fff', fontWeight: 500, fontFamily: 'MCI', letterSpacing: 2 },
-                        nameTextStyle: { color: '#fff', fontWeight: 600, fontFamily: 'MCI', letterSpacing: 2 },
+                        axisLine: { show: true, lineStyle: { color: 'rgba(255,255,255,0.8)' } },
+                        axisLabel: { formatter: v => normalized ? v.toFixed(2) : formatKMB(v), color: 'rgba(255,255,255,0.8)', fontWeight: 500, fontFamily: 'MCI', letterSpacing: 2 },
+                        nameTextStyle: { color: 'rgba(255,255,255,0.8)', fontWeight: 600, fontFamily: 'MCI', letterSpacing: 2 },
                         splitLine: { lineStyle: { color: '#333' } },
                         min: yMin,
-                        max: yMax
+                        max: yMax,
+                        axisPointer: { label: { margin: -8, padding: [6, 8] } }
                     },
                     {
                         type: 'value',
                         name: 'Volume',
                         position: 'right',
-                        axisLine: { show: true, lineStyle: { color: '#fff' } },
-                        axisLabel: { formatter: v => v != null ? formatKMB(v) : '', color: '#fff', fontWeight: 500, fontFamily: 'MCI', letterSpacing: 2 },
-                        nameTextStyle: { color: '#fff', fontWeight: 600, fontFamily: 'MCI', letterSpacing: 2 },
+                        axisLine: { show: true, lineStyle: { color: 'rgba(255,255,255,0.8)' } },
+                        axisLabel: { formatter: v => v != null ? formatKMB(v) : '', color: 'rgba(255,255,255,0.8)', fontWeight: 500, fontFamily: 'MCI', letterSpacing: 2 },
+                        nameTextStyle: { color: 'rgba(255,255,255,0.8)', fontWeight: 600, fontFamily: 'MCI', letterSpacing: 2 },
                         splitLine: { show: false },
                         min: 0,
-                        max: undefined
+                        max: undefined,
+                        axisPointer: { label: { margin: -8, padding: [6, 8] } }
                     }
                 ],
                 series: series.map(s => s.type === 'bar' ? { ...s, barMinWidth: 3 } : s)
@@ -447,8 +537,6 @@
             const symbols = Object.keys(data);
 
             // Debug: log loaded data and selected symbols
-            console.log('Loaded data:', data);
-            console.log('Symbols:', symbols);
 
             // Use config-driven categories
             const companySymbols = symbolCategories.company.filter(sym => data[sym]);
@@ -495,7 +583,7 @@
                 syms.forEach(sym => {
                     const itemLabel = document.createElement('label');
                     itemLabel.setAttribute('data-symbol', sym);
-                    itemLabel.style.marginRight = '1em';
+                    // Removed redundant marginRight, handled by CSS gap/margin
                     const cb = document.createElement('input');
                     cb.type = 'checkbox';
                     cb.value = sym;
@@ -595,7 +683,6 @@
                 };
             }
             let selectedSyms = getSelectedSymbols();
-            console.log('Selected symbols for chart:', selectedSyms);
             let chartOption = prepareEChartsOption(
                 selectedSyms,
                 data,
@@ -610,18 +697,31 @@
             });
 
             function updateCheckboxColors() {
-                // Get current selected symbols in order
                 const selected = getSelectedSymbols();
-                // For each selected symbol, set its label color to the palette color for its current index
                 selected.forEach((sym, idx) => {
                     const label = document.querySelector('label[data-symbol="' + sym + '"]');
-                    if (label) label.style.color = getColor(idx);
+                    if (label) {
+                        const hex = BASE_COLORS[idx % BASE_COLORS.length].replace('#','');
+                        const r = parseInt(hex.substring(0,2),16);
+                        const g = parseInt(hex.substring(2,4),16);
+                        const b = parseInt(hex.substring(4,6),16);
+                        const rgba = `rgba(${r},${g},${b},0.8)`;
+                        label.style.background = rgba;
+                        label.style.borderColor = rgba;
+                        const luminance = (0.299*r + 0.587*g + 0.114*b) / 255;
+                        label.style.color = luminance > 0.6 ? '#181c24' : '#fff';
+                        label.style.boxShadow = '0 2px 8px 0 rgba(0,0,0,0.18)';
+                    }
                 });
-                // For unselected, set color to #b0b4c1 (default)
                 [...companySymbols, ...indexSymbols, ...fxSymbols, ...commoditySymbols, ...macroSymbols].forEach(sym => {
                     if (!selected.includes(sym)) {
                         const label = document.querySelector('label[data-symbol="' + sym + '"]');
-                        if (label) label.style.color = '#b0b4c1';
+                        if (label) {
+                            label.style.background = '';
+                            label.style.borderColor = '';
+                            label.style.color = '#b0b4c1';
+                            label.style.boxShadow = '';
+                        }
                     }
                 });
             }
