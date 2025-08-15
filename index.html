@@ -304,6 +304,7 @@
         // Helper for K/M/B formatting
         function formatKMB(val) {
             if (val == null || isNaN(val)) return '';
+            if (Math.abs(val) >= 1e12) return (val / 1e12).toFixed(2).replace(/\.00$/, '') + 't';
             if (Math.abs(val) >= 1e9) return (val / 1e9).toFixed(2).replace(/\.00$/, '') + 'b';
             if (Math.abs(val) >= 1e6) return (val / 1e6).toFixed(2).replace(/\.00$/, '') + 'm';
             if (Math.abs(val) >= 1e3) return (val / 1e3).toFixed(2).replace(/\.00$/, '') + 'k';
@@ -389,6 +390,7 @@
                         values = values.map((v, i) => {
                             if (v == null) return null;
                             if (i < start || i > end) return null;
+                            // Always return a number for real data, null for missing
                             return range === 0 ? 0 : (v - min) / range;
                         });
                     } else {
@@ -398,7 +400,7 @@
                         range = max - min;
                         // Store actual values for tooltip
                         actualValues = values.slice();
-                        values = values.map(v => v == null ? null : (range === 0 ? 0 : (v - min) / range));
+                        values = values.map((v, i) => v == null ? null : (range === 0 ? 0 : (v - min) / range));
                     }
                 } else if (indexed && values.filter(v => v != null).length > 0 && opts.windowRange) {
                     // Indexed mode: divide by first non-null value in the current window
@@ -411,6 +413,7 @@
                     values = values.map((v, i) => {
                         if (v == null) return null;
                         if (base == null) return null;
+                        // Always return a number for real data, null for missing
                         return i >= start && i <= end ? v / base : null;
                     });
                 }
@@ -419,7 +422,11 @@
                     type: 'line',
                     data: values,
                     yAxisIndex: 0,
-                    showSymbol: false,
+                    showSymbol: true,
+                    symbol: 'circle',
+                    symbolSize: 7,
+                    symbolKeepAspect: true,
+                    symbolSize: 7,
                     connectNulls: true,
                     lineStyle: { width: 2, color: getColor(idx) },
                     itemStyle: { color: getColor(idx) },
