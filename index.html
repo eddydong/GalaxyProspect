@@ -10,6 +10,7 @@
 <body>
         <div class="layout">
             <aside class="sidebar">
+                <div class="sidebar-bevel"></div>
                 <div class="sidebar-top-icons">
                     <!-- View Mode Icon -->
                     <div class="sidebar-icon mode-panel-icon" data-panel="mode" title="Chart Mode">
@@ -55,7 +56,10 @@
                 </div>
             </aside>
             <div class="main-window">
-                <div id="chart-container"><div id="casinoChart"></div></div>
+                <div id="chart-container">
+                    <div id="casinoChart"></div>
+                    <div class="chart-bottom-spacer"></div>
+                </div>
             </div>
             <div class="floating-panel" id="panel-mode">
                 <div class="checkbox-group mode-panel-group">
@@ -192,6 +196,15 @@
                     symbolCategories.macro.push(item.symbol_name);
                 }
             });
+        }
+
+        // Ensure font is loaded before rendering
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(() => {
+                setTimeout(main, 20);
+            });
+        } else {
+            window.addEventListener('DOMContentLoaded', main);
         }
 
         async function fetchConfig() {
@@ -429,11 +442,10 @@
                             borderColor: '#00bcd4',
                             borderWidth: 1,
                             fontWeight: 'bold',
-                            fontSize: 13,
+                            fontSize: 16,
                             fontFamily: 'MCI',
-                            padding: [6, 12],
-                            shadowColor: '#000',
-                            shadowBlur: 6
+                            padding: [6, 16],
+                            margin: 0
                         }
                     },
                     backgroundColor: '#232837',
@@ -441,7 +453,7 @@
                     textStyle: { color: '#fff', fontFamily: 'MCI' }
                 },
                 legend: { show: false, textStyle: { fontFamily: 'MCI' } },
-                grid: { left: 36, right: 36, top: 85, bottom: 24 },
+                grid: { left: 52, right: 44, top: 85, bottom: 24 },
                 dataZoom: [
                     {
                         type: 'slider',
@@ -485,6 +497,7 @@
                         hideOverlap: true, // Never overlap
                         fontFamily: 'MCI',
                         letterSpacing: 2,
+                        fontSize: 16,
                         // Always show at least 4 ticks: if ECharts shows fewer, force 4 evenly spaced
                         formatter: function(value, index) {
                             const total = sortedDates.length;
@@ -507,8 +520,9 @@
                         name: normalized ? 'Normalized Adj Close' : 'Adj Close',
                         position: 'left',
                         axisLine: { show: true, lineStyle: { color: 'rgba(255,255,255,0.8)' } },
-                        axisLabel: { formatter: v => normalized ? v.toFixed(2) : formatKMB(v), color: 'rgba(255,255,255,0.8)', fontWeight: 500, fontFamily: 'MCI', letterSpacing: 2 },
-                        nameTextStyle: { color: 'rgba(255,255,255,0.8)', fontWeight: 600, fontFamily: 'MCI', letterSpacing: 2 },
+                        axisLabel: { formatter: v => normalized ? v.toFixed(2) : formatKMB(v), color: 'rgba(255,255,255,0.8)', fontWeight: 500, fontFamily: 'MCI', letterSpacing: 2, fontSize: 16, margin: 8 },
+                        nameTextStyle: { color: 'rgba(255,255,255,0.8)', fontWeight: 600, fontFamily: 'MCI', letterSpacing: 2, fontSize: 16 },
+                        nameGap: 16,
                         splitLine: { lineStyle: { color: '#333' } },
                         min: yMin,
                         max: yMax,
@@ -519,8 +533,8 @@
                         name: 'Volume',
                         position: 'right',
                         axisLine: { show: true, lineStyle: { color: 'rgba(255,255,255,0.8)' } },
-                        axisLabel: { formatter: v => v != null ? formatKMB(v) : '', color: 'rgba(255,255,255,0.8)', fontWeight: 500, fontFamily: 'MCI', letterSpacing: 2 },
-                        nameTextStyle: { color: 'rgba(255,255,255,0.8)', fontWeight: 600, fontFamily: 'MCI', letterSpacing: 2 },
+                        axisLabel: { formatter: v => v != null ? formatKMB(v) : '', color: 'rgba(255,255,255,0.8)', fontWeight: 500, fontFamily: 'MCI', letterSpacing: 2, fontSize: 16 },
+                        nameTextStyle: { color: 'rgba(255,255,255,0.8)', fontWeight: 600, fontFamily: 'MCI', letterSpacing: 2, fontSize: 16 },
                         splitLine: { show: false },
                         min: 0,
                         max: undefined,
@@ -695,6 +709,11 @@
             window.addEventListener('resize', () => {
                 casinoChart.resize();
             });
+           // Force repaint after font load to fix font fallback issue and reveal chart
+            setTimeout(() => {
+                casinoChart.resize();
+                document.getElementById('chart-container').style.visibility = 'visible';
+            }, 0);
 
             function updateCheckboxColors() {
                 const selected = getSelectedSymbols();
@@ -790,7 +809,6 @@
             });
             updateModeBtns();
         }
-        main();
     </script>
 </body>
 </html>
