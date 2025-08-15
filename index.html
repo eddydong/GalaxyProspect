@@ -5,209 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GalaxyProspect Dashboard</title>
     <script src="./echarts.min.js"></script>
-    <style>
-        @font-face {
-            font-family: 'Gobold Lowplus';
-            src: url('Gobold Lowplus.otf') format('opentype');
-            font-style: normal;
-        }
-        .main-window {
-            margin-left: 68px;
-            height: 100vh;
-            width: calc(100vw - 68px);
-            position: relative;
-            overflow: hidden;
-        }
-        .checkbox-group label {
-            display: block;
-            margin-bottom: 0.5em;
-            cursor: pointer;
-            font-size: 1em;
-        }
-        .checkbox-group input[type=checkbox] {
-            appearance: none;
-            -webkit-appearance: none;
-            width: 1.15em;
-            height: 1.15em;
-            border: 2.2px solid #b0b4c1;
-            border-radius: 5px;
-            background: #232837;
-            outline: none;
-            cursor: pointer;
-            position: relative;
-            margin-right: 0.4em;
-            vertical-align: middle;
-            transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
-        }
-        .floating-panel {
-            display: none;
-            position: absolute;
-            min-width: 260px;
-            max-width: 340px;
-            z-index: 100;
-        }
-        .floating-panel.active {
-            display: block;
-        }
-    body {
-            font-family: 'Gobold Lowplus', Arial, sans-serif;
-            font-size: 16px;
-            margin: 0;
-            background: #181c24;
-            color: #f5f6fa;
-            min-height: 100vh;
-        }
-        .checkbox-group {
-            background: #232837;
-            border-radius: 14px;
-            padding: 1.1em 1.5em 1.1em 1.2em;
-            margin-bottom: 0.5em;
-            box-shadow: 0 4px 24px 0 rgba(0,0,0,0.18);
-            /* restore static layout for content formatting */
-        }
-        .sidebar {
-        width: 68px;
-            background: #181c24;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 2em;
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            z-index: 10;
-            box-shadow: 2px 0 16px 0 rgba(0,0,0,0.12);
-        }
-        .sidebar-icon {
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.45em;
-            background: linear-gradient(135deg, #232837 70%, #222c38 100%);
-            border-radius: 12px;
-            color: #888a92; /* grey color for icons */
-            cursor: pointer;
-            transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.18s;
-            box-shadow: 0 2px 8px 0 rgba(0,188,212,0.08);
-            position: relative;
-            margin-bottom: 0.5em;
-            border: 1.5px solid #232837;
-        }
-        .mode-btn:hover {
-            background: #2e3448 !important;
-            color: #00bcd4 !important;
-            border-color: #00bcd4 !important;
-            box-shadow: 0 2px 8px 0 rgba(0,188,212,0.10);
-        }
-        .sidebar-icon svg {
-            width: 1.5em;
-            height: 1.5em;
-            display: block;
-        }
-        .sidebar-icon:hover, .sidebar-icon.active {
-            background: linear-gradient(135deg, #e0e0e0 80%, #bdbdbd 100%);
-            color: #888a92;
-            box-shadow: 0 2px 12px 0 rgba(136,138,146,0.13);
-            border-color: #888a92;
-            transform: scale(1.07) rotate(-12deg); /* rotate on hover */
-        }
-        .checkbox-group input[type=checkbox]:hover, .checkbox-group input[type=checkbox]:focus {
-            box-shadow: 0 0 0 3px rgba(0,188,212,0.18);
-            border-color: currentColor;
-        }
-        .checkbox-group input[type=checkbox]:checked {
-            border-color: currentColor;
-            background: currentColor;
-        }
-        .checkbox-group input[type=checkbox]:checked::after {
-            content: '';
-            position: absolute;
-            left: 0.36em;
-            top: 0.13em;
-            width: 0.35em;
-            height: 0.7em;
-            border-right: 3px solid #fff;
-            border-bottom: 3px solid #fff;
-            border-radius: 1px;
-            transform: scale(1) rotate(45deg);
-            opacity: 1;
-            transition: all 0.18s cubic-bezier(.4,2,.6,1);
-            background: none;
-            z-index: 2;
-        }
-        .checkbox-group input[type=checkbox]::after {
-            content: '';
-            position: absolute;
-            left: 0.36em;
-            top: 0.13em;
-            width: 0.35em;
-            height: 0.7em;
-            border-right: 3px solid currentColor;
-            border-bottom: 3px solid currentColor;
-            border-radius: 1px;
-            transform: scale(0.2) rotate(45deg);
-            opacity: 0;
-            transition: all 0.18s cubic-bezier(.4,2,.6,1);
-            background: none;
-            z-index: 2;
-        }
-        .normalize-label {
-            color: #b0b4c1;
-            font-size: 1em;
-            font-weight: 500;
-            margin-left: 0.5em;
-            cursor: pointer;
-        }
-        #chart-container {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            border-radius: 0;
-            background: #181c24;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
-        /* ECharts dataZoom slider interactivity fix */
-        .echarts, .echarts-container, .echarts-for-react {
-            position: relative !important;
-            z-index: 2 !important;
-            pointer-events: auto !important;
-        }
-        .ec-extension-datazoom-slider, .echarts-datazoom {
-            z-index: 1000 !important;
-            pointer-events: auto !important;
-        }
-        /* Make ECharts dataZoom slider always interactive */
-        .echarts { position: relative; z-index: 1; }
-        .echarts datazoom, .echarts .ec-extension-datazoom-slider {
-            z-index: 10 !important;
-            pointer-events: auto !important;
-        }
-        #casinoChart {
-            width: 100% !important;
-            height: 100% !important;
-            min-height: 0;
-            min-width: 0;
-            display: block;
-        }
-        @media (max-width: 900px) {
-            .dashboard-card { padding: 1.2rem 0.5rem 1.2rem 0.5rem; }
-            h2 { font-size: 1.2rem; }
-            .controls { gap: 1rem; flex-direction: column; }
-            .checkbox-group { min-width: 0; }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
         <div class="layout">
             <aside class="sidebar">
                 <!-- View Mode Icon -->
-                <div class="sidebar-icon" data-panel="mode" title="Chart Mode" style="margin-bottom:1.1em;">
+                <div class="sidebar-icon mode-panel-icon" data-panel="mode" title="Chart Mode">
                     <svg viewBox="0 0 32 32" fill="none">
                         <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="3" fill="none"/>
                         <g>
@@ -230,22 +34,17 @@
                 <div id="chart-container"><div id="casinoChart"></div></div>
             </div>
             <div class="floating-panel" id="panel-mode">
-                <div class="checkbox-group" style="padding:1.1em 1.5em 1.1em 1.2em; background:#232837; border-radius:14px; box-shadow:0 4px 24px 0 rgba(0,0,0,0.18);">
-                    <label style="font-weight:600;display:block;margin-bottom:0.7em;font-size:1em;">Chart Mode:</label>
-                    <div id="mode-options" style="display:flex;flex-direction:column;gap:0.7em;width:100%;">
-                        <button class="mode-btn" data-mode="raw" style="width:100%;margin-bottom:0.3em;padding:0.4em 0;border-radius:6px;border:1.2px solid #2e3448;background:#232837;color:#fff;font-size:0.95em;font-weight:500;cursor:pointer;transition:background 0.15s,border-color 0.15s;text-align:center;font-family:system-ui,sans-serif;">Raw</button>
-                        <button class="mode-btn" data-mode="normalized" style="width:100%;margin-bottom:0.3em;padding:0.4em 0;border-radius:6px;border:1.2px solid #2e3448;background:#232837;color:#fff;font-size:0.95em;font-weight:500;cursor:pointer;transition:background 0.15s,border-color 0.15s;text-align:center;font-family:system-ui,sans-serif;">Normalized</button>
-                        <button class="mode-btn" data-mode="indexed" style="width:100%;margin-bottom:0;padding:0.4em 0;border-radius:6px;border:1.2px solid #2e3448;background:#232837;color:#fff;font-size:0.95em;font-weight:500;cursor:pointer;transition:background 0.15s,border-color 0.15s;text-align:center;font-family:system-ui,sans-serif;">Indexed</button>
+                <div class="checkbox-group mode-panel-group">
+                    <label class="mode-panel-label">Chart Mode:</label>
+                    <div id="mode-options" class="mode-options">
+                        <button class="mode-btn" data-mode="raw">Raw</button>
+                        <button class="mode-btn" data-mode="normalized">Normalized</button>
+                        <button class="mode-btn" data-mode="indexed">Indexed</button>
                     </div>
                 </div>
             </div>
-            <div class="floating-panel" id="panel-series" style="padding: 1.2em 1.5em; background: #232837; border-radius: 18px; box-shadow: 0 4px 24px 0 rgba(0,0,0,0.18); min-width: 600px; max-width: 900px;">
-                <div id="series-categories" style="display: flex; flex-wrap: wrap; gap: 2em; align-items: flex-start; justify-content: flex-start;">
-                    <div class="checkbox-group" id="company-checkboxes" style="min-width: 180px; flex: 1 1 180px;"></div>
-                    <div class="checkbox-group" id="index-checkboxes" style="min-width: 180px; flex: 1 1 180px;"></div>
-                    <div class="checkbox-group" id="fx-checkboxes" style="min-width: 180px; flex: 1 1 180px;"></div>
-                    <div class="checkbox-group" id="commodity-checkboxes" style="min-width: 180px; flex: 1 1 180px;"></div>
-                    <div class="checkbox-group" id="macro-checkboxes" style="min-width: 180px; flex: 1 1 180px;"></div>
+            <div class="floating-panel" id="panel-series">
+                <div id="series-categories" class="series-categories">
                 </div>
             </div>
         </div>
@@ -552,7 +351,7 @@
                             borderWidth: 1,
                             fontWeight: 'bold',
                             fontSize: 13,
-                            fontFamily: 'Gobold Lowplus',
+                            fontFamily: 'MCI',
                             padding: [6, 12],
                             shadowColor: '#000',
                             shadowBlur: 6
@@ -560,9 +359,9 @@
                     },
                     backgroundColor: '#232837',
                     borderColor: '#fff',
-                    textStyle: { color: '#fff', fontFamily: 'Gobold Lowplus' }
+                    textStyle: { color: '#fff', fontFamily: 'MCI' }
                 },
-                legend: { show: false, textStyle: { fontFamily: 'Gobold Lowplus' } },
+                legend: { show: false, textStyle: { fontFamily: 'MCI' } },
                 grid: { left: 60, right: 60, top: 85, bottom: 90 },
                 dataZoom: [
                     {
@@ -596,9 +395,9 @@
                         interval: 'auto', // Let ECharts auto-calculate, but force minInterval below
                         minInterval: 1, // Allow every tick if space
                         hideOverlap: true, // Never overlap
-                        fontFamily: 'Gobold Lowplus',
+                        fontFamily: 'MCI',
                         letterSpacing: 2
-                        // Always show at least 4 ticks: if ECharts shows fewer, force them
+                        // Always show at least 4 ticks: if ECharts shows fewer, force 4 evenly spaced
                         ,formatter: function(value, index) {
                             const total = sortedDates.length;
                             // If ECharts would show fewer than 4, force 4 evenly spaced
@@ -620,8 +419,8 @@
                         name: normalized ? 'Normalized Adj Close' : 'Adj Close',
                         position: 'left',
                         axisLine: { show: true, lineStyle: { color: '#fff' } },
-                        axisLabel: { formatter: v => normalized ? v.toFixed(2) : formatKMB(v), color: '#fff', fontWeight: 500, fontFamily: 'Gobold Lowplus', letterSpacing: 2 },
-                        nameTextStyle: { color: '#fff', fontWeight: 600, fontFamily: 'Gobold Lowplus', letterSpacing: 2 },
+                        axisLabel: { formatter: v => normalized ? v.toFixed(2) : formatKMB(v), color: '#fff', fontWeight: 500, fontFamily: 'MCI', letterSpacing: 2 },
+                        nameTextStyle: { color: '#fff', fontWeight: 600, fontFamily: 'MCI', letterSpacing: 2 },
                         splitLine: { lineStyle: { color: '#333' } },
                         min: yMin,
                         max: yMax
@@ -631,8 +430,8 @@
                         name: 'Volume',
                         position: 'right',
                         axisLine: { show: true, lineStyle: { color: '#fff' } },
-                        axisLabel: { formatter: v => v != null ? formatKMB(v) : '', color: '#fff', fontWeight: 500, fontFamily: 'Gobold Lowplus', letterSpacing: 2 },
-                        nameTextStyle: { color: '#fff', fontWeight: 600, fontFamily: 'Gobold Lowplus', letterSpacing: 2 },
+                        axisLabel: { formatter: v => v != null ? formatKMB(v) : '', color: '#fff', fontWeight: 500, fontFamily: 'MCI', letterSpacing: 2 },
+                        nameTextStyle: { color: '#fff', fontWeight: 600, fontFamily: 'MCI', letterSpacing: 2 },
                         splitLine: { show: false },
                         min: 0,
                         max: undefined
@@ -647,6 +446,10 @@
             const data = await fetchData();
             const symbols = Object.keys(data);
 
+            // Debug: log loaded data and selected symbols
+            console.log('Loaded data:', data);
+            console.log('Symbols:', symbols);
+
             // Use config-driven categories
             const companySymbols = symbolCategories.company.filter(sym => data[sym]);
             const indexSymbols = symbolCategories.index.filter(sym => data[sym]);
@@ -654,118 +457,103 @@
             const commoditySymbols = symbolCategories.commodity.filter(sym => data[sym]);
             const macroSymbols = symbolCategories.macro.filter(sym => data[sym]);
 
-            // Company checkboxes
-            const companyDiv = document.getElementById('company-checkboxes');
-            companyDiv.innerHTML = '<label class="category-label" style="font-weight:600;cursor:pointer;"><input type="checkbox" class="category-checkbox" data-category="company" style="margin-right:0.5em;">Companies:</label> ';
-            companySymbols.forEach((sym, idx) => {
-                const label = document.createElement('label');
-                label.style.marginRight = '1em';
-                label.setAttribute('data-symbol', sym);
-                const cb = document.createElement('input');
-                cb.type = 'checkbox';
-                cb.value = sym;
-                cb.checked = (sym === companySymbols[0]);
-                label.appendChild(cb);
-                label.appendChild(document.createTextNode(' ' + sym + ' (' + (symbolNames[sym] || sym) + ')'));
-                companyDiv.appendChild(label);
-            });
 
-            // Index checkboxes
-            const indexDiv = document.getElementById('index-checkboxes');
-            indexDiv.innerHTML = '<label class="category-label" style="font-weight:600;cursor:pointer;"><input type="checkbox" class="category-checkbox" data-category="index" style="margin-right:0.5em;">Market Indexes:</label> ';
-            indexSymbols.forEach((sym, idx) => {
-                const label = document.createElement('label');
-                label.style.marginRight = '1em';
-                label.setAttribute('data-symbol', sym);
-                const cb = document.createElement('input');
-                cb.type = 'checkbox';
-                cb.value = sym;
-                cb.checked = false;
-                label.appendChild(cb);
-                label.appendChild(document.createTextNode(' ' + sym + ' (' + (symbolNames[sym] || sym) + ')'));
-                indexDiv.appendChild(label);
-            });
-
-            // FX checkboxes
-            let fxDiv = document.getElementById('fx-checkboxes');
-            if (!fxDiv) {
-                fxDiv = document.createElement('div');
-                fxDiv.className = 'checkbox-group';
-                fxDiv.id = 'fx-checkboxes';
-                indexDiv.parentNode.insertBefore(fxDiv, indexDiv.nextSibling);
+            // CATEGORY BLOCKS: each category is a vertical block (label + checkboxes)
+            const seriesCategories = document.getElementById('series-categories');
+            seriesCategories.innerHTML = '';
+            function createCategoryBlock(cat, labelText, syms) {
+                const block = document.createElement('div');
+                block.className = 'category-block';
+                // Category label
+                const label = document.createElement('div');
+                label.className = 'category-label';
+                const catCheckbox = document.createElement('input');
+                catCheckbox.type = 'checkbox';
+                catCheckbox.className = 'category-checkbox';
+                catCheckbox.setAttribute('data-category', cat);
+                label.appendChild(catCheckbox);
+                label.appendChild(document.createTextNode(labelText));
+                // Make the whole label clickable to toggle the checkbox
+                label.addEventListener('click', function(e) {
+                    // Only toggle if the click is not directly on the checkbox itself
+                    if (e.target !== catCheckbox) {
+                        // Find all child checkboxes in this block
+                        const block = label.closest('.category-block');
+                        if (!block) return;
+                        const cbs = Array.from(block.querySelectorAll('input[type=checkbox][value]'));
+                        // Determine if all are checked
+                        const allChecked = cbs.every(cb => cb.checked);
+                        // Toggle all: if all checked, uncheck all; else check all
+                        cbs.forEach(cb => { cb.checked = !allChecked; });
+                        updateChart();
+                        // Sync the cat checkbox to reflect children state
+                        if (typeof syncCatCheckboxFns[cat] === 'function') syncCatCheckboxFns[cat]();
+                    }
+                });
+                block.appendChild(label);
+                // Series checkboxes
+                syms.forEach(sym => {
+                    const itemLabel = document.createElement('label');
+                    itemLabel.setAttribute('data-symbol', sym);
+                    itemLabel.style.marginRight = '1em';
+                    const cb = document.createElement('input');
+                    cb.type = 'checkbox';
+                    cb.value = sym;
+                    cb.checked = false;
+                    itemLabel.appendChild(cb);
+                    itemLabel.appendChild(document.createTextNode(' ' + (symbolNames[sym] || sym)));
+                    itemLabel.title = sym;
+                    block.appendChild(itemLabel);
+                });
+                return {block, catCheckbox};
             }
-            fxDiv.innerHTML = '<label class="category-label" style="font-weight:600;cursor:pointer;"><input type="checkbox" class="category-checkbox" data-category="fx" style="margin-right:0.5em;">FX:</label> ';
-            fxSymbols.forEach((sym, idx) => {
-                const label = document.createElement('label');
-                label.style.marginRight = '1em';
-                label.setAttribute('data-symbol', sym);
-                const cb = document.createElement('input');
-                cb.type = 'checkbox';
-                cb.value = sym;
-                cb.checked = false;
-                label.appendChild(cb);
-                label.appendChild(document.createTextNode(' ' + sym + ' (' + (symbolNames[sym] || sym) + ')'));
-                fxDiv.appendChild(label);
-            });
-
-            // Commodity checkboxes
-            let commodityDiv = document.getElementById('commodity-checkboxes');
-            if (!commodityDiv) {
-                commodityDiv = document.createElement('div');
-                commodityDiv.className = 'checkbox-group';
-                commodityDiv.id = 'commodity-checkboxes';
-                fxDiv.parentNode.insertBefore(commodityDiv, fxDiv.nextSibling);
-            }
-            commodityDiv.innerHTML = '<label class="category-label" style="font-weight:600;cursor:pointer;"><input type="checkbox" class="category-checkbox" data-category="commodity" style="margin-right:0.5em;">Commodities:</label> ';
-            commoditySymbols.forEach((sym, idx) => {
-                const label = document.createElement('label');
-                label.style.marginRight = '1em';
-                label.setAttribute('data-symbol', sym);
-                const cb = document.createElement('input');
-                cb.type = 'checkbox';
-                cb.value = sym;
-                cb.checked = false;
-                label.appendChild(cb);
-                label.appendChild(document.createTextNode(' ' + sym + ' (' + (symbolNames[sym] || sym) + ')'));
-                commodityDiv.appendChild(label);
-            });
-
-            // Macro checkboxes
-            let macroDiv = document.getElementById('macro-checkboxes');
-            if (!macroDiv) {
-                macroDiv = document.createElement('div');
-                macroDiv.className = 'checkbox-group';
-                macroDiv.id = 'macro-checkboxes';
-                commodityDiv.parentNode.insertBefore(macroDiv, commodityDiv.nextSibling);
-            }
-            macroDiv.innerHTML = '<label class="category-label" style="font-weight:600;cursor:pointer;"><input type="checkbox" class="category-checkbox" data-category="macro" style="margin-right:0.5em;">Macro:</label> ';
-            macroSymbols.forEach((sym, idx) => {
-                const label = document.createElement('label');
-                label.style.marginRight = '1em';
-                label.setAttribute('data-symbol', sym);
-                const cb = document.createElement('input');
-                cb.type = 'checkbox';
-                cb.value = sym;
-                cb.checked = false;
-                label.appendChild(cb);
-                label.appendChild(document.createTextNode(' ' + sym + ' (' + (symbolNames[sym] || sym) + ')'));
-                macroDiv.appendChild(label);
+            let anyChecked = false;
+            const catOrder = [
+                {cat: 'company', label: 'COMPANIES', syms: companySymbols},
+                {cat: 'index', label: 'MARKET INDEXES', syms: indexSymbols},
+                {cat: 'fx', label: 'FX', syms: fxSymbols},
+                {cat: 'commodity', label: 'COMMODITIES', syms: commoditySymbols},
+                {cat: 'macro', label: 'MACRO', syms: macroSymbols}
+            ];
+            const catCheckboxes = {};
+            catOrder.forEach(({cat, label, syms}) => {
+                const {block, catCheckbox} = createCategoryBlock(cat, label, syms);
+                // Check the first available company by default
+                if (cat === 'company') {
+                    for (const sym of syms) {
+                        if (!anyChecked && sym && data[sym]) {
+                            const cb = block.querySelector('input[type=checkbox][value="' + sym + '"]');
+                            if (cb) { cb.checked = true; anyChecked = true; break; }
+                        }
+                    }
+                }
+                // Add a change listener to update the chart on any checkbox change in this block
+                block.addEventListener('change', function(e) {
+                    updateChart();
+                });
+                seriesCategories.appendChild(block);
+                catCheckboxes[cat] = catCheckbox;
             });
 
             // Helper: batch check/uncheck children when category label is toggled
-            function setupCategoryBatchToggle(category, symbols, div) {
-                const catCheckbox = div.querySelector('input.category-checkbox[data-category="' + category + '"]');
+            // Store sync functions for each category
+            const syncCatCheckboxFns = {};
+            function setupCategoryBatchToggle(category, symbols, catCheckbox) {
                 catCheckbox.addEventListener('change', function() {
                     const checked = catCheckbox.checked;
-                    symbols.forEach(sym => {
-                        if (!data[sym]) return;
-                        const cb = div.querySelector('input[type=checkbox][value="' + sym + '"]');
-                        if (cb) cb.checked = checked;
-                    });
+                    // Find the block for this category
+                    const block = catCheckbox.closest('.category-block');
+                    if (!block) return;
+                    const cbs = Array.from(block.querySelectorAll('input[type=checkbox][value]'));
+                    cbs.forEach(cb => { cb.checked = checked; });
                     updateChart();
+                    // Always sync after batch toggle
+                    if (typeof syncCatCheckboxFns[category] === 'function') syncCatCheckboxFns[category]();
                 });
                 function syncCatCheckbox() {
-                    const cbs = symbols.map(sym => div.querySelector('input[type=checkbox][value="' + sym + '"]')).filter(Boolean);
+                    const block = catCheckbox.closest('.category-block');
+                    if (!block) return;
+                    const cbs = Array.from(block.querySelectorAll('input[type=checkbox][value]'));
                     const checkedCount = cbs.filter(cb => cb.checked).length;
                     if (checkedCount === cbs.length && cbs.length > 0) {
                         catCheckbox.checked = true;
@@ -778,29 +566,25 @@
                         catCheckbox.indeterminate = true;
                     }
                 }
-                div.addEventListener('change', function(e) {
-                    if (!e.target.classList.contains('category-checkbox')) syncCatCheckbox();
-                });
+                // Only listen for changes within this block
+                const block = catCheckbox.closest('.category-block');
+                if (block) {
+                    block.addEventListener('change', function(e) {
+                        if (!e.target.classList.contains('category-checkbox')) syncCatCheckbox();
+                    });
+                }
+                syncCatCheckboxFns[category] = syncCatCheckbox;
                 syncCatCheckbox();
             }
-            setupCategoryBatchToggle('company', companySymbols, companyDiv);
-            setupCategoryBatchToggle('index', indexSymbols, indexDiv);
-            setupCategoryBatchToggle('fx', fxSymbols, fxDiv);
-            setupCategoryBatchToggle('commodity', commoditySymbols, commodityDiv);
-            setupCategoryBatchToggle('macro', macroSymbols, macroDiv);
+            setupCategoryBatchToggle('company', companySymbols, catCheckboxes['company']);
+            setupCategoryBatchToggle('index', indexSymbols, catCheckboxes['index']);
+            setupCategoryBatchToggle('fx', fxSymbols, catCheckboxes['fx']);
+            setupCategoryBatchToggle('commodity', commoditySymbols, catCheckboxes['commodity']);
+            setupCategoryBatchToggle('macro', macroSymbols, catCheckboxes['macro']);
 
             function getSelectedSymbols() {
-                const companyDiv = document.getElementById('company-checkboxes');
-                const indexDiv = document.getElementById('index-checkboxes');
-                const fxDiv = document.getElementById('fx-checkboxes');
-                const commodityDiv = document.getElementById('commodity-checkboxes');
-                const macroDiv = document.getElementById('macro-checkboxes');
-                const companyChecked = Array.from(companyDiv.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
-                const indexChecked = Array.from(indexDiv.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
-                const fxChecked = Array.from(fxDiv.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
-                const commodityChecked = Array.from(commodityDiv.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
-                const macroChecked = Array.from(macroDiv.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
-                return [...companyChecked, ...indexChecked, ...fxChecked, ...commodityChecked, ...macroChecked];
+                // All checked series checkboxes in all blocks
+                return Array.from(document.querySelectorAll('.category-block label input[type=checkbox]:checked')).map(cb => cb.value);
             }
 
             let currentMode = 'raw';
@@ -810,8 +594,10 @@
                     indexed: currentMode === 'indexed'
                 };
             }
+            let selectedSyms = getSelectedSymbols();
+            console.log('Selected symbols for chart:', selectedSyms);
             let chartOption = prepareEChartsOption(
-                getSelectedSymbols(),
+                selectedSyms,
                 data,
                 getModeStates().normalized,
                 getModeStates().indexed
@@ -868,6 +654,8 @@
                 casinoChart.clear();
                 casinoChart.setOption(newOption, { notMerge: true, replaceMerge: ['series'] });
                 updateCheckboxColors();
+                // Sync all category checkboxes after chart update
+                Object.values(syncCatCheckboxFns).forEach(fn => fn());
             }
             // Listen for zoom events to update rebasing
             let chartReady = false;
@@ -877,11 +665,7 @@
             chartReady = true;
             // Initial color sync
             updateCheckboxColors();
-            companyDiv.addEventListener('change', updateChart);
-            indexDiv.addEventListener('change', updateChart);
-            if (fxDiv) fxDiv.addEventListener('change', updateChart);
-            if (commodityDiv) commodityDiv.addEventListener('change', updateChart);
-            if (macroDiv) macroDiv.addEventListener('change', updateChart);
+            // All change events now handled by the category-block listeners
             // Mode button logic
             const modeBtns = document.querySelectorAll('.mode-btn');
             function updateModeBtns() {

@@ -100,7 +100,7 @@
   {
     "server": "FRED",
     "symbol_name": "CSCICP02CNM460S",
-    "desc": "China Composite Consumer Confidence",
+    "desc": "Consumer Confidence",
     "freq": "M"
   },
   {
@@ -118,7 +118,7 @@
   {
     "server": "FRED",
     "symbol_name": "CHNLOLITOAASTSAM",
-    "desc": "OECD Composite Leading Indicator",
+    "desc": "OECD Leading Indicator",
     "freq": "M"
   },
   {
@@ -130,7 +130,7 @@
   {
     "server": "FRED",
     "symbol_name": "CHNBSCICP02STSAM",
-    "desc": "OECD Business Tendency (Mfg)",
+    "desc": "OECD Mfg. Tendency",
     "freq": "M"
   }
   ]
