@@ -8,76 +8,65 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="layout">
-            <aside class="sidebar">
-                <div class="sidebar-bevel"></div>
-                <div class="sidebar-top-icons">
-                    <!-- View Mode Icon -->
-                    <div class="sidebar-icon mode-panel-icon" data-panel="mode" title="Chart Mode">
-                        <svg viewBox="0 0 32 32" fill="none" width="32" height="32">
-                            <circle cx="16" cy="16" r="12.5" stroke="currentColor" stroke-width="2" fill="none"/>
-                            <g>
-                                <rect x="8.5" y="10.5" width="3" height="11" rx="1" fill="currentColor" opacity="0.7"/>
-                                <rect x="14" y="6.5" width="4" height="15" rx="1" fill="currentColor"/>
-                                <rect x="19.5" y="14.5" width="3" height="7" rx="1" fill="currentColor" opacity="0.7"/>
-                            </g>
-                        </svg>
-                    </div>
-                    <!-- Series Checkboxes Icon -->
-                    <div class="sidebar-icon" data-panel="series" title="Series Selection">
-                        <svg viewBox="0 0 32 32" fill="none" width="32" height="32">
-                            <rect x="5.5" y="13.5" width="4" height="13" rx="1.3" fill="currentColor"/>
-                            <rect x="13" y="7.5" width="5" height="17" rx="1.3" fill="currentColor"/>
-                            <rect x="22" y="17.5" width="4" height="9" rx="1.3" fill="currentColor"/>
-                        </svg>
-                    </div>
-                </div>
-                <div class="sidebar-bottom-icons">
-                    <!-- Help Icon -->
-                    <div class="sidebar-icon" data-panel="help" title="Help" id="help-btn">
-                        <svg viewBox="0 0 32 32" fill="none" width="32" height="32">
-                            <circle cx="16" cy="16" r="12.5" stroke="currentColor" stroke-width="2" fill="none"/>
-                            <g>
-                                <path d="M16 22h0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                <path d="M16 10a4 4 0 0 1 4 4c0 2-2 3-2 3s-2 1-2 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </g>
-                        </svg>
-                    </div>
-                    <!-- Settings Icon -->
-                    <div class="sidebar-icon" data-panel="settings" title="Settings">
-                        <svg viewBox="0 0 32 32" fill="none" width="32" height="32">
-                            <circle cx="16" cy="16" r="12.5" stroke="currentColor" stroke-width="2" fill="none"/>
-                            <g>
-                                <circle cx="16" cy="16" r="3.5" fill="currentColor"/>
-                                <path d="M16 6v4M16 22v4M6 16h4M22 16h4M10.5 10.5l2.2 2.2M20 20l2.2 2.2M10.5 21.5l2.2-2.2M20 12l2.2-2.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                            </g>
-                        </svg>
-                    </div>
-                </div>
-            </aside>
-            <div class="main-window">
-                <div id="chart-container">
-                    <div id="casinoChart"></div>
-                    <div class="chart-bottom-spacer"></div>
-                </div>
+    <aside class="sidebar">
+        <div class="sidebar-bevel"></div>
+        <div class="sidebar-top-icons">
+            <div class="sidebar-icon mode-panel-icon" data-panel="mode" title="Chart Mode">
+                <svg viewBox="0 0 32 32" fill="none" width="32" height="32">
+                    <circle cx="16" cy="16" r="12.5" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <g>
+                        <rect x="8.5" y="10.5" width="3" height="11" rx="1" fill="currentColor" opacity="0.7"/>
+                        <rect x="14" y="6.5" width="4" height="15" rx="1" fill="currentColor"/>
+                        <rect x="19.5" y="14.5" width="3" height="7" rx="1" fill="currentColor" opacity="0.7"/>
+                    </g>
+                </svg>
             </div>
-            <div class="floating-panel" id="panel-mode">
-                <div class="checkbox-group mode-panel-group">
-                    <label class="mode-panel-label">Chart Mode:</label>
-                    <div id="mode-options" class="mode-options">
-                        <button class="mode-btn" data-mode="raw">Raw</button>
-                        <button class="mode-btn" data-mode="normalized">Normalized</button>
-                        <button class="mode-btn" data-mode="indexed">Indexed</button>
-                    </div>
-                </div>
-            </div>
-            <div class="floating-panel" id="panel-series">
-                <div id="series-categories" class="series-categories">
-                </div>
+            <div class="sidebar-icon" data-panel="series" title="Series Selection">
+                <svg viewBox="0 0 32 32" fill="none" width="32" height="32">
+                    <rect x="5.5" y="13.5" width="4" height="13" rx="1.3" fill="currentColor"/>
+                    <rect x="13" y="7.5" width="5" height="17" rx="1.3" fill="currentColor"/>
+                    <rect x="22" y="17.5" width="4" height="9" rx="1.3" fill="currentColor"/>
+                </svg>
             </div>
         </div>
+        <div class="sidebar-bottom-icons">
+            <div class="sidebar-icon" data-panel="help" title="Help" id="help-btn">
+                <svg viewBox="0 0 32 32" fill="none" width="32" height="32">
+                    <circle cx="16" cy="16" r="12.5" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <g>
+                        <path d="M16 22h0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M16 10a4 4 0 0 1 4 4c0 2-2 3-2 3s-2 1-2 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </g>
+                </svg>
+            </div>
+            <div class="sidebar-icon" data-panel="settings" title="Settings">
+                <svg viewBox="0 0 32 32" fill="none" width="32" height="32">
+                    <circle cx="16" cy="16" r="12.5" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <g>
+                        <circle cx="16" cy="16" r="3.5" fill="currentColor"/>
+                        <path d="M16 6v4M16 22v4M6 16h4M22 16h4M10.5 10.5l2.2 2.2M20 20l2.2 2.2M10.5 21.5l2.2-2.2M20 12l2.2-2.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </aside>
+    <main class="main-window">
+        <div id="chart-container">
+            <div id="casinoChart"></div>
+            <div class="chart-bottom-spacer"></div>
+        </div>
+    </main>
+    <div class="floating-panel" id="panel-mode">
+        <label class="mode-panel-label">Chart Mode:</label>
+        <div id="mode-options" class="mode-options">
+            <button class="mode-btn" data-mode="raw">Raw</button>
+            <button class="mode-btn" data-mode="normalized">Normalized</button>
+            <button class="mode-btn" data-mode="indexed">Indexed</button>
+        </div>
     </div>
-</div>
+    <div class="floating-panel" id="panel-series">
+        <div id="series-categories" class="series-categories"></div>
+    </div>
 <div id="about-modal" class="about-modal">
     <div class="about-content">
         <div class="about-logo" style="margin-bottom:18px;">
@@ -320,6 +309,9 @@
                     if (!maxDate || d > maxDate) maxDate = d;
                 });
             });
+
+            // Track if any volume data is present for the selected symbol
+            let hasVolume = false;
             function formatDate(d) {
                 const m = (d.getMonth() + 1).toString().padStart(2, '0');
                 const day = d.getDate().toString().padStart(2, '0');
@@ -450,9 +442,9 @@
                 const entries = Object.entries(data[symbol]);
                 // Try both 'Volume' and 'volume' keys for robustness
                 const dateToVolume = Object.fromEntries(entries.map(([date, v]) => [date, v['Volume'] ?? v['volume'] ?? null]));
-                // Debug: log volume data for selected symbol
                 // Only add if there is at least some volume data
                 if (Object.values(dateToVolume).some(v => v != null)) {
+                    hasVolume = true;
                     // Outlier filter: if a value is >10x the previous max, treat as null
                     let prevMax = null;
                     const filteredVolumeArray = sortedDates.map(date => {
@@ -591,7 +583,7 @@
                         name: normalized ? 'Normalized Adj Close' : 'Adj Close',
                         position: 'left',
                         axisLine: { show: true, lineStyle: { color: 'rgba(255,255,255,0.8)' } },
-                        axisLabel: { formatter: v => normalized ? v.toFixed(2) : formatKMB(v), color: 'rgba(255,255,255,0.8)', fontWeight: 500, fontFamily: 'MCI', letterSpacing: 2, fontSize: 16, margin: 8 },
+                        axisLabel: { formatter: v => normalized ? v.toFixed(2) : (typeof v === 'number' ? v.toFixed(2) : formatKMB(v)), color: 'rgba(255,255,255,0.8)', fontWeight: 500, fontFamily: 'MCI', letterSpacing: 2, fontSize: 16, margin: 8 },
                         nameTextStyle: { color: 'rgba(255,255,255,0.8)', fontWeight: 600, fontFamily: 'MCI', letterSpacing: 2, fontSize: 16 },
                         nameGap: 16,
                         splitLine: { lineStyle: { color: '#333' } },
@@ -599,7 +591,7 @@
                         max: yMax,
                         axisPointer: { label: { margin: -8, padding: [6, 8] } }
                     },
-                    {
+                    ...(hasVolume ? [{
                         type: 'value',
                         name: 'Volume',
                         position: 'right',
@@ -610,7 +602,7 @@
                         min: 0,
                         max: undefined,
                         axisPointer: { label: { margin: -8, padding: [6, 8] } }
-                    }
+                    }] : [])
                 ],
                 series: series.map(s => s.type === 'bar' ? { ...s, barMinWidth: 3 } : s)
             };
