@@ -611,52 +611,6 @@
             // CATEGORY BLOCKS: each category is a vertical block (label + checkboxes)
             const seriesCategories = document.getElementById('series-categories');
             seriesCategories.innerHTML = '';
-            function createCategoryBlock(cat, labelText, syms) {
-                const block = document.createElement('div');
-                block.className = 'category-block';
-                // Category label
-                const label = document.createElement('div');
-                label.className = 'category-label';
-                const catCheckbox = document.createElement('input');
-                catCheckbox.type = 'checkbox';
-                catCheckbox.className = 'category-checkbox';
-                catCheckbox.setAttribute('data-category', cat);
-                label.appendChild(catCheckbox);
-                label.appendChild(document.createTextNode(labelText));
-                // Make the whole label clickable to toggle the checkbox
-                label.addEventListener('click', function(e) {
-                    // Only toggle if the click is not directly on the checkbox itself
-                    if (e.target !== catCheckbox) {
-                        // Find all child checkboxes in this block
-                        const block = label.closest('.category-block');
-                        if (!block) return;
-                        const cbs = Array.from(block.querySelectorAll('input[type=checkbox][value]'));
-                        // Determine if all are checked
-                        const allChecked = cbs.every(cb => cb.checked);
-                        // Toggle all: if all checked, uncheck all; else check all
-                        cbs.forEach(cb => { cb.checked = !allChecked; });
-                        updateChart();
-                        // Sync the cat checkbox to reflect children state
-                        if (typeof syncCatCheckboxFns[cat] === 'function') syncCatCheckboxFns[cat]();
-                    }
-                });
-                block.appendChild(label);
-                // Series checkboxes
-                syms.forEach(sym => {
-                    const itemLabel = document.createElement('label');
-                    itemLabel.setAttribute('data-symbol', sym);
-                    // Removed redundant marginRight, handled by CSS gap/margin
-                    const cb = document.createElement('input');
-                    cb.type = 'checkbox';
-                    cb.value = sym;
-                    cb.checked = false;
-                    itemLabel.appendChild(cb);
-                    itemLabel.appendChild(document.createTextNode(' ' + (symbolNames[sym] || sym)));
-                    itemLabel.title = sym;
-                    block.appendChild(itemLabel);
-                });
-                return {block, catCheckbox};
-            }
             let anyChecked = false;
             const catOrder = [
                 {cat: 'company', label: 'COMPANIES', syms: companySymbols},
@@ -667,21 +621,86 @@
             ];
             const catCheckboxes = {};
             catOrder.forEach(({cat, label, syms}) => {
-                const {block, catCheckbox} = createCategoryBlock(cat, label, syms);
-                // Check the first available company by default
-                if (cat === 'company') {
-                    for (const sym of syms) {
-                        if (!anyChecked && sym && data[sym]) {
-                            const cb = block.querySelector('input[type=checkbox][value="' + sym + '"]');
-                            if (cb) { cb.checked = true; anyChecked = true; break; }
+                // Category label as direct child
+                const labelDiv = document.createElement('div');
+                labelDiv.className = 'category-label';
+                const catCheckbox = document.createElement('input');
+                catCheckbox.type = 'checkbox';
+                catCheckbox.className = 'category-checkbox';
+                catCheckbox.setAttribute('data-category', cat);
+                labelDiv.appendChild(catCheckbox);
+                labelDiv.appendChild(document.createTextNode(label));
+                // Toggle all children when clicking label (except on the checkbox itself)
+                labelDiv.addEventListener('click', function(e) {
+                    if (e.target !== catCheckbox) {
+                        // Find all checkboxes between this labelDiv and the next .category-label
+                        let cbs = [];
+                        let node = labelDiv.nextElementSibling;
+                        while (node && !node.classList.contains('category-label')) {
+                            if (node.tagName === 'LABEL') {
+                                const cb = node.querySelector('input[type=checkbox]');
+                                if (cb) cbs.push(cb);
+                            }
+                            node = node.nextElementSibling;
                         }
+                        const allChecked = cbs.length > 0 && cbs.every(cb => cb.checked);
+                        cbs.forEach(cb => { cb.checked = !allChecked; });
+                        updateChart();
+                        if (typeof syncCatCheckboxFns[cat] === 'function') syncCatCheckboxFns[cat]();
                     }
-                }
-                // Add a change listener to update the chart on any checkbox change in this block
-                block.addEventListener('change', function(e) {
+                });
+                seriesCategories.appendChild(labelDiv);
+                // Series checkboxes as direct children
+                syms.forEach(sym => {
+                    const itemLabel = document.createElement('label');
+                    itemLabel.setAttribute('data-symbol', sym);
+                    const cb = document.createElement('input');
+                    cb.type = 'checkbox';
+                    cb.value = sym;
+                    cb.checked = false;
+                    itemLabel.appendChild(cb);
+                    itemLabel.appendChild(document.createTextNode(' ' + (symbolNames[sym] || sym)));
+                    itemLabel.title = sym;
+                    seriesCategories.appendChild(itemLabel);
+                    // Check the first available company by default
+                    if (cat === 'company' && !anyChecked && sym && data[sym]) {
+                        cb.checked = true; anyChecked = true;
+                    }
+                    // Add change listener to update category checkbox indeterminate state
+                    cb.addEventListener('change', function() {
+                        // Find the parent category label
+                        let prev = itemLabel.previousElementSibling;
+                        while (prev && !prev.classList.contains('category-label')) prev = prev.previousElementSibling;
+                        if (!prev) return;
+                        const catCheckbox = prev.querySelector('input[type=checkbox][data-category]');
+                        if (!catCheckbox) return;
+                        // Find all checkboxes for this category
+                        let cbs = [];
+                        let node = prev.nextElementSibling;
+                        while (node && !node.classList.contains('category-label')) {
+                            if (node.tagName === 'LABEL') {
+                                const cb2 = node.querySelector('input[type=checkbox]');
+                                if (cb2) cbs.push(cb2);
+                            }
+                            node = node.nextElementSibling;
+                        }
+                        const checkedCount = cbs.filter(cb2 => cb2.checked).length;
+                        if (checkedCount === cbs.length && cbs.length > 0) {
+                            catCheckbox.checked = true;
+                            catCheckbox.indeterminate = false;
+                        } else if (checkedCount === 0) {
+                            catCheckbox.checked = false;
+                            catCheckbox.indeterminate = false;
+                        } else {
+                            catCheckbox.checked = false;
+                            catCheckbox.indeterminate = true;
+                        }
+                    });
+                });
+                // Add a change listener to update the chart on any checkbox change in this category
+                catCheckbox.addEventListener('change', function(e) {
                     updateChart();
                 });
-                seriesCategories.appendChild(block);
                 catCheckboxes[cat] = catCheckbox;
             });
 
@@ -733,8 +752,8 @@
             setupCategoryBatchToggle('macro', macroSymbols, catCheckboxes['macro']);
 
             function getSelectedSymbols() {
-                // All checked series checkboxes in all blocks
-                return Array.from(document.querySelectorAll('.category-block label input[type=checkbox]:checked')).map(cb => cb.value);
+                // All checked series checkboxes in the flat structure
+                return Array.from(document.querySelectorAll('.series-categories > label > input[type=checkbox]:checked')).map(cb => cb.value);
             }
 
             let currentMode = 'raw';
