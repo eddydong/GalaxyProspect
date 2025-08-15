@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-        <div class="layout">
+    <div class="layout">
             <aside class="sidebar">
                 <div class="sidebar-bevel"></div>
                 <div class="sidebar-top-icons">
@@ -34,7 +34,7 @@
                 </div>
                 <div class="sidebar-bottom-icons">
                     <!-- Help Icon -->
-                    <div class="sidebar-icon" data-panel="help" title="Help">
+                    <div class="sidebar-icon" data-panel="help" title="Help" id="help-btn">
                         <svg viewBox="0 0 32 32" fill="none" width="32" height="32">
                             <circle cx="16" cy="16" r="12.5" stroke="currentColor" stroke-width="2" fill="none"/>
                             <g>
@@ -76,6 +76,40 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+<div id="about-modal" class="about-modal">
+    <div class="about-content">
+        <div class="about-logo" style="margin-bottom:18px;">
+            <!-- SVG LOGO: Theme color circle, two overlapping squares full opacity, overlapped part transparent -->
+            <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="36" cy="36" r="22" stroke="#00bcd4" stroke-width="5" fill="none"/>
+                <g>
+                    <defs>
+                        <!-- Mask for first square: cut out overlap area -->
+                        <mask id="cut1">
+                            <rect x="0" y="0" width="72" height="72" fill="white"/>
+                            <rect x="30" y="30" width="20" height="20" fill="black"/>
+                        </mask>
+                        <!-- Mask for second square: cut out overlap area -->
+                        <mask id="cut2">
+                            <rect x="0" y="0" width="72" height="72" fill="white"/>
+                            <rect x="22" y="22" width="20" height="20" fill="black"/>
+                        </mask>
+                    </defs>
+                    <!-- First square: bottom-left, with overlap cut out -->
+                    <rect x="22" y="22" width="20" height="20" fill="#00bcd4" mask="url(#cut1)"/>
+                    <!-- Second square: top-right, with overlap cut out -->
+                    <rect x="30" y="30" width="20" height="20" fill="#00bcd4" mask="url(#cut2)"/>
+                </g>
+            </svg>
+        </div>
+        <div class="product-name">Macau Casino Indices</div>
+    <div style="color:#00bcd4; margin-bottom:10px;">Version 0.01</div>
+        <div style="margin-bottom:2px;">By Eddy K. Dong</div>
+        <div style="margin-bottom:2px;">All Rights Reserved, 2025</div>
+    </div>
+</div>
 
     <script>
     // Disable all default scroll, selection, and drag for the whole page
@@ -83,6 +117,20 @@
     document.addEventListener('selectstart', function(e) { e.preventDefault(); });
     document.addEventListener('dragstart', function(e) { e.preventDefault(); });
     document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
+
+    // About modal show/hide logic
+    function showAbout() {
+    var modal = document.getElementById('about-modal');
+    modal.classList.add('visible');
+    }
+    document.getElementById('about-modal').addEventListener('click', function() {
+        this.classList.remove('visible');
+    });
+    // Make the help button open the About modal
+    document.getElementById('help-btn').addEventListener('click', function(e) {
+        showAbout();
+        e.stopPropagation();
+    });
         // Block all horizontal (sideways) scroll on sidebar and chart, only allow vertical for chart panning
         function handleWheel(e) {
             // Always block horizontal scroll (deltaX) to prevent browser history navigation

@@ -301,3 +301,58 @@ body {
     cursor: pointer;
 }
 
+/* About modal styles */
+.about-modal {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(24,28,36,0.85) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 2147483647 !important;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s linear;
+    /* Remove debug border, use theme color in .about-content only */
+    border: none;
+}
+.about-modal.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+.about-logo svg {
+    display: block;
+    margin: 0 auto;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.18));
+}
+.about-content {
+    background: linear-gradient(135deg, #232837 85%, #232837 100%);
+    color: #fff;
+    font-family: 'MCI', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 18px;
+    border: 2.5px solid #00bcd4;
+    box-shadow: 0 8px 40px 0 rgba(0,188,212,0.33), 0 1.5px 0 #00bcd4 inset;
+    padding: 36px 48px;
+    text-align: center;
+    line-height: 1.7;
+    letter-spacing: 1.2px;
+    user-select: none;
+}
+.about-content .product-name {
+    font-size: 2.5em;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+.about-logo svg {
+    display: block;
+    margin: 0 auto;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.18));
+}
+    background: linear-gradient(135deg, #232837 85%, #232837 100%);
+
