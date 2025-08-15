@@ -224,6 +224,14 @@
                     });
                 }
             });
+
+            // Mode button highlight logic
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.addEventListener('mousedown', function() {
+                    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
         });
 
         // Load config.json for symbol metadata and categories
@@ -331,7 +339,12 @@
                 yMin = 0;
                 yMax = undefined;
             } else if (selectedSymbols.length > 0) {
-                let windowRange = opts.windowRange || [0, sortedDates.length - 1];
+                // Always use the current dataZoom window for yMin/yMax in raw mode
+                let windowRange = opts.windowRange;
+                if (!windowRange && typeof getCurrentWindowRange === 'function') {
+                    windowRange = getCurrentWindowRange();
+                }
+                if (!windowRange) windowRange = [0, sortedDates.length - 1];
                 let allVisible = [];
                 selectedSymbols.filter(symbol => data[symbol]).forEach(symbol => {
                     const entries = Object.entries(data[symbol]);
@@ -349,6 +362,9 @@
                         yMin = yMin * 0.98;
                         yMax = yMax * 1.02;
                     }
+                } else {
+                    yMin = null;
+                    yMax = null;
                 }
             }
             // Prepare series for each symbol
@@ -620,6 +636,7 @@
                 {cat: 'macro', label: 'MACRO', syms: macroSymbols}
             ];
             const catCheckboxes = {};
+            const categoryToCheckboxes = {};
             catOrder.forEach(({cat, label, syms}) => {
                 // Category label as direct child
                 const labelDiv = document.createElement('div');
@@ -630,27 +647,21 @@
                 catCheckbox.setAttribute('data-category', cat);
                 labelDiv.appendChild(catCheckbox);
                 labelDiv.appendChild(document.createTextNode(label));
+                // Assign catCheckboxes[cat] before any listeners reference it
+                catCheckboxes[cat] = catCheckbox;
                 // Toggle all children when clicking label (except on the checkbox itself)
                 labelDiv.addEventListener('click', function(e) {
                     if (e.target !== catCheckbox) {
-                        // Find all checkboxes between this labelDiv and the next .category-label
-                        let cbs = [];
-                        let node = labelDiv.nextElementSibling;
-                        while (node && !node.classList.contains('category-label')) {
-                            if (node.tagName === 'LABEL') {
-                                const cb = node.querySelector('input[type=checkbox]');
-                                if (cb) cbs.push(cb);
-                            }
-                            node = node.nextElementSibling;
-                        }
+                        // Use virtual group for this category
+                        const cbs = categoryToCheckboxes[cat];
                         const allChecked = cbs.length > 0 && cbs.every(cb => cb.checked);
-                        cbs.forEach(cb => { cb.checked = !allChecked; });
+                        cbs.forEach(cb => { cb.checked = !allChecked; cb.dispatchEvent(new Event('change', {bubbles:true})); });
                         updateChart();
-                        if (typeof syncCatCheckboxFns[cat] === 'function') syncCatCheckboxFns[cat]();
                     }
                 });
                 seriesCategories.appendChild(labelDiv);
                 // Series checkboxes as direct children
+                categoryToCheckboxes[cat] = [];
                 syms.forEach(sym => {
                     const itemLabel = document.createElement('label');
                     itemLabel.setAttribute('data-symbol', sym);
@@ -662,39 +673,32 @@
                     itemLabel.appendChild(document.createTextNode(' ' + (symbolNames[sym] || sym)));
                     itemLabel.title = sym;
                     seriesCategories.appendChild(itemLabel);
+                    // Track for virtual grouping
+                    categoryToCheckboxes[cat].push(cb);
                     // Check the first available company by default
                     if (cat === 'company' && !anyChecked && sym && data[sym]) {
                         cb.checked = true; anyChecked = true;
                     }
+                    // Add click handler to label: toggle checkbox only if not clicking on the checkbox itself
+                    itemLabel.addEventListener('click', function(e) {
+                        if (e.target === cb) return; // Let native checkbox event fire
+                        e.preventDefault(); // Prevent default label behavior
+                        cb.checked = !cb.checked;
+                        cb.dispatchEvent(new Event('change', {bubbles:true}));
+                        updateChart();
+                    });
                     // Add change listener to update category checkbox indeterminate state
                     cb.addEventListener('change', function() {
-                        // Find the parent category label
-                        let prev = itemLabel.previousElementSibling;
-                        while (prev && !prev.classList.contains('category-label')) prev = prev.previousElementSibling;
-                        if (!prev) return;
-                        const catCheckbox = prev.querySelector('input[type=checkbox][data-category]');
-                        if (!catCheckbox) return;
-                        // Find all checkboxes for this category
-                        let cbs = [];
-                        let node = prev.nextElementSibling;
-                        while (node && !node.classList.contains('category-label')) {
-                            if (node.tagName === 'LABEL') {
-                                const cb2 = node.querySelector('input[type=checkbox]');
-                                if (cb2) cbs.push(cb2);
-                            }
-                            node = node.nextElementSibling;
-                        }
+                        const catCheckbox = catCheckboxes[cat];
+                        const cbs = categoryToCheckboxes[cat];
                         const checkedCount = cbs.filter(cb2 => cb2.checked).length;
                         if (checkedCount === cbs.length && cbs.length > 0) {
                             catCheckbox.checked = true;
-                            catCheckbox.indeterminate = false;
-                        } else if (checkedCount === 0) {
-                            catCheckbox.checked = false;
-                            catCheckbox.indeterminate = false;
                         } else {
                             catCheckbox.checked = false;
-                            catCheckbox.indeterminate = true;
                         }
+                        catCheckbox.indeterminate = false;
+                        updateChart();
                     });
                 });
                 // Add separator after last item in category
@@ -703,9 +707,11 @@
                 seriesCategories.appendChild(separator);
                 // Add a change listener to update the chart on any checkbox change in this category
                 catCheckbox.addEventListener('change', function(e) {
+                    // Batch check/uncheck all children in this category
+                    const cbs = categoryToCheckboxes[cat];
+                    cbs.forEach(cb => { cb.checked = catCheckbox.checked; cb.dispatchEvent(new Event('change', {bubbles:true})); });
                     updateChart();
                 });
-                catCheckboxes[cat] = catCheckbox;
             });
 
             // Helper: batch check/uncheck children when category label is toggled
@@ -827,11 +833,8 @@
             function updateChart() {
                 const selected = getSelectedSymbols();
                 const { normalized, indexed } = getModeStates();
-                // Always get the current window range for indexed or normalized mode
-                let windowRange = undefined;
-                if (indexed || normalized) {
-                    windowRange = getCurrentWindowRange();
-                }
+                // Always get the current window range for all modes
+                let windowRange = getCurrentWindowRange();
                 const newOption = prepareEChartsOption(selected, data, normalized, !normalized && indexed, { windowRange });
                 // Always preserve the current dataZoom window
                 const option = casinoChart.getOption();

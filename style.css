@@ -1,3 +1,30 @@
+/* Floating panel for series selection */
+#panel-series {
+    padding: 1.2em 1.5em;
+    background: #232837;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px 0 rgba(0,0,0,0.18);
+    width: max-content;
+    min-width: unset;
+    max-width: unset;
+    height: 50vh;
+    min-height: 400px;
+    overflow-x: auto;
+}
+/* Floating panel for mode selection */
+#panel-mode {
+    padding: 0.3em 0.7em;
+    background: #232837;
+    border-radius: 14px;
+    box-shadow: 0 4px 24px 0 rgba(0,0,0,0.18);
+    width: max-content;
+    min-width: unset;
+    max-width: unset;
+    height: auto;
+    min-height: 0;
+    overflow-x: auto;
+    border: none;
+}
 /* Unified checkbox style for all category checkboxes */
  .category-block label input[type="checkbox"],
  .category-label input[type="checkbox"],
@@ -26,7 +53,7 @@
  .category-label input[type="checkbox"]:checked,
  .series-categories > label > input[type="checkbox"]:checked {
     border-color: #00bcd4;
-    background: #fff;
+    background: #fff !important;
 }
 /* GalaxyProspect Styles */
 
@@ -38,17 +65,22 @@
 body {
     font-family: 'MCI';
     font-size: 16px;
-    margin: 0;
+        font-size: 2em;
     background: #181c24;
     color: #f5f6fa;
     min-height: 100vh;
 }
 .floating-panel {
     display: none;
-    position: absolute;
-    min-width: 260px;
-    max-width: 340px;
-    z-index: 100;
+    position: fixed;
+    border-radius: 12px;
+    /* border: 2px solid #00bcd4; */
+    box-shadow: 0 4px 24px 0 rgba(0,188,212,0.22), 0 1px 0 #00bcd4 inset;
+    padding: 18px 28px;
+    z-index: 9999;
+    pointer-events: auto;
+    top: 80px;
+    left: 80px;
 }
 .floating-panel.active {
     display: block;
@@ -119,9 +151,10 @@ body {
 
 /* Mode button transitions */
 .mode-btn {
-    width: 100%;
+    width: 140px;
+    min-width: 120px;
     margin-bottom: 0.3em;
-    padding: 0.4em 0;
+    padding: 0.4em 1.2em;
     border-radius: 6px;
     border: 1.2px solid #2e3448;
     background: #232837;
@@ -134,6 +167,13 @@ body {
     transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
     box-shadow: none;
     outline: none;
+}
+
+.mode-btn.active, .mode-btn:active {
+    background: #00bcd4 !important;
+    color: #232837 !important;
+    border-color: #00bcd4 !important;
+    box-shadow: 0 2px 8px 0 rgba(0,188,212,0.18);
 }
 
 .mode-btn:hover {
@@ -154,10 +194,10 @@ body {
 
 /* Mode panel group styles */
 .mode-panel-group {
-    padding: 1.1em 1.5em 1.1em 1.2em;
+    padding: 0.3em 0.7em 0.3em 0.7em;
     background: #232837;
-    border-radius: 14px;
-    box-shadow: 0 4px 24px 0 rgba(0,0,0,0.18);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
 }
 
 /* Mode panel label styles */
@@ -182,9 +222,9 @@ body {
     background: #232837;
     border-radius: 18px;
     box-shadow: 0 4px 24px 0 rgba(0,0,0,0.18);
-    width: auto;
-    min-width: 320px;
-    max-width: 1200px;
+    width: max-content;
+    min-width: unset;
+    max-width: unset;
     height: 50vh;
     min-height: 400px;
     overflow-x: auto;
@@ -195,10 +235,10 @@ body {
     display: grid;
     grid-auto-flow: column;
     grid-template-rows: repeat(auto-fill, minmax(30px, 1fr));
-    gap: 0.4em 1.2em;
+    gap: 0.32em 1em;
     height: 100%;
     min-width: 420px;
-    width: 100%;
+    width: max-content;
     clear: both;
 }
 .category-block,
@@ -235,6 +275,9 @@ body {
     transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
     box-shadow: none;
     gap: 0.4em;
+}
+.series-categories > label:active {
+    filter: brightness(1.08);
 }
 .series-categories > label:hover {
     background: #2e3448;
@@ -298,9 +341,12 @@ body {
     z-index: 2;
     position: relative;
     gap: 0.5em;
+    height: 30px;
+    min-height: 30px;
+    max-height: 30px;
     margin-bottom: 0.4em;
     margin-top: 0;
-    padding: 0.38em 0.8em 0.38em 0.5em;
+    padding: 0.18em 0.6em 0.18em 0.4em;
     cursor: pointer;
 }
 
@@ -333,17 +379,17 @@ body {
     font-family: 'MCI', sans-serif;
     font-size: 16px;
     font-weight: 600;
-    border-radius: 18px;
-    border: 2.5px solid #00bcd4;
-    box-shadow: 0 8px 40px 0 rgba(0,188,212,0.33), 0 1.5px 0 #00bcd4 inset;
-    padding: 36px 48px;
+    border-radius: 12px;
+    border: 2px solid #00bcd4;
+    box-shadow: 0 4px 24px 0 rgba(0,188,212,0.22), 0 1px 0 #00bcd4 inset;
+    padding: 18px 28px;
     text-align: center;
     line-height: 1.7;
     letter-spacing: 1.2px;
     user-select: none;
 }
 .about-content .product-name {
-    font-size: 2.5em;
+    font-size: 2em;
     font-weight: bold;
     margin-bottom: 2px;
 }
