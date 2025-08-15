@@ -6,7 +6,11 @@
     <title>GalaxyProspect Dashboard</title>
     <script src="./echarts.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+        @font-face {
+            font-family: 'Gobold Lowplus';
+            src: url('Gobold Lowplus.otf') format('opentype');
+            font-style: normal;
+        }
         .main-window {
             margin-left: 68px;
             height: 100vh;
@@ -46,7 +50,7 @@
             display: block;
         }
     body {
-            font-family: 'Inter', Arial, sans-serif;
+            font-family: 'Gobold Lowplus', Arial, sans-serif;
             font-size: 16px;
             margin: 0;
             background: #181c24;
@@ -91,6 +95,12 @@
             position: relative;
             margin-bottom: 0.5em;
             border: 1.5px solid #232837;
+        }
+        .mode-btn:hover {
+            background: #2e3448 !important;
+            color: #00bcd4 !important;
+            border-color: #00bcd4 !important;
+            box-shadow: 0 2px 8px 0 rgba(0,188,212,0.10);
         }
         .sidebar-icon svg {
             width: 1.5em;
@@ -223,9 +233,9 @@
                 <div class="checkbox-group" style="padding:1.1em 1.5em 1.1em 1.2em; background:#232837; border-radius:14px; box-shadow:0 4px 24px 0 rgba(0,0,0,0.18);">
                     <label style="font-weight:600;display:block;margin-bottom:0.7em;font-size:1em;">Chart Mode:</label>
                     <div id="mode-options" style="display:flex;flex-direction:column;gap:0.7em;width:100%;">
-                        <button class="mode-btn" data-mode="raw" style="width:100%;margin-bottom:0.3em;padding:0.4em 0;border-radius:6px;border:1.2px solid #2e3448;background:#232837;color:#fff;font-size:0.95em;font-weight:500;cursor:pointer;transition:background 0.15s,border-color 0.15s;text-align:center;">Raw</button>
-                        <button class="mode-btn" data-mode="normalized" style="width:100%;margin-bottom:0.3em;padding:0.4em 0;border-radius:6px;border:1.2px solid #2e3448;background:#232837;color:#fff;font-size:0.95em;font-weight:500;cursor:pointer;transition:background 0.15s,border-color 0.15s;text-align:center;">Normalized</button>
-                        <button class="mode-btn" data-mode="indexed" style="width:100%;margin-bottom:0;padding:0.4em 0;border-radius:6px;border:1.2px solid #2e3448;background:#232837;color:#fff;font-size:0.95em;font-weight:500;cursor:pointer;transition:background 0.15s,border-color 0.15s;text-align:center;">Indexed</button>
+                        <button class="mode-btn" data-mode="raw" style="width:100%;margin-bottom:0.3em;padding:0.4em 0;border-radius:6px;border:1.2px solid #2e3448;background:#232837;color:#fff;font-size:0.95em;font-weight:500;cursor:pointer;transition:background 0.15s,border-color 0.15s;text-align:center;font-family:system-ui,sans-serif;">Raw</button>
+                        <button class="mode-btn" data-mode="normalized" style="width:100%;margin-bottom:0.3em;padding:0.4em 0;border-radius:6px;border:1.2px solid #2e3448;background:#232837;color:#fff;font-size:0.95em;font-weight:500;cursor:pointer;transition:background 0.15s,border-color 0.15s;text-align:center;font-family:system-ui,sans-serif;">Normalized</button>
+                        <button class="mode-btn" data-mode="indexed" style="width:100%;margin-bottom:0;padding:0.4em 0;border-radius:6px;border:1.2px solid #2e3448;background:#232837;color:#fff;font-size:0.95em;font-weight:500;cursor:pointer;transition:background 0.15s,border-color 0.15s;text-align:center;font-family:system-ui,sans-serif;">Indexed</button>
                     </div>
                 </div>
             </div>
@@ -320,7 +330,7 @@
 
         function getColor(idx) {
             // High-contrast, colorblind-friendly palette for dark backgrounds
-            const colors = [
+            const baseColors = [
                 '#FFD600', // Galaxy - Vivid Yellow
                 '#00E676', // SJM - Bright Green
                 '#FF1744', // Wynn - Vivid Red
@@ -331,10 +341,28 @@
                 '#C51162', // Shanghai - Deep Pink
                 '#AEEA00'  // Shenzhen - Lime
             ];
-            return colors[idx % colors.length];
+            // Convert hex to rgba with alpha 0.9
+            function hexToRgba(hex, alpha) {
+                hex = hex.replace('#', '');
+                if (hex.length === 3) hex = hex.split('').map(x => x + x).join('');
+                const num = parseInt(hex, 16);
+                const r = (num >> 16) & 255;
+                const g = (num >> 8) & 255;
+                const b = num & 255;
+                return `rgba(${r},${g},${b},${alpha})`;
+            }
+            return hexToRgba(baseColors[idx % baseColors.length], 0.9);
         }
 
     function prepareEChartsOption(selectedSymbols, data, normalized, indexed, opts = {}) {
+        // Helper for K/M/B formatting
+        function formatKMB(val) {
+            if (val == null || isNaN(val)) return '';
+            if (Math.abs(val) >= 1e9) return (val / 1e9).toFixed(2).replace(/\.00$/, '') + 'b';
+            if (Math.abs(val) >= 1e6) return (val / 1e6).toFixed(2).replace(/\.00$/, '') + 'm';
+            if (Math.abs(val) >= 1e3) return (val / 1e3).toFixed(2).replace(/\.00$/, '') + 'k';
+            return val.toLocaleString();
+        }
             // Always use the full union of all dates from all symbols for a stable x-axis
             // Generate a complete calendar date range from min to max date in the data
             let minDate = null, maxDate = null;
@@ -445,9 +473,9 @@
                     tooltip: {
                         valueFormatter: function (value, i) {
                             if ((normalized || indexed) && typeof value === 'number' && typeof actualValues[i] === 'number') {
-                                return value.toFixed(3) + ' (actual: ' + actualValues[i].toFixed(2) + ')';
+                                return value.toFixed(3) + ' (actual: ' + formatKMB(actualValues[i]) + ')';
                             } else if (typeof value === 'number') {
-                                return value.toFixed(2);
+                                return formatKMB(value);
                             } else {
                                 return 'N/A';
                             }
@@ -479,9 +507,6 @@
                         if (v > prevMax) prevMax = v;
                         return v;
                     });
-                    if (['^HSI','000001.SS','399001.SZ'].includes(symbol)) {
-                        console.log('Filtered volume array for', symbol, filteredVolumeArray);
-                    }
                     series.push({
                         name: symbol + ' (' + (symbolNames[symbol] || symbol) + ') Volume',
                         type: 'bar',
@@ -492,7 +517,7 @@
                             opacity: 0.25
                         },
                         emphasis: { focus: 'series' },
-                        tooltip: { valueFormatter: v => v != null ? v.toLocaleString() : 'N/A' }
+                        tooltip: { valueFormatter: v => v != null ? formatKMB(v) : 'N/A' }
                     });
                 }
             }
@@ -527,6 +552,7 @@
                             borderWidth: 1,
                             fontWeight: 'bold',
                             fontSize: 13,
+                            fontFamily: 'Gobold Lowplus',
                             padding: [6, 12],
                             shadowColor: '#000',
                             shadowBlur: 6
@@ -534,9 +560,9 @@
                     },
                     backgroundColor: '#232837',
                     borderColor: '#fff',
-                    textStyle: { color: '#fff' }
+                    textStyle: { color: '#fff', fontFamily: 'Gobold Lowplus' }
                 },
-                legend: { show: false },
+                legend: { show: false, textStyle: { fontFamily: 'Gobold Lowplus' } },
                 grid: { left: 60, right: 60, top: 85, bottom: 90 },
                 dataZoom: [
                     {
@@ -564,10 +590,27 @@
                     type: 'category',
                     data: sortedDates,
                     axisLabel: {
-                        rotate: 45,
+                        rotate: 0, // Print horizontally
                         color: '#fff',
                         fontWeight: 500,
-                        interval: 'auto',
+                        interval: 'auto', // Let ECharts auto-calculate, but force minInterval below
+                        minInterval: 1, // Allow every tick if space
+                        hideOverlap: true, // Never overlap
+                        fontFamily: 'Gobold Lowplus',
+                        letterSpacing: 2
+                        // Always show at least 4 ticks: if ECharts shows fewer, force them
+                        ,formatter: function(value, index) {
+                            const total = sortedDates.length;
+                            // If ECharts would show fewer than 4, force 4 evenly spaced
+                            if (this.axis && this.axis.getViewLabels) {
+                                const labels = this.axis.getViewLabels();
+                                if (labels.length < 4) {
+                                    const step = Math.max(1, Math.floor(total / 4));
+                                    if (index % step !== 0 && index !== total - 1 && index !== 0) return '';
+                                }
+                            }
+                            return value;
+                        }
                     },
                     axisLine: { lineStyle: { color: '#fff' } }
                 },
@@ -577,8 +620,8 @@
                         name: normalized ? 'Normalized Adj Close' : 'Adj Close',
                         position: 'left',
                         axisLine: { show: true, lineStyle: { color: '#fff' } },
-                        axisLabel: { formatter: v => normalized ? v.toFixed(2) : v, color: '#fff', fontWeight: 500 },
-                        nameTextStyle: { color: '#fff', fontWeight: 600 },
+                        axisLabel: { formatter: v => normalized ? v.toFixed(2) : formatKMB(v), color: '#fff', fontWeight: 500, fontFamily: 'Gobold Lowplus', letterSpacing: 2 },
+                        nameTextStyle: { color: '#fff', fontWeight: 600, fontFamily: 'Gobold Lowplus', letterSpacing: 2 },
                         splitLine: { lineStyle: { color: '#333' } },
                         min: yMin,
                         max: yMax
@@ -588,8 +631,8 @@
                         name: 'Volume',
                         position: 'right',
                         axisLine: { show: true, lineStyle: { color: '#fff' } },
-                        axisLabel: { formatter: v => v != null ? v.toLocaleString() : '', color: '#fff', fontWeight: 500 },
-                        nameTextStyle: { color: '#fff', fontWeight: 600 },
+                        axisLabel: { formatter: v => v != null ? formatKMB(v) : '', color: '#fff', fontWeight: 500, fontFamily: 'Gobold Lowplus', letterSpacing: 2 },
+                        nameTextStyle: { color: '#fff', fontWeight: 600, fontFamily: 'Gobold Lowplus', letterSpacing: 2 },
                         splitLine: { show: false },
                         min: 0,
                         max: undefined
