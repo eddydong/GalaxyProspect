@@ -88,9 +88,6 @@ body {
     align-items: center;
     gap: 29px;
 }
-.sidebar-bottom-icons {
-    margin-top: auto;
-}
 .sidebar-icon {
     width: 44px;
     height: 44px;
@@ -323,11 +320,6 @@ body {
 .about-modal.visible {
     opacity: 1;
     pointer-events: auto;
-}
-.about-logo svg {
-    display: block;
-    margin: 0 auto;
-    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.18));
 }
 .about-content {
     background: linear-gradient(135deg, #232837 85%, #232837 100%);
