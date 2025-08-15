@@ -697,6 +697,10 @@
                         }
                     });
                 });
+                // Add separator after last item in category
+                const separator = document.createElement('div');
+                separator.className = 'category-placeholder';
+                seriesCategories.appendChild(separator);
                 // Add a change listener to update the chart on any checkbox change in this category
                 catCheckbox.addEventListener('change', function(e) {
                     updateChart();
