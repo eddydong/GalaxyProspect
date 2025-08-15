@@ -1,3 +1,4 @@
+
 import json
 import os
 import sys
@@ -6,6 +7,7 @@ from datetime import datetime, timedelta
 from fredapi import Fred
 import yfinance as yf
 import pandas as pd
+import sqlite3
 
 FRED_API_KEY = '7479e85ab14cfbc7497819516a20dec4'
 
@@ -13,27 +15,12 @@ def load_config():
     with open('config.json', 'r') as f:
         return json.load(f)
 
-def get_latest_date(existing_data, symbol):
-    if symbol not in existing_data:
-        return None
-    dates = [d for d in existing_data[symbol].keys() if d[:4].isdigit()]
-    if not dates:
-        return None
-    return max(dates)
-
 def fetch_yf_data(symbols, mode, existing_data):
     output = {}
     today = datetime.today().strftime('%Y-%m-%d')
     for symbol in symbols:
         print(f'\n=== {symbol} (YF) ===')
-        if mode == 'incremental':
-            latest = get_latest_date(existing_data, symbol)
-            if latest:
-                start_date = (datetime.strptime(latest, '%Y-%m-%d') + timedelta(days=1)).strftime('%Y-%m-%d')
-            else:
-                start_date = '2000-01-01'
-        else:
-            start_date = '2000-01-01'
+        start_date = '2000-01-01'
         data = yf.download(symbol, start=start_date, end=today, group_by='ticker', auto_adjust=False)
         try:
             if isinstance(data.columns, pd.MultiIndex):
@@ -70,28 +57,20 @@ def fetch_fred_data(symbols, desc_map, mode, existing_data):
     for code in symbols:
         print(f'\n=== {desc_map[code]} ({code}) (FRED) ===')
         try:
-            if mode == 'incremental' and code in existing_data:
-                latest = get_latest_date(existing_data, code)
-                start_date = (datetime.strptime(latest, '%Y-%m-%d') + timedelta(days=1)) if latest else None
-            else:
-                start_date = None
             series = fred.get_series(code)
             series_dict = {}
             for date, value in series.items():
-                if start_date and date < start_date:
-                    continue
                 date_str = date.strftime('%Y-%m-%d')
                 if value is None or (isinstance(value, float) and (math.isnan(value) or math.isinf(value))):
                     adj_close = None
                 else:
                     adj_close = float(value)
                 series_dict[date_str] = {"Adj Close": adj_close, "Volume": 0}
-            merged = dict(existing_data.get(code, {}))
-            merged.update(series_dict)
-            macro_data[code] = merged
+            macro_data[code] = series_dict
         except Exception as e:
             print(f"Error processing {code}: {e}")
     return macro_data
+
 
 def main():
     config = load_config()
@@ -100,18 +79,11 @@ def main():
     yf_symbols = [item['symbol_name'] for item in symbols if item['server'] == 'YF']
     fred_symbols = [item['symbol_name'] for item in symbols if item['server'] == 'FRED']
     fred_desc = {item['symbol_name']: item['desc'] for item in symbols if item['server'] == 'FRED'}
+    field_map = {item['symbol_name']: item['field_name'] for item in symbols}
 
-    # Load existing data if incremental
-    mode = 'incremental'
-    if len(sys.argv) > 1:
-        mode = sys.argv[1].lower()
-        if mode not in ['full', 'incremental']:
-            print("Usage: python load_data.py [full|incremental]")
-            sys.exit(1)
+    # Always use full mode, ignore any command line args
+    mode = 'full'
     existing_data = {}
-    if os.path.exists('data.json'):
-        with open('data.json', 'r') as f:
-            existing_data = json.load(f)
 
     # Fetch data
     yf_data = fetch_yf_data(yf_symbols, mode, existing_data)
@@ -122,17 +94,41 @@ def main():
     merged.update(yf_data)
     merged.update(fred_data)
 
-    # Filter all symbols' data to start_date or later
+
+    # Filter all symbols' data to start_date or later, and print data count for each
     for symbol in list(merged.keys()):
         filtered = {date: val for date, val in merged[symbol].items() if date >= start_date}
+        count = len(filtered)
+        print(f"{symbol}: {count} records")
         if filtered:
             merged[symbol] = filtered
         else:
             del merged[symbol]
 
-    with open('data.json', 'w') as f:
-        json.dump(merged, f, indent=2)
-    print(f"Saved all data to data.json (from {start_date} onward)")
+    # Save to DB
+    DB_FILE = "galaxyprospect.db"
+    TABLE_NAME = "fact"
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    # For each symbol, upsert its data by date and field_name
+    for symbol in merged:
+        field_name = field_map.get(symbol)
+        if not field_name:
+            continue
+        for date, valdict in merged[symbol].items():
+            # Use 'Adj Close' if present, else skip
+            v = valdict.get("Adj Close")
+            if v is None:
+                continue
+            # Upsert
+            c.execute(f"SELECT 1 FROM {TABLE_NAME} WHERE date = ?", (date,))
+            if c.fetchone():
+                c.execute(f"UPDATE {TABLE_NAME} SET {field_name} = ? WHERE date = ?", (v, date))
+            else:
+                c.execute(f"INSERT INTO {TABLE_NAME} (date, {field_name}) VALUES (?, ?)", (date, v))
+    conn.commit()
+    conn.close()
+    print(f"Saved all data to {DB_FILE} (from {start_date} onward)")
 
 if __name__ == '__main__':
     main()

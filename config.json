@@ -2,136 +2,204 @@
   "startDate": "2005-01-01",
   "symbols": [
   {
+    "server" : "DSEC",
+    "symbol_name": "1216",
+    "desc": "Macau GGR",
+    "freq": "M",
+    "field_name": "DSEC_ggr",
+    "category": "Macau Gaming"
+  },
+  {
+    "server" : "DSEC",
+    "symbol_name": "245",
+    "desc": "Macau Hotel Occupancy",
+    "freq": "M",
+    "field_name": "DSEC_hotel",   
+    "category": "Macau Gaming"
+  },
+  {
+    "server" : "DSEC",
+    "symbol_name": "243",
+    "desc": "Macau Visitation",
+    "freq": "M",
+    "field_name": "DSEC_visitation",
+    "category": "Macau Gaming"
+  },
+  {
     "server": "YF",
     "symbol_name": "0027.HK",
     "desc": "Galaxy",
-    "freq": "D"
+    "freq": "D",
+    "field_name": "YF_galaxy",
+    "category": "Stock Price"
   },
   {
     "server": "YF",
     "symbol_name": "0880.HK",
     "desc": "SJM",
-    "freq": "D"
+    "freq": "D",
+    "field_name": "YF_sjm",
+    "category": "Stock Price"
   },
   {
     "server": "YF",
     "symbol_name": "1128.HK",
     "desc": "Wynn",
-    "freq": "D"
+    "freq": "D",
+    "field_name": "YF_wynn",
+    "category": "Stock Price"
   },
   {
     "server": "YF",
     "symbol_name": "1928.HK",
     "desc": "Sands",
-    "freq": "D"
+    "freq": "D",
+    "field_name": "YF_sands",
+    "category": "Stock Price"
   },
   {
     "server": "YF",
     "symbol_name": "2282.HK",
     "desc": "MGM",
-    "freq": "D"
+    "freq": "D",
+    "field_name": "YF_mgm",
+    "category": "Stock Price"
   },
   {
     "server": "YF",
     "symbol_name": "0200.HK",
     "desc": "Melco",
-    "freq": "D"
+    "freq": "D",
+    "field_name": "YF_melco",
+    "category": "Stock Price"
   },
   {
     "server": "YF",
     "symbol_name": "^HSI",
     "desc": "Hang Seng",
-    "freq": "D"
+    "freq": "D",
+    "field_name": "YF_hang_seng",
+    "category": "Market Index"
   },
   {
     "server": "YF",
     "symbol_name": "000001.SS",
     "desc": "Shanghai",
-    "freq": "D"
+    "freq": "D",
+    "field_name": "YF_shanghai",
+    "category": "Market Index"
   },
   {
     "server": "YF",
     "symbol_name": "399001.SZ",
     "desc": "Shenzhen",
-    "freq": "D"
+    "freq": "D",
+    "field_name": "YF_shenzhen",
+    "category": "Market Index"
   },
   {
     "server": "YF",
     "symbol_name": "HKD=X",
     "desc": "USD/HKD",
-    "freq": "D"
+    "freq": "D",
+    "field_name": "YF_usd_hkd",
+    "category": "FX"
   },
   {
     "server": "YF",
     "symbol_name": "CNY=X",
     "desc": "USD/CNY",
-    "freq": "D"
+    "freq": "D",
+    "field_name": "YF_usd_cny",
+    "category": "FX"
   },
   {
     "server": "YF",
     "symbol_name": "DX-Y.NYB",
     "desc": "USD Index",
-    "freq": "D"
+    "freq": "D",
+    "field_name": "YF_usd_index",
+    "category": "FX"
   },
   {
     "server": "YF",
     "symbol_name": "GC=F",
     "desc": "Gold",
-    "freq": "D"
+    "freq": "D",
+    "field_name": "YF_gold",
+    "category": "Commodity"
   },
   {
     "server": "YF",
     "symbol_name": "SI=F",
     "desc": "Silver",
-    "freq": "D"
+    "freq": "D",
+    "field_name": "YF_silver",
+    "category": "Commodity"
   },
   {
     "server": "FRED",
     "symbol_name": "CHNCPIALLMINMEI",
     "desc": "China CPI",
-    "freq": "M"
+    "freq": "M",
+    "field_name": "FRED_CPI",
+    "category": "China Macro"
   },
   {
     "server": "FRED",
     "symbol_name": "MABMM201CNM189S",
     "desc": "China M2",
-    "freq": "M"
+    "freq": "M",
+    "field_name": "FRED_M2",
+    "category": "China Macro"
   },
   {
     "server": "FRED",
     "symbol_name": "CSCICP02CNM460S",
     "desc": "Consumer Confidence",
-    "freq": "M"
+    "freq": "M",
+    "field_name": "FRED_consumer_confidence",
+    "category": "China Macro"
   },
   {
     "server": "FRED",
     "symbol_name": "EXPCH",
     "desc": "US Exports to China",
-    "freq": "M"
+    "freq": "M",
+    "field_name": "FRED_exports_to_China",
+    "category": "China Macro"
   },
   {
     "server": "FRED",
     "symbol_name": "IR3TIB01CNM156N",
     "desc": "China 3M Interest Rate",
-    "freq": "M"
+    "freq": "M",
+    "field_name": "FRED_3M_interest_rate",
+    "category": "China Macro"
   },
   {
     "server": "FRED",
     "symbol_name": "CHNLOLITOAASTSAM",
     "desc": "OECD Leading Indicator",
-    "freq": "M"
+    "freq": "M",
+    "field_name": "FRED_leading_indicator",
+    "category": "China Macro"
   },
   {
     "server": "FRED",
     "symbol_name": "CHNCSESFT02STSAM",
     "desc": "OECD Future Tendency",
-    "freq": "M"
+    "freq": "M",
+    "field_name": "FRED_future_tendency",
+    "category": "China Macro"
   },
   {
     "server": "FRED",
     "symbol_name": "CHNBSCICP02STSAM",
     "desc": "OECD Mfg. Tendency",
-    "freq": "M"
+    "freq": "M",
+    "field_name": "FRED_mfg_tendency",
+    "category": "China Macro"
   }
   ]
 }
