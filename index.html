@@ -6,6 +6,7 @@
     <title>GalaxyProspect Dashboard</title>
     <script src="./echarts.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
         .main-window {
             margin-left: 68px;
             height: 100vh;
@@ -44,8 +45,7 @@
         .floating-panel.active {
             display: block;
         }
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-        body {
+    body {
             font-family: 'Inter', Arial, sans-serif;
             font-size: 16px;
             margin: 0;
@@ -84,7 +84,7 @@
             font-size: 1.45em;
             background: linear-gradient(135deg, #232837 70%, #222c38 100%);
             border-radius: 12px;
-            color: #00bcd4;
+            color: #888a92; /* grey color for icons */
             cursor: pointer;
             transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.18s;
             box-shadow: 0 2px 8px 0 rgba(0,188,212,0.08);
@@ -98,11 +98,11 @@
             display: block;
         }
         .sidebar-icon:hover, .sidebar-icon.active {
-            background: linear-gradient(135deg, #00bcd4 80%, #00e6d4 100%);
-            color: #181c24;
-            box-shadow: 0 2px 12px 0 rgba(0,188,212,0.13);
-            border-color: #00bcd4;
-            transform: scale(1.07);
+            background: linear-gradient(135deg, #e0e0e0 80%, #bdbdbd 100%);
+            color: #888a92;
+            box-shadow: 0 2px 12px 0 rgba(136,138,146,0.13);
+            border-color: #888a92;
+            transform: scale(1.07) rotate(-12deg); /* rotate on hover */
         }
         .checkbox-group input[type=checkbox]:hover, .checkbox-group input[type=checkbox]:focus {
             box-shadow: 0 0 0 3px rgba(0,188,212,0.18);
@@ -196,6 +196,7 @@
 <body>
         <div class="layout">
             <aside class="sidebar">
+                <!-- View Mode Icon -->
                 <div class="sidebar-icon" data-panel="mode" title="Chart Mode" style="margin-bottom:1.1em;">
                     <svg viewBox="0 0 32 32" fill="none">
                         <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="3" fill="none"/>
@@ -206,30 +207,18 @@
                         </g>
                     </svg>
                 </div>
-                <div class="sidebar-icon" data-panel="company" title="Companies">
-                    <svg viewBox="0 0 32 32" fill="none"><rect x="3" y="13" width="6" height="16" rx="2" fill="currentColor"/><rect x="13" y="7" width="6" height="22" rx="2" fill="currentColor"/><rect x="23" y="17" width="6" height="12" rx="2" fill="currentColor"/></svg>
-                </div>
-                <div class="sidebar-icon" data-panel="index" title="Indexes">
-                    <svg viewBox="0 0 32 32" fill="none"><polyline points="4,28 12,18 20,22 28,8" stroke="currentColor" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="28" cy="8" r="2.5" fill="currentColor"/></svg>
-                </div>
-                <div class="sidebar-icon" data-panel="fx" title="FX">
-                    <svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="3" fill="none"/><text x="16" y="21" text-anchor="middle" font-size="13" fill="currentColor" font-family="Arial, sans-serif">$</text></svg>
-                </div>
-                <div class="sidebar-icon" data-panel="commodity" title="Commodities">
-                    <svg viewBox="0 0 32 32" fill="none"><rect x="7" y="20" width="18" height="7" rx="2" fill="currentColor"/><ellipse cx="16" cy="14" rx="9" ry="6" fill="currentColor"/></svg>
-                </div>
-                <div class="sidebar-icon" data-panel="macro" title="Macro">
-                    <svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="3" fill="none"/><circle cx="16" cy="16" r="7" fill="currentColor"/></svg>
+                <!-- Series Checkboxes Icon -->
+                <div class="sidebar-icon" data-panel="series" title="Series Selection">
+                    <svg viewBox="0 0 32 32" fill="none">
+                        <rect x="3" y="13" width="6" height="16" rx="2" fill="currentColor"/>
+                        <rect x="13" y="7" width="6" height="22" rx="2" fill="currentColor"/>
+                        <rect x="23" y="17" width="6" height="12" rx="2" fill="currentColor"/>
+                    </svg>
                 </div>
             </aside>
             <div class="main-window">
                 <div id="chart-container"><div id="casinoChart"></div></div>
             </div>
-            <div class="floating-panel" id="panel-company"><div class="checkbox-group" id="company-checkboxes"></div></div>
-            <div class="floating-panel" id="panel-index"><div class="checkbox-group" id="index-checkboxes"></div></div>
-            <div class="floating-panel" id="panel-fx"><div class="checkbox-group" id="fx-checkboxes"></div></div>
-            <div class="floating-panel" id="panel-commodity"><div class="checkbox-group" id="commodity-checkboxes"></div></div>
-            <div class="floating-panel" id="panel-macro"><div class="checkbox-group" id="macro-checkboxes"></div></div>
             <div class="floating-panel" id="panel-mode">
                 <div class="checkbox-group" style="padding:1.1em 1.5em 1.1em 1.2em; background:#232837; border-radius:14px; box-shadow:0 4px 24px 0 rgba(0,0,0,0.18);">
                     <label style="font-weight:600;display:block;margin-bottom:0.7em;font-size:1em;">Chart Mode:</label>
@@ -240,31 +229,36 @@
                     </div>
                 </div>
             </div>
+            <div class="floating-panel" id="panel-series" style="padding: 1.2em 1.5em; background: #232837; border-radius: 18px; box-shadow: 0 4px 24px 0 rgba(0,0,0,0.18); min-width: 600px; max-width: 900px;">
+                <div id="series-categories" style="display: flex; flex-wrap: wrap; gap: 2em; align-items: flex-start; justify-content: flex-start;">
+                    <div class="checkbox-group" id="company-checkboxes" style="min-width: 180px; flex: 1 1 180px;"></div>
+                    <div class="checkbox-group" id="index-checkboxes" style="min-width: 180px; flex: 1 1 180px;"></div>
+                    <div class="checkbox-group" id="fx-checkboxes" style="min-width: 180px; flex: 1 1 180px;"></div>
+                    <div class="checkbox-group" id="commodity-checkboxes" style="min-width: 180px; flex: 1 1 180px;"></div>
+                    <div class="checkbox-group" id="macro-checkboxes" style="min-width: 180px; flex: 1 1 180px;"></div>
+                </div>
+            </div>
         </div>
 
     <script>
-        // Sidebar panel hover logic
+
+        // Sidebar panel hover logic for two icons
         document.addEventListener('DOMContentLoaded', function() {
-            const icons = document.querySelectorAll('.sidebar-icon');
+            const icons = [
+                { icon: document.querySelector('.sidebar-icon[data-panel="mode"]'), panel: document.getElementById('panel-mode') },
+                { icon: document.querySelector('.sidebar-icon[data-panel="series"]'), panel: document.getElementById('panel-series') }
+            ];
             let panelTimeout = null;
-            icons.forEach(icon => {
-                const panelId = 'panel-' + icon.getAttribute('data-panel');
-                const panel = document.getElementById(panelId);
+            icons.forEach(({icon, panel}) => {
                 icon.addEventListener('mouseenter', (e) => {
-                    // Hide all panels
                     document.querySelectorAll('.floating-panel').forEach(p => p.classList.remove('active'));
-                    // Position this panel next to the icon
                     if (panel) {
-                        // Get icon's position relative to viewport
                         const rect = icon.getBoundingClientRect();
-                        // Panel left is always sidebar width (100px), top is icon center minus half panel height
                         const sidebarWidth = icon.parentElement.offsetWidth;
-                        // Estimate panel height (or use offsetHeight if visible)
                         panel.style.display = 'block';
-                        const panelHeight = panel.offsetHeight || 320;
+                        const panelHeight = panel.offsetHeight || 480;
                         panel.style.display = '';
                         let top = rect.top + window.scrollY + rect.height/2 - panelHeight/2;
-                        // Clamp to viewport
                         top = Math.max(16, Math.min(top, window.innerHeight - panelHeight - 16));
                         panel.style.left = sidebarWidth + 'px';
                         panel.style.top = top + 'px';
@@ -291,34 +285,37 @@
                 }
             });
         });
-        // Map of ticker to company abbreviation
-        const symbolNames = {
-            '0027.HK': 'Galaxy',
-            '0880.HK': 'SJM',
-            '1128.HK': 'Wynn',
-            '1928.HK': 'Sands',
-            '2282.HK': 'MGM',
-            '0200.HK': 'Melco',
-            '^HSI': 'Hang Seng',
-            '000001.SS': 'Shanghai',
-            '399001.SZ': 'Shenzhen',
-            'HKD=X': 'USD/HKD',
-            'CNY=X': 'USD/CNY',
-            'DX-Y.NYB': 'USD Index',
-            'GC=F': 'Gold',
-            'SI=F': 'Silver'
-        };
+
+        // Load config.json for symbol metadata and categories
+    let configData = { symbols: [] };
+        let symbolNames = {};
+        let symbolCategories = { company: [], index: [], fx: [], commodity: [], macro: [] };
+        function categorizeSymbols() {
+            symbolCategories = { company: [], index: [], fx: [], commodity: [], macro: [] };
+            (configData.symbols || []).forEach(item => {
+                symbolNames[item.symbol_name] = item.desc;
+                // Categorize based on symbol_name pattern or desc
+                if (item.server === 'YF') {
+                    if (/\.HK$/.test(item.symbol_name)) symbolCategories.company.push(item.symbol_name);
+                    else if (/\^HSI|\.SS$|\.SZ$/.test(item.symbol_name)) symbolCategories.index.push(item.symbol_name);
+                    else if (/=X$|NYB$/.test(item.symbol_name)) symbolCategories.fx.push(item.symbol_name);
+                    else if (/=F$/.test(item.symbol_name)) symbolCategories.commodity.push(item.symbol_name);
+                } else if (item.server === 'FRED') {
+                    symbolCategories.macro.push(item.symbol_name);
+                }
+            });
+        }
+
+        async function fetchConfig() {
+            const res = await fetch('config.json');
+            configData = await res.json();
+            categorizeSymbols();
+        }
 
         async function fetchData() {
-            // Fetch both main and macro data, merge for charting
-            const [mainRes, macroRes] = await Promise.all([
-                fetch('/api/data'),
-                fetch('macro.json')
-            ]);
-            const mainData = await mainRes.json();
-            const macroData = await macroRes.json();
-            // Merge macroData into mainData (no symbol overlap)
-            return { ...mainData, ...macroData };
+            // Fetch unified data.json only
+            const res = await fetch('/api/data');
+            return await res.json();
         }
 
         function getColor(idx) {
@@ -510,6 +507,10 @@
                     volumeMax = Math.max(...volumes);
                 }
             }
+            // Default to last 36 months (about 756 trading days)
+            const defaultMonths = 36;
+            const defaultDays = defaultMonths * 21; // ~21 trading days per month
+            const defaultWindow = sortedDates.length > defaultDays ? Math.round((sortedDates.length - defaultDays) / sortedDates.length * 100) : 0;
             return {
                 tooltip: {
                     trigger: 'axis',
@@ -542,8 +543,8 @@
                         type: 'slider',
                         show: true,
                         xAxisIndex: 0,
-                        // Show only the most recent 12 months (about 252 trading days) by default
-                        start: sortedDates.length > 252 ? Math.round((sortedDates.length - 252) / sortedDates.length * 100) : 0,
+                        // Show only the most recent 36 months (about 756 trading days) by default
+                        start: defaultWindow,
                         end: 100,
                         height: 22,
                         bottom: null,
@@ -599,31 +600,16 @@
         }
 
         async function main() {
+            await fetchConfig();
             const data = await fetchData();
             const symbols = Object.keys(data);
-            // No checkboxes needed; all series are always shown and controlled by legend
 
-            function getSelectedSymbols() {
-                return Array.from(checkboxDiv.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
-            }
-
-
-
-
-            // Separate company, index, FX, and commodity symbols
-            const companySymbols = [
-                '0027.HK','0880.HK','1128.HK','1928.HK','2282.HK','0200.HK'
-            ].filter(sym => data[sym]);
-            const indexSymbols = [
-                '^HSI','000001.SS','399001.SZ'
-            ].filter(sym => data[sym]);
-            const fxSymbols = [
-                'HKD=X','CNY=X','DX-Y.NYB'
-            ].filter(sym => data[sym]);
-            const commoditySymbols = [
-                'GC=F','SI=F'
-            ].filter(sym => data[sym]);
-
+            // Use config-driven categories
+            const companySymbols = symbolCategories.company.filter(sym => data[sym]);
+            const indexSymbols = symbolCategories.index.filter(sym => data[sym]);
+            const fxSymbols = symbolCategories.fx.filter(sym => data[sym]);
+            const commoditySymbols = symbolCategories.commodity.filter(sym => data[sym]);
+            const macroSymbols = symbolCategories.macro.filter(sym => data[sym]);
 
             // Company checkboxes
             const companyDiv = document.getElementById('company-checkboxes');
@@ -635,7 +621,7 @@
                 const cb = document.createElement('input');
                 cb.type = 'checkbox';
                 cb.value = sym;
-                cb.checked = (sym === '0027.HK');
+                cb.checked = (sym === companySymbols[0]);
                 label.appendChild(cb);
                 label.appendChild(document.createTextNode(' ' + sym + ' (' + (symbolNames[sym] || sym) + ')'));
                 companyDiv.appendChild(label);
@@ -658,7 +644,7 @@
             });
 
             // FX checkboxes
-            let fxDiv = document.getElementById('fx-checkboxes'); // keep this declaration only
+            let fxDiv = document.getElementById('fx-checkboxes');
             if (!fxDiv) {
                 fxDiv = document.createElement('div');
                 fxDiv.className = 'checkbox-group';
@@ -680,7 +666,7 @@
             });
 
             // Commodity checkboxes
-            let commodityDiv = document.getElementById('commodity-checkboxes'); // keep this declaration only
+            let commodityDiv = document.getElementById('commodity-checkboxes');
             if (!commodityDiv) {
                 commodityDiv = document.createElement('div');
                 commodityDiv.className = 'checkbox-group';
@@ -702,7 +688,7 @@
             });
 
             // Macro checkboxes
-            let macroDiv = document.getElementById('macro-checkboxes'); // keep this declaration only
+            let macroDiv = document.getElementById('macro-checkboxes');
             if (!macroDiv) {
                 macroDiv = document.createElement('div');
                 macroDiv.className = 'checkbox-group';
@@ -710,25 +696,31 @@
                 commodityDiv.parentNode.insertBefore(macroDiv, commodityDiv.nextSibling);
             }
             macroDiv.innerHTML = '<label class="category-label" style="font-weight:600;cursor:pointer;"><input type="checkbox" class="category-checkbox" data-category="macro" style="margin-right:0.5em;">Macro:</label> ';
-            // Macro symbols (must be defined before setupCategoryBatchToggle)
-            const macroSymbols = Object.keys(data).filter(sym => {
-                // Heuristic: macro series are those present in macro.json (not in mainData)
-                return !companySymbols.includes(sym) && !indexSymbols.includes(sym) && !fxSymbols.includes(sym) && !commoditySymbols.includes(sym);
+            macroSymbols.forEach((sym, idx) => {
+                const label = document.createElement('label');
+                label.style.marginRight = '1em';
+                label.setAttribute('data-symbol', sym);
+                const cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.value = sym;
+                cb.checked = false;
+                label.appendChild(cb);
+                label.appendChild(document.createTextNode(' ' + sym + ' (' + (symbolNames[sym] || sym) + ')'));
+                macroDiv.appendChild(label);
             });
+
             // Helper: batch check/uncheck children when category label is toggled
             function setupCategoryBatchToggle(category, symbols, div) {
                 const catCheckbox = div.querySelector('input.category-checkbox[data-category="' + category + '"]');
                 catCheckbox.addEventListener('change', function() {
                     const checked = catCheckbox.checked;
                     symbols.forEach(sym => {
-                        // Only check if data exists for this symbol
                         if (!data[sym]) return;
                         const cb = div.querySelector('input[type=checkbox][value="' + sym + '"]');
                         if (cb) cb.checked = checked;
                     });
                     updateChart();
                 });
-                // Sync category checkbox state if all/none/some children are checked
                 function syncCatCheckbox() {
                     const cbs = symbols.map(sym => div.querySelector('input[type=checkbox][value="' + sym + '"]')).filter(Boolean);
                     const checkedCount = cbs.filter(cb => cb.checked).length;
@@ -748,43 +740,18 @@
                 });
                 syncCatCheckbox();
             }
-            // Setup batch toggles for all categories
             setupCategoryBatchToggle('company', companySymbols, companyDiv);
             setupCategoryBatchToggle('index', indexSymbols, indexDiv);
             setupCategoryBatchToggle('fx', fxSymbols, fxDiv);
             setupCategoryBatchToggle('commodity', commoditySymbols, commodityDiv);
             setupCategoryBatchToggle('macro', macroSymbols, macroDiv);
-            macroSymbols.forEach((sym, idx) => {
-                const label = document.createElement('label');
-                label.style.marginRight = '1em';
-                label.setAttribute('data-symbol', sym);
-                const cb = document.createElement('input');
-                cb.type = 'checkbox';
-                cb.value = sym;
-                cb.checked = false;
-                label.appendChild(cb);
-        // Optionally, provide a human-readable label for known macro series
-        let labelText = sym;
-        const macroNames = {
-            'CHNCPIALLMINMEI': 'China CPI',
-            'MABMM201CNM189S': 'China M2',
-            'CSCICP02CNM460S': 'China Composite Consumer Confidence',
-            'EXPCH': 'US Exports to China',
-            'IR3TIB01CNM156N': 'China 3M Interest Rate',
-            'CHNLOLITOAASTSAM': 'OECD Composite Leading Indicator',
-            'CHNCSESFT02STSAM': 'OECD Future Tendency',
-            'CHNBSCICP02STSAM': 'OECD Business Tendency (Mfg)'
-        };
-        if (macroNames[sym]) labelText = macroNames[sym];
-        label.appendChild(document.createTextNode(' ' + sym + ' (' + labelText + ')'));
-                macroDiv.appendChild(label);
-            });
 
             function getSelectedSymbols() {
                 const companyDiv = document.getElementById('company-checkboxes');
                 const indexDiv = document.getElementById('index-checkboxes');
                 const fxDiv = document.getElementById('fx-checkboxes');
                 const commodityDiv = document.getElementById('commodity-checkboxes');
+                const macroDiv = document.getElementById('macro-checkboxes');
                 const companyChecked = Array.from(companyDiv.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
                 const indexChecked = Array.from(indexDiv.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
                 const fxChecked = Array.from(fxDiv.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
@@ -853,7 +820,10 @@
                     newOption.dataZoom[0].start = option.dataZoom[0].start;
                     newOption.dataZoom[0].end = option.dataZoom[0].end;
                 }
-                casinoChart.setOption(newOption, true);
+                // Hide tooltip before updating chart to avoid DOM errors
+                try { casinoChart.dispatchAction({ type: 'hideTip' }); } catch (e) {}
+                casinoChart.clear();
+                casinoChart.setOption(newOption, { notMerge: true, replaceMerge: ['series'] });
                 updateCheckboxColors();
             }
             // Listen for zoom events to update rebasing

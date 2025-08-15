@@ -1,0 +1,137 @@
+{
+  "startDate": "2005-01-01",
+  "symbols": [
+  {
+    "server": "YF",
+    "symbol_name": "0027.HK",
+    "desc": "Galaxy",
+    "freq": "D"
+  },
+  {
+    "server": "YF",
+    "symbol_name": "0880.HK",
+    "desc": "SJM",
+    "freq": "D"
+  },
+  {
+    "server": "YF",
+    "symbol_name": "1128.HK",
+    "desc": "Wynn",
+    "freq": "D"
+  },
+  {
+    "server": "YF",
+    "symbol_name": "1928.HK",
+    "desc": "Sands",
+    "freq": "D"
+  },
+  {
+    "server": "YF",
+    "symbol_name": "2282.HK",
+    "desc": "MGM",
+    "freq": "D"
+  },
+  {
+    "server": "YF",
+    "symbol_name": "0200.HK",
+    "desc": "Melco",
+    "freq": "D"
+  },
+  {
+    "server": "YF",
+    "symbol_name": "^HSI",
+    "desc": "Hang Seng",
+    "freq": "D"
+  },
+  {
+    "server": "YF",
+    "symbol_name": "000001.SS",
+    "desc": "Shanghai",
+    "freq": "D"
+  },
+  {
+    "server": "YF",
+    "symbol_name": "399001.SZ",
+    "desc": "Shenzhen",
+    "freq": "D"
+  },
+  {
+    "server": "YF",
+    "symbol_name": "HKD=X",
+    "desc": "USD/HKD",
+    "freq": "D"
+  },
+  {
+    "server": "YF",
+    "symbol_name": "CNY=X",
+    "desc": "USD/CNY",
+    "freq": "D"
+  },
+  {
+    "server": "YF",
+    "symbol_name": "DX-Y.NYB",
+    "desc": "USD Index",
+    "freq": "D"
+  },
+  {
+    "server": "YF",
+    "symbol_name": "GC=F",
+    "desc": "Gold",
+    "freq": "D"
+  },
+  {
+    "server": "YF",
+    "symbol_name": "SI=F",
+    "desc": "Silver",
+    "freq": "D"
+  },
+  {
+    "server": "FRED",
+    "symbol_name": "CHNCPIALLMINMEI",
+    "desc": "China CPI",
+    "freq": "M"
+  },
+  {
+    "server": "FRED",
+    "symbol_name": "MABMM201CNM189S",
+    "desc": "China M2",
+    "freq": "M"
+  },
+  {
+    "server": "FRED",
+    "symbol_name": "CSCICP02CNM460S",
+    "desc": "China Composite Consumer Confidence",
+    "freq": "M"
+  },
+  {
+    "server": "FRED",
+    "symbol_name": "EXPCH",
+    "desc": "US Exports to China",
+    "freq": "M"
+  },
+  {
+    "server": "FRED",
+    "symbol_name": "IR3TIB01CNM156N",
+    "desc": "China 3M Interest Rate",
+    "freq": "M"
+  },
+  {
+    "server": "FRED",
+    "symbol_name": "CHNLOLITOAASTSAM",
+    "desc": "OECD Composite Leading Indicator",
+    "freq": "M"
+  },
+  {
+    "server": "FRED",
+    "symbol_name": "CHNCSESFT02STSAM",
+    "desc": "OECD Future Tendency",
+    "freq": "M"
+  },
+  {
+    "server": "FRED",
+    "symbol_name": "CHNBSCICP02STSAM",
+    "desc": "OECD Business Tendency (Mfg)",
+    "freq": "M"
+  }
+  ]
+}

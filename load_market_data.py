@@ -2,6 +2,7 @@
 # Run "python load_market_data.py" or "python load_market_data.py incremental" to do incremental update
 # Run "python load_market_data.py full" to do full update
 
+
 import yfinance as yf
 import json
 import os
@@ -9,24 +10,13 @@ import pandas as pd
 import sys
 from datetime import datetime, timedelta
 
+# Load symbols from config.json (only those with server == 'YF')
+def load_symbols_from_config():
+    with open('config.json', 'r') as f:
+        config = json.load(f)
+    return [item['symbol_name'] for item in config if item['server'] == 'YF']
 
-# List of 6 Macau casino operators traded in Hong Kong + 3 indexes + USD/HKD FX
-symbols = [
-    '0027.HK',  # Galaxy Entertainment
-    '0880.HK',  # SJM Holdings
-    '1128.HK',  # Wynn Macau
-    '1928.HK',  # Sands China
-    '2282.HK',  # MGM China
-    '0200.HK',  # Melco International Development
-    '^HSI',     # Hang Seng Index (Hong Kong)
-    '000001.SS',# Shanghai Composite
-    '399001.SZ',# Shenzhen Component
-    'HKD=X',    # USD/HKD FX rate
-    'CNY=X',    # USD/CNY FX rate
-    'DX-Y.NYB', # USD Index (DXY)
-    'GC=F',     # Gold Futures
-    'SI=F'      # Silver Futures
-]
+symbols = load_symbols_from_config()
 
 output = {}
 
