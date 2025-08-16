@@ -1,0 +1,751 @@
+[
+  {
+    "event_name": "Chinese New Year Celebrations & Parade",
+    "organizer_name": "MGTO",
+    "date": "2025-02-11",
+    "impact_score": 0.9,
+    "reasoning": "Major cultural event drawing massive Chinese tourists for parades and festivities, boosting tourism during holiday season. High appeal as traditional celebration resonates deeply with mainland audience."
+  },
+  {
+    "event_name": "INFINITE 15th Anniversary Concert",
+    "organizer_name": "Studio City Event Center",
+    "date": "2025-01-11",
+    "impact_score": 0.4,
+    "reasoning": "INFINITE, older K-pop group, retains some loyal fans in China but lacks current top popularity compared to newer acts like BTS or EXO. Moderate influence on dedicated audience."
+  },
+  {
+    "event_name": "INFINITE 15th Anniversary Concert",
+    "organizer_name": "Studio City Event Center",
+    "date": "2025-01-12",
+    "impact_score": 0.4,
+    "reasoning": "INFINITE, older K-pop group, retains some loyal fans in China but lacks current top popularity compared to newer acts like BTS or EXO. Moderate influence on dedicated audience."
+  },
+  {
+    "event_name": "Dreamcatcher 2025 World Tour [Finale of 7 Doors] in Macau",
+    "organizer_name": "Broadway Theatre",
+    "date": "2025-03-02",
+    "impact_score": 0.3,
+    "reasoning": "Dreamcatcher has niche appeal in China with rock style K-pop, but not among top popular groups like TWICE or aespa. Limited broad impact on Chinese fans."
+  },
+  {
+    "event_name": "G.E.M. \"I AM GLORIA\" World Tour",
+    "organizer_name": "Galaxy Arena",
+    "date": "2025-03-14",
+    "impact_score": 0.95,
+    "reasoning": "G.E.M. is a top C-pop star hugely popular in mainland China for her powerful vocals and hits. Strong influence, drawing large fanbase from China."
+  },
+  {
+    "event_name": "G.E.M. \"I AM GLORIA\" World Tour",
+    "organizer_name": "Galaxy Arena",
+    "date": "2025-03-15",
+    "impact_score": 0.95,
+    "reasoning": "G.E.M. is a top C-pop star hugely popular in mainland China for her powerful vocals and hits. Strong influence, drawing large fanbase from China."
+  },
+  {
+    "event_name": "G.E.M. \"I AM GLORIA\" World Tour",
+    "organizer_name": "Galaxy Arena",
+    "date": "2025-03-16",
+    "impact_score": 0.95,
+    "reasoning": "G.E.M. is a top C-pop star hugely popular in mainland China for her powerful vocals and hits. Strong influence, drawing large fanbase from China."
+  },
+  {
+    "event_name": "NCT WISH Asian Tour",
+    "organizer_name": "Broadway Macau",
+    "date": "2025-04-05",
+    "impact_score": 0.8,
+    "reasoning": "NCT subunits like NCT WISH benefit from NCT's high popularity in China, with large fandom. Significant draw for K-pop enthusiasts."
+  },
+  {
+    "event_name": "NCT WISH Asian Tour",
+    "organizer_name": "Broadway Macau",
+    "date": "2025-04-06",
+    "impact_score": 0.8,
+    "reasoning": "NCT subunits like NCT WISH benefit from NCT's high popularity in China, with large fandom. Significant draw for K-pop enthusiasts."
+  },
+  {
+    "event_name": "K-POP Super Concert with CHANYEOL",
+    "organizer_name": "Broadway Theatre",
+    "date": "2025-04-27",
+    "impact_score": 0.9,
+    "reasoning": "CHANYEOL from EXO, one of China's most beloved K-pop groups. EXO's massive fanbase ensures high attendance and buzz among Chinese audience."
+  },
+  {
+    "event_name": "Toy Story 30th Anniversary Events",
+    "organizer_name": "Studio City/MGM Cotai",
+    "date": "2025-10-31",
+    "impact_score": 0.6,
+    "reasoning": "Disney events like Toy Story appeal to Chinese families and tourists, with moderate cultural influence. Attracts visitors but not star-driven."
+  },
+  {
+    "event_name": "Disney in Concert: Frozen",
+    "organizer_name": "MGM China (MGM Theater)",
+    "date": "2025-06-01",
+    "impact_score": 0.6,
+    "reasoning": "Frozen concert taps into Disney's popularity in China, family-oriented with broad appeal but no specific pop star. Moderate tourist draw."
+  },
+  {
+    "event_name": "aespa \"SYNK: PARALLEL LINE\" Tour",
+    "organizer_name": "Galaxy Arena",
+    "date": "2025-06-29",
+    "impact_score": 0.85,
+    "reasoning": "aespa ranks high in China with strong sales and recognition among 4th-gen K-pop. Significant influence on young Chinese fans."
+  },
+  {
+    "event_name": "aespa \"SYNK: PARALLEL LINE\" Tour",
+    "organizer_name": "Galaxy Arena",
+    "date": "2025-06-30",
+    "impact_score": 0.85,
+    "reasoning": "aespa ranks high in China with strong sales and recognition among 4th-gen K-pop. Significant influence on young Chinese fans."
+  },
+  {
+    "event_name": "G-Dragon \"PEACEMINUSONE\" World Tour",
+    "organizer_name": "Galaxy Arena",
+    "date": "2025-06-06",
+    "impact_score": 0.95,
+    "reasoning": "G-Dragon, Big Bang leader, iconic in China with enduring popularity and fashion influence. High impact from loyal fanbase."
+  },
+  {
+    "event_name": "G-Dragon \"PEACEMINUSONE\" World Tour",
+    "organizer_name": "Galaxy Arena",
+    "date": "2025-06-07",
+    "impact_score": 0.95,
+    "reasoning": "G-Dragon, Big Bang leader, iconic in China with enduring popularity and fashion influence. High impact from loyal fanbase."
+  },
+  {
+    "event_name": "G-Dragon \"PEACEMINUSONE\" World Tour",
+    "organizer_name": "Galaxy Arena",
+    "date": "2025-06-08",
+    "impact_score": 0.95,
+    "reasoning": "G-Dragon, Big Bang leader, iconic in China with enduring popularity and fashion influence. High impact from loyal fanbase."
+  },
+  {
+    "event_name": "Jacky Cheung 60+ Concert Tour",
+    "organizer_name": "Cotai Arena, The Venetian Macao",
+    "date": "2025-06-20",
+    "impact_score": 0.9,
+    "reasoning": "Jacky Cheung, HK pop legend, remains highly influential in mainland China despite age. Draws huge crowds with nostalgic hits."
+  },
+  {
+    "event_name": "Jacky Cheung 60+ Concert Tour",
+    "organizer_name": "Cotai Arena, The Venetian Macao",
+    "date": "2025-06-21",
+    "impact_score": 0.9,
+    "reasoning": "Jacky Cheung, HK pop legend, remains highly influential in mainland China despite age. Draws huge crowds with nostalgic hits."
+  },
+  {
+    "event_name": "Jacky Cheung 60+ Concert Tour",
+    "organizer_name": "Cotai Arena, The Venetian Macao",
+    "date": "2025-06-22",
+    "impact_score": 0.9,
+    "reasoning": "Jacky Cheung, HK pop legend, remains highly influential in mainland China despite age. Draws huge crowds with nostalgic hits."
+  },
+  {
+    "event_name": "Jacky Cheung 60+ Concert Tour",
+    "organizer_name": "Cotai Arena, The Venetian Macao",
+    "date": "2025-06-27",
+    "impact_score": 0.9,
+    "reasoning": "Jacky Cheung, HK pop legend, remains highly influential in mainland China despite age. Draws huge crowds with nostalgic hits."
+  },
+  {
+    "event_name": "Jacky Cheung 60+ Concert Tour",
+    "organizer_name": "Cotai Arena, The Venetian Macao",
+    "date": "2025-06-28",
+    "impact_score": 0.9,
+    "reasoning": "Jacky Cheung, HK pop legend, remains highly influential in mainland China despite age. Draws huge crowds with nostalgic hits."
+  },
+  {
+    "event_name": "Jacky Cheung 60+ Concert Tour",
+    "organizer_name": "Cotai Arena, The Venetian Macao",
+    "date": "2025-06-29",
+    "impact_score": 0.9,
+    "reasoning": "Jacky Cheung, HK pop legend, remains highly influential in mainland China despite age. Draws huge crowds with nostalgic hits."
+  },
+  {
+    "event_name": "Jacky Cheung 60+ Concert Tour",
+    "organizer_name": "Cotai Arena, The Venetian Macao",
+    "date": "2025-07-04",
+    "impact_score": 0.9,
+    "reasoning": "Jacky Cheung, HK pop legend, remains highly influential in mainland China despite age. Draws huge crowds with nostalgic hits."
+  },
+  {
+    "event_name": "Jacky Cheung 60+ Concert Tour",
+    "organizer_name": "Cotai Arena, The Venetian Macao",
+    "date": "2025-07-05",
+    "impact_score": 0.9,
+    "reasoning": "Jacky Cheung, HK pop legend, remains highly influential in mainland China despite age. Draws huge crowds with nostalgic hits."
+  },
+  {
+    "event_name": "Jacky Cheung 60+ Concert Tour",
+    "organizer_name": "Cotai Arena, The Venetian Macao",
+    "date": "2025-07-06",
+    "impact_score": 0.9,
+    "reasoning": "Jacky Cheung, HK pop legend, remains highly influential in mainland China despite age. Draws huge crowds with nostalgic hits."
+  },
+  {
+    "event_name": "Aaron Kwok Concert Series",
+    "organizer_name": "Studio City Event Center",
+    "date": "2025-07-12",
+    "impact_score": 0.85,
+    "reasoning": "Aaron Kwok, Heavenly King, popular in China for dance and music legacy. Strong appeal to mature audience."
+  },
+  {
+    "event_name": "Aaron Kwok Concert Series",
+    "organizer_name": "Studio City Event Center",
+    "date": "2025-07-13",
+    "impact_score": 0.85,
+    "reasoning": "Aaron Kwok, Heavenly King, popular in China for dance and music legacy. Strong appeal to mature audience."
+  },
+  {
+    "event_name": "Aaron Kwok Concert Series",
+    "organizer_name": "Studio City Event Center",
+    "date": "2025-07-19",
+    "impact_score": 0.85,
+    "reasoning": "Aaron Kwok, Heavenly King, popular in China for dance and music legacy. Strong appeal to mature audience."
+  },
+  {
+    "event_name": "Aaron Kwok Concert Series",
+    "organizer_name": "Studio City Event Center",
+    "date": "2025-07-20",
+    "impact_score": 0.85,
+    "reasoning": "Aaron Kwok, Heavenly King, popular in China for dance and music legacy. Strong appeal to mature audience."
+  },
+  {
+    "event_name": "Aaron Kwok Concert Series",
+    "organizer_name": "Studio City Event Center",
+    "date": "2025-07-25",
+    "impact_score": 0.85,
+    "reasoning": "Aaron Kwok, Heavenly King, popular in China for dance and music legacy. Strong appeal to mature audience."
+  },
+  {
+    "event_name": "Aaron Kwok Concert Series",
+    "organizer_name": "Studio City Event Center",
+    "date": "2025-07-26",
+    "impact_score": 0.85,
+    "reasoning": "Aaron Kwok, Heavenly King, popular in China for dance and music legacy. Strong appeal to mature audience."
+  },
+  {
+    "event_name": "Aaron Kwok Concert Series",
+    "organizer_name": "Studio City Event Center",
+    "date": "2025-07-27",
+    "impact_score": 0.85,
+    "reasoning": "Aaron Kwok, Heavenly King, popular in China for dance and music legacy. Strong appeal to mature audience."
+  },
+  {
+    "event_name": "Sandy Lam Live",
+    "organizer_name": "The Venetian Arena",
+    "date": "2025-07-19",
+    "impact_score": 0.7,
+    "reasoning": "Sandy Lam, classic HK singer, has dedicated fans in China but less mainstream now. Moderate nostalgic impact."
+  },
+  {
+    "event_name": "Sandy Lam Live",
+    "organizer_name": "The Venetian Arena",
+    "date": "2025-07-20",
+    "impact_score": 0.7,
+    "reasoning": "Sandy Lam, classic HK singer, has dedicated fans in China but less mainstream now. Moderate nostalgic impact."
+  },
+  {
+    "event_name": "Sandy Lam Live",
+    "organizer_name": "The Venetian Arena",
+    "date": "2025-07-26",
+    "impact_score": 0.7,
+    "reasoning": "Sandy Lam, classic HK singer, has dedicated fans in China but less mainstream now. Moderate nostalgic impact."
+  },
+  {
+    "event_name": "Sandy Lam Live",
+    "organizer_name": "The Venetian Arena",
+    "date": "2025-07-27",
+    "impact_score": 0.7,
+    "reasoning": "Sandy Lam, classic HK singer, has dedicated fans in China but less mainstream now. Moderate nostalgic impact."
+  },
+  {
+    "event_name": "Eason Chan Live",
+    "organizer_name": "Galaxy Arena",
+    "date": "2025-08-01",
+    "impact_score": 0.9,
+    "reasoning": "Eason Chan, top HK pop star, hugely popular in mainland with sold-out shows. Strong emotional connection with fans."
+  },
+  {
+    "event_name": "Eason Chan Live",
+    "organizer_name": "Galaxy Arena",
+    "date": "2025-08-02",
+    "impact_score": 0.9,
+    "reasoning": "Eason Chan, top HK pop star, hugely popular in mainland with sold-out shows. Strong emotional connection with fans."
+  },
+  {
+    "event_name": "Eason Chan Live",
+    "organizer_name": "Galaxy Arena",
+    "date": "2025-08-03",
+    "impact_score": 0.9,
+    "reasoning": "Eason Chan, top HK pop star, hugely popular in mainland with sold-out shows. Strong emotional connection with fans."
+  },
+  {
+    "event_name": "Eason Chan Live",
+    "organizer_name": "Galaxy Arena",
+    "date": "2025-08-08",
+    "impact_score": 0.9,
+    "reasoning": "Eason Chan, top HK pop star, hugely popular in mainland with sold-out shows. Strong emotional connection with fans."
+  },
+  {
+    "event_name": "Eason Chan Live",
+    "organizer_name": "Galaxy Arena",
+    "date": "2025-08-09",
+    "impact_score": 0.9,
+    "reasoning": "Eason Chan, top HK pop star, hugely popular in mainland with sold-out shows. Strong emotional connection with fans."
+  },
+  {
+    "event_name": "Eason Chan Live",
+    "organizer_name": "Galaxy Arena",
+    "date": "2025-08-10",
+    "impact_score": 0.9,
+    "reasoning": "Eason Chan, top HK pop star, hugely popular in mainland with sold-out shows. Strong emotional connection with fans."
+  },
+  {
+    "event_name": "WATERBOMB 2025 World Tour In Macao",
+    "organizer_name": "Macao Outdoor",
+    "date": "2025-08-09",
+    "impact_score": 0.8,
+    "reasoning": "WATERBOMB features K-pop acts, aligning with high concert popularity in Macau among Chinese. Attracts young festival-goers."
+  },
+  {
+    "event_name": "WATERBOMB 2025 World Tour In Macao",
+    "organizer_name": "Macao Outdoor",
+    "date": "2025-08-10",
+    "impact_score": 0.8,
+    "reasoning": "WATERBOMB features K-pop acts, aligning with high concert popularity in Macau among Chinese. Attracts young festival-goers."
+  },
+  {
+    "event_name": "NuNew 1st Concert Dream Catcher IN Macau",
+    "organizer_name": "Broadway Macau",
+    "date": "2025-08-16",
+    "impact_score": 0.7,
+    "reasoning": "NuNew, Thai BL star, gaining fame in China through dramas and music. Strong niche fanbase impact."
+  },
+  {
+    "event_name": "2025 Show Lo \"SHOW EVOLUTION\" World Tour",
+    "organizer_name": "Studio City Event Center",
+    "date": "2025-08-17",
+    "impact_score": 0.6,
+    "reasoning": "Show Lo, Taiwanese pop star, has past popularity in China but affected by scandals. Moderate draw."
+  },
+  {
+    "event_name": "TMElive International Music Awards",
+    "organizer_name": "Galaxy Arena",
+    "date": "2025-08-22",
+    "impact_score": 0.8,
+    "reasoning": "Awards show with various stars, boosts Macau's concert scene popular among Chinese. High buzz from multi-artist lineup."
+  },
+  {
+    "event_name": "TMElive International Music Awards",
+    "organizer_name": "Galaxy Arena",
+    "date": "2025-08-23",
+    "impact_score": 0.8,
+    "reasoning": "Awards show with various stars, boosts Macau's concert scene popular among Chinese. High buzz from multi-artist lineup."
+  },
+  {
+    "event_name": "WINNER [OUR MOMENT] 2025 Asia Concert in Macau",
+    "organizer_name": "Galaxy Entertainment Group (Broadway Theatre)",
+    "date": "2025-08-23",
+    "impact_score": 0.6,
+    "reasoning": "WINNER has moderate popularity in China as YG group, not top-tier like EXO. Appeals to dedicated fans."
+  },
+  {
+    "event_name": "Chopsticks Brothers Live in Macau",
+    "organizer_name": "Wynn Resorts (Wynn Palace)",
+    "date": "2025-08-23",
+    "impact_score": 0.5,
+    "reasoning": "Chopsticks Brothers known for viral hit in China, but limited ongoing influence. Nostalgic appeal."
+  },
+  {
+    "event_name": "TMEA Music Ceremony",
+    "organizer_name": "Galaxy Arena",
+    "date": "2025-08-24",
+    "impact_score": 0.85,
+    "reasoning": "Tencent awards feature top artists, highly anticipated by Chinese music fans. Significant cultural impact."
+  },
+  {
+    "event_name": "FRIENDS LIVE MUSIC SHOW (Jeff Chang, etc.)",
+    "organizer_name": "Sands China Ltd. (The Venetian Arena)",
+    "date": "2025-08-30",
+    "impact_score": 0.7,
+    "reasoning": "Jeff Chang, love song prince, popular in China; multi-artist show enhances appeal. Moderate to high nostalgic draw."
+  },
+  {
+    "event_name": "Johnny Yip Golden Melodies Years",
+    "organizer_name": "Broadway Theater Macau",
+    "date": "2025-08-30",
+    "impact_score": 0.3,
+    "reasoning": "Johnny Yip, older Cantopop singer, limited current influence in mainland China. Niche audience."
+  },
+  {
+    "event_name": "BAEKHYUN <lonsdaleite> in MACAO</lonsdaleite>",
+    "organizer_name": "Galaxy Arena",
+    "date": "2025-08-30",
+    "impact_score": 0.9,
+    "reasoning": "BAEKHYUN from EXO, top K-pop act with huge Chinese fandom. Strong solo influence."
+  },
+  {
+    "event_name": "BAEKHYUN <lonsdaleite> in MACAO</lonsdaleite>",
+    "organizer_name": "Galaxy Arena",
+    "date": "2025-08-31",
+    "impact_score": 0.9,
+    "reasoning": "BAEKHYUN from EXO, top K-pop act with huge Chinese fandom. Strong solo influence."
+  },
+  {
+    "event_name": "Air Supply 50th Anniversary Tour",
+    "organizer_name": "Broadway Theatre",
+    "date": "2025-09-06",
+    "impact_score": 0.6,
+    "reasoning": "Air Supply has legacy popularity in Asia, including China, with enduring hits. Appeals to older audience."
+  },
+  {
+    "event_name": "Dear Jane Live in Macau 2025",
+    "organizer_name": "Galaxy Arena",
+    "date": "2025-09-13",
+    "impact_score": 0.5,
+    "reasoning": "Dear Jane, HK band, moderately popular in Greater China region. Limited mainland dominance."
+  },
+  {
+    "event_name": "P1Harmony Live Tour [FLAME ON] in MACAU",
+    "organizer_name": "Melco Resorts – Studio City",
+    "date": "2025-09-13",
+    "impact_score": 0.5,
+    "reasoning": "P1Harmony, rising 4th-gen K-pop, gaining traction but not top in China. Moderate fan impact."
+  },
+  {
+    "event_name": "33rd Macau International Fireworks Display Contest",
+    "organizer_name": "MGTO",
+    "date": "2025-10-01",
+    "impact_score": 0.8,
+    "reasoning": "Fireworks contest highly popular among Chinese tourists for spectacle. Draws crowds during holidays."
+  },
+  {
+    "event_name": "33rd Macau International Fireworks Display Contest",
+    "organizer_name": "MGTO",
+    "date": "2025-10-05",
+    "impact_score": 0.8,
+    "reasoning": "Fireworks contest highly popular among Chinese tourists for spectacle. Draws crowds during holidays."
+  },
+  {
+    "event_name": "STEP by STEPHY Live in Macau 2025",
+    "organizer_name": "Sands China Ltd. (The Venetian Arena)",
+    "date": "2025-09-20",
+    "impact_score": 0.4,
+    "reasoning": "Stephy Tang, HK singer, has niche following in China. Limited broad influence."
+  },
+  {
+    "event_name": "STEP by STEPHY Live in Macau 2025",
+    "organizer_name": "Sands China Ltd. (The Venetian Arena)",
+    "date": "2025-09-21",
+    "impact_score": 0.4,
+    "reasoning": "Stephy Tang, HK singer, has niche following in China. Limited broad influence."
+  },
+  {
+    "event_name": "DOH KYUNG SOO <bloom> in MACAU</bloom>",
+    "organizer_name": "Melco Resorts – Studio City",
+    "date": "2025-09-20",
+    "impact_score": 0.9,
+    "reasoning": "D.O. from EXO, massively popular in China. High solo fan engagement."
+  },
+  {
+    "event_name": "TWICE 'THIS IS FOR' World Tour in Macao",
+    "organizer_name": "Sands China Ltd. (The Venetian Arena)",
+    "date": "2025-09-27",
+    "impact_score": 0.95,
+    "reasoning": "TWICE consistently ranks among top K-pop groups in China. Huge draw for fans."
+  },
+  {
+    "event_name": "TWICE 'THIS IS FOR' World Tour in Macao",
+    "organizer_name": "Sands China Ltd. (The Venetian Arena)",
+    "date": "2025-09-28",
+    "impact_score": 0.95,
+    "reasoning": "TWICE consistently ranks among top K-pop groups in China. Huge draw for fans."
+  },
+  {
+    "event_name": "Hwasa [Twits] 1st Fancon Tour in MACAU",
+    "organizer_name": "Melco Resorts – Studio City",
+    "date": "2025-09-27",
+    "impact_score": 0.6,
+    "reasoning": "Hwasa from MAMAMOO has moderate solo popularity in China. Appeals to K-pop followers."
+  },
+  {
+    "event_name": "NBA China Games: Phoenix Suns vs Brooklyn Nets – Game 1",
+    "organizer_name": "Sands China x NBA (The Venetian Arena)",
+    "date": "2025-10-10",
+    "impact_score": 0.95,
+    "reasoning": "NBA hugely popular in China; Macau games mark return, massive audience impact. Draws millions of fans."
+  },
+  {
+    "event_name": "NBA China Games: Phoenix Suns vs Brooklyn Nets – Game 2",
+    "organizer_name": "Sands China x NBA (The Venetian Arena)",
+    "date": "2025-10-12",
+    "impact_score": 0.95,
+    "reasoning": "Second NBA game amplifies excitement in China, where basketball is wildly followed. High engagement expected."
+  },
+  {
+    "event_name": "hush! Beach Concerts 2025 (music festival)",
+    "organizer_name": "Macao Cultural Affairs Bureau (IC)",
+    "date": "2025-10-18",
+    "impact_score": 0.7,
+    "reasoning": "Beach music festival aligns with rising popularity of concerts in Macau. Attracts Chinese youth."
+  },
+  {
+    "event_name": "hush! Beach Concerts 2025 (music festival)",
+    "organizer_name": "Macao Cultural Affairs Bureau (IC)",
+    "date": "2025-10-19",
+    "impact_score": 0.7,
+    "reasoning": "Beach music festival aligns with rising popularity of concerts in Macau. Attracts Chinese youth."
+  },
+  {
+    "event_name": "25th Lusofonia Festival",
+    "organizer_name": "Cultural Affairs Bureau / Taipa Houses",
+    "date": "2025-10-24",
+    "impact_score": 0.4,
+    "reasoning": "Cultural festival with Portuguese focus, less mass appeal to mainland Chinese tourists. Niche interest."
+  },
+  {
+    "event_name": "25th Lusofonia Festival",
+    "organizer_name": "Cultural Affairs Bureau / Taipa Houses",
+    "date": "2025-10-25",
+    "impact_score": 0.4,
+    "reasoning": "Cultural festival with Portuguese focus, less mass appeal to mainland Chinese tourists. Niche interest."
+  },
+  {
+    "event_name": "25th Lusofonia Festival",
+    "organizer_name": "Cultural Affairs Bureau / Taipa Houses",
+    "date": "2025-10-26",
+    "impact_score": 0.4,
+    "reasoning": "Cultural festival with Portuguese focus, less mass appeal to mainland Chinese tourists. Niche interest."
+  },
+  {
+    "event_name": "24th Macau Food Festival",
+    "organizer_name": "United Association of Macao Restaurant Sectors",
+    "date": "2025-11-07",
+    "impact_score": 0.8,
+    "reasoning": "Food festival highly popular among Chinese for culinary tourism. Draws food enthusiasts."
+  },
+  {
+    "event_name": "24th Macau Food Festival",
+    "organizer_name": "United Association of Macao Restaurant Sectors",
+    "date": "2025-11-08",
+    "impact_score": 0.8,
+    "reasoning": "Food festival highly popular among Chinese for culinary tourism. Draws food enthusiasts."
+  },
+  {
+    "event_name": "24th Macau Food Festival",
+    "organizer_name": "United Association of Macao Restaurant Sectors",
+    "date": "2025-11-09",
+    "impact_score": 0.8,
+    "reasoning": "Food festival highly popular among Chinese for culinary tourism. Draws food enthusiasts."
+  },
+  {
+    "event_name": "24th Macau Food Festival",
+    "organizer_name": "United Association of Macao Restaurant Sectors",
+    "date": "2025-11-10",
+    "impact_score": 0.8,
+    "reasoning": "Food festival highly popular among Chinese for culinary tourism. Draws food enthusiasts."
+  },
+  {
+    "event_name": "24th Macau Food Festival",
+    "organizer_name": "United Association of Macao Restaurant Sectors",
+    "date": "2025-11-11",
+    "impact_score": 0.8,
+    "reasoning": "Food festival highly popular among Chinese for culinary tourism. Draws food enthusiasts."
+  },
+  {
+    "event_name": "24th Macau Food Festival",
+    "organizer_name": "United Association of Macao Restaurant Sectors",
+    "date": "2025-11-12",
+    "impact_score": 0.8,
+    "reasoning": "Food festival highly popular among Chinese for culinary tourism. Draws food enthusiasts."
+  },
+  {
+    "event_name": "24th Macau Food Festival",
+    "organizer_name": "United Association of Macao Restaurant Sectors",
+    "date": "2025-11-13",
+    "impact_score": 0.8,
+    "reasoning": "Food festival highly popular among Chinese for culinary tourism. Draws food enthusiasts."
+  },
+  {
+    "event_name": "24th Macau Food Festival",
+    "organizer_name": "United Association of Macao Restaurant Sectors",
+    "date": "2025-11-14",
+    "impact_score": 0.8,
+    "reasoning": "Food festival highly popular among Chinese for culinary tourism. Draws food enthusiasts."
+  },
+  {
+    "event_name": "24th Macau Food Festival",
+    "organizer_name": "United Association of Macao Restaurant Sectors",
+    "date": "2025-11-15",
+    "impact_score": 0.8,
+    "reasoning": "Food festival highly popular among Chinese for culinary tourism. Draws food enthusiasts."
+  },
+  {
+    "event_name": "24th Macau Food Festival",
+    "organizer_name": "United Association of Macao Restaurant Sectors",
+    "date": "2025-11-16",
+    "impact_score": 0.8,
+    "reasoning": "Food festival highly popular among Chinese for culinary tourism. Draws food enthusiasts."
+  },
+  {
+    "event_name": "24th Macau Food Festival",
+    "organizer_name": "United Association of Macao Restaurant Sectors",
+    "date": "2025-11-17",
+    "impact_score": 0.8,
+    "reasoning": "Food festival highly popular among Chinese for culinary tourism. Draws food enthusiasts."
+  },
+  {
+    "event_name": "24th Macau Food Festival",
+    "organizer_name": "United Association of Macao Restaurant Sectors",
+    "date": "2025-11-18",
+    "impact_score": 0.8,
+    "reasoning": "Food festival highly popular among Chinese for culinary tourism. Draws food enthusiasts."
+  },
+  {
+    "event_name": "24th Macau Food Festival",
+    "organizer_name": "United Association of Macao Restaurant Sectors",
+    "date": "2025-11-19",
+    "impact_score": 0.8,
+    "reasoning": "Food festival highly popular among Chinese for culinary tourism. Draws food enthusiasts."
+  },
+  {
+    "event_name": "24th Macau Food Festival",
+    "organizer_name": "United Association of Macao Restaurant Sectors",
+    "date": "2025-11-20",
+    "impact_score": 0.8,
+    "reasoning": "Food festival highly popular among Chinese for culinary tourism. Draws food enthusiasts."
+  },
+  {
+    "event_name": "24th Macau Food Festival",
+    "organizer_name": "United Association of Macao Restaurant Sectors",
+    "date": "2025-11-21",
+    "impact_score": 0.8,
+    "reasoning": "Food festival highly popular among Chinese for culinary tourism. Draws food enthusiasts."
+  },
+  {
+    "event_name": "24th Macau Food Festival",
+    "organizer_name": "United Association of Macao Restaurant Sectors",
+    "date": "2025-11-22",
+    "impact_score": 0.8,
+    "reasoning": "Food festival highly popular among Chinese for culinary tourism. Draws food enthusiasts."
+  },
+  {
+    "event_name": "24th Macau Food Festival",
+    "organizer_name": "United Association of Macao Restaurant Sectors",
+    "date": "2025-11-23",
+    "impact_score": 0.8,
+    "reasoning": "Food festival highly popular among Chinese for culinary tourism. Draws food enthusiasts."
+  },
+  {
+    "event_name": "72nd Macau Grand Prix (major citywide event)",
+    "organizer_name": "Macau Grand Prix Organizing Committee",
+    "date": "2025-11-13",
+    "impact_score": 0.85,
+    "reasoning": "Iconic racing event attracts Chinese motorsport fans and tourists. High excitement level."
+  },
+  {
+    "event_name": "72nd Macau Grand Prix (major citywide event)",
+    "organizer_name": "Macau Grand Prix Organizing Committee",
+    "date": "2025-11-14",
+    "impact_score": 0.85,
+    "reasoning": "Iconic racing event attracts Chinese motorsport fans and tourists. High excitement level."
+  },
+  {
+    "event_name": "72nd Macau Grand Prix (major citywide event)",
+    "organizer_name": "Macau Grand Prix Organizing Committee",
+    "date": "2025-11-15",
+    "impact_score": 0.85,
+    "reasoning": "Iconic racing event attracts Chinese motorsport fans and tourists. High excitement level."
+  },
+  {
+    "event_name": "72nd Macau Grand Prix (major citywide event)",
+    "organizer_name": "Macau Grand Prix Organizing Committee",
+    "date": "2025-11-16",
+    "impact_score": 0.85,
+    "reasoning": "Iconic racing event attracts Chinese motorsport fans and tourists. High excitement level."
+  },
+  {
+    "event_name": "PP Krit 'My Pleasure Concert: AFTERGLOW' in Macau",
+    "organizer_name": "Sands China Ltd. (The Venetian Arena)",
+    "date": "2025-11-29",
+    "impact_score": 0.7,
+    "reasoning": "PP Krit, Thai BL singer, popular in China via dramas. Strong niche influence."
+  },
+  {
+    "event_name": "PP Krit 'My Pleasure Concert: AFTERGLOW' in Macau",
+    "organizer_name": "Sands China Ltd. (The Venetian Arena)",
+    "date": "2025-11-30",
+    "impact_score": 0.7,
+    "reasoning": "PP Krit, Thai BL singer, popular in China via dramas. Strong niche influence."
+  },
+  {
+    "event_name": "Clockenflap Macau (Music Festival)",
+    "organizer_name": "Major outdoor venue",
+    "date": "2025-12-05",
+    "impact_score": 0.75,
+    "reasoning": "Music festival expansion popular among Chinese for diverse acts. Growing regional appeal."
+  },
+  {
+    "event_name": "Clockenflap Macau (Music Festival)",
+    "organizer_name": "Major outdoor venue",
+    "date": "2025-12-06",
+    "impact_score": 0.75,
+    "reasoning": "Music festival expansion popular among Chinese for diverse acts. Growing regional appeal."
+  },
+  {
+    "event_name": "Clockenflap Macau (Music Festival)",
+    "organizer_name": "Major outdoor venue",
+    "date": "2025-12-07",
+    "impact_score": 0.75,
+    "reasoning": "Music festival expansion popular among Chinese for diverse acts. Growing regional appeal."
+  },
+  {
+    "event_name": "Macao International Parade",
+    "organizer_name": "Cultural Affairs Bureau",
+    "date": "2025-12-07",
+    "impact_score": 0.5,
+    "reasoning": "Cultural parade has moderate draw for Chinese tourists interested in local festivities. Limited star power."
+  },
+  {
+    "event_name": "Macao International Parade",
+    "organizer_name": "Cultural Affairs Bureau",
+    "date": "2025-12-08",
+    "impact_score": 0.5,
+    "reasoning": "Cultural parade has moderate draw for Chinese tourists interested in local festivities. Limited star power."
+  },
+  {
+    "event_name": "S2O Macao Songkran Music Festival 2025",
+    "organizer_name": "S2O Asia (Macao Outdoor Performance Venue)",
+    "date": "2025-12-20",
+    "impact_score": 0.7,
+    "reasoning": "EDM festival with Thai twist, aligns with music event popularity in Macau. Attracts party crowd."
+  },
+  {
+    "event_name": "S2O Macao Songkran Music Festival 2025",
+    "organizer_name": "S2O Asia (Macao Outdoor Performance Venue)",
+    "date": "2025-12-21",
+    "impact_score": 0.7,
+    "reasoning": "EDM festival with Thai twist, aligns with music event popularity in Macau. Attracts party crowd."
+  },
+  {
+    "event_name": "Various New Year's Eve Countdown Concerts",
+    "organizer_name": "Major Integrated Resorts (e.g., Wynn, The Londoner)",
+    "date": "2025-12-31",
+    "impact_score": 0.8,
+    "reasoning": "NYE concerts at resorts draw Chinese for celebrations, high festive impact. Multi-venue appeal."
+  },
+  {
+    "event_name": "Macao Light Festival 2025",
+    "organizer_name": "MGTO",
+    "date": "2025-12-07",
+    "impact_score": 0.75,
+    "reasoning": "Light festival popular for visuals, attracting Chinese tourists exploring Macau. Enhances holiday vibe."
+  },
+  {
+    "event_name": "Macao Light Festival 2025",
+    "organizer_name": "MGTO",
+    "date": "2025-02-28",
+    "impact_score": 0.75,
+    "reasoning": "Light festival popular for visuals, attracting Chinese tourists exploring Macau. Enhances holiday vibe."
+  }
+]

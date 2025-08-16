@@ -200,6 +200,14 @@
     "freq": "M",
     "field_name": "FRED_mfg_tendency",
     "category": "China Macro"
+  },
+  {
+    "server": "AI",
+    "symbol_name": "EVENTS",
+    "desc": "Macau Concerts & Events",
+    "freq": "D",
+    "field_name": "Events",
+    "category": "Events"
   }
   ]
 }
