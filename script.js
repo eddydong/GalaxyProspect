@@ -168,7 +168,7 @@
                     if (val && typeof val === 'object' && 'value' in val) {
                         val = val.value;
                     }
-                    symbolData[symbol][date] = { 'value': val };
+                    symbolData[symbol][date] = data[symbol];
                 });
             });
             return symbolData;
