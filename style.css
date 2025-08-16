@@ -1,3 +1,8 @@
+.series-categories > .category-label,
+.series-categories > .category-label:hover,
+.series-categories > .category-label:focus {
+    box-shadow: none !important;
+}
 /* Disabled checkboxes: must come after checked to override border */
 .series-categories > label > input[type="checkbox"]:disabled,
 .series-categories > label > input[type="checkbox"]:disabled:checked {
@@ -12,9 +17,10 @@
 }
 /* Feature panel: 50% window height */
 .feature-panel {
-    height: 95vh;
-    min-height: 400px;
-    max-height: 100vh;
+    box-sizing: border-box;
+    height: 60vh;
+    min-height: 300px;
+    max-height: 80vh;
     overflow-y: auto;
 }
 /* Ensure active style takes precedence over hover for mode buttons */
@@ -62,6 +68,7 @@
 }
 
 #panel-series {
+    box-sizing: border-box;
     padding: 1.2em 1.5em;
     border-radius: 4px;
     height: 98vh;
@@ -300,8 +307,9 @@ body {
     width: max-content;
     min-width: unset;
     max-width: unset;
-    height: 32vh;
-    min-height: 220px;
+    height: 60vh;
+    min-height: 300px;
+    max-height: 80vh;
     overflow-x: auto;
 }
 
@@ -311,7 +319,9 @@ body {
     grid-auto-flow: column;
     grid-template-rows: repeat(auto-fill, minmax(30px, 1fr));
     gap: 0.32em 1em;
-    height: 100%;
+    height: calc(100% - 2.4em); /* Adjust for panel vertical padding (1.2em top + 1.2em bottom) */
+    overflow-y: auto;
+    padding-bottom: 0.2em;
     min-width: 420px;
     width: max-content;
     clear: both;
@@ -321,19 +331,6 @@ body {
         overflow-y: auto;
 }
 .category-block label,
-.category-label {
-    width: 100%;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    padding: 0.18em 0 0.18em 0 !important;
-    margin-left: 0 !important;
-    font-weight: 600;
-    font-size: 15px;
-    background: none;
-    border: none;
-    color: #fff;
-}
 .category-block {
     display: flex;
     flex-direction: column;
@@ -431,11 +428,11 @@ body {
     font-weight: 700;
     letter-spacing: 1.5px;
     color: #fff;
-    background: linear-gradient(90deg, #00bcd4 0%, #232837 100%);
+    background: #00bcd4;
     border-radius: 6px;
     border: 1.2px solid #2e3448;
-    box-shadow: 0 4px 16px 0 rgba(0,188,212,0.13);
-    text-shadow: none;
+    box-shadow: none !important;
+    text-shadow: none !important;
     text-transform: uppercase;
     z-index: 2;
     position: relative;
