@@ -316,12 +316,12 @@
                         yAxisIndex: 0,
                         showSymbol: true,
                         symbol: 'circle',
-                        symbolSize: 18, // always large
+                        symbolSize: 10, // match 'events' line dot size
                         symbolKeepAspect: true,
                         connectNulls: true,
                         lineStyle: { width: 2, color: getColor(idx) },
                         itemStyle: { color: getColor(idx) },
-                        emphasis: { focus: 'series' },
+                        emphasis: { focus: 'series' }, // restore default dimming
                         tooltip: {
                             valueFormatter: function (value, i) {
                                 if ((normalized || indexed) && typeof value === 'number' && typeof actualValues[i] === 'number') {
@@ -384,9 +384,10 @@
                     barMinWidth: 8,
                     barMaxWidth: 24,
                     itemStyle: { color: eventColor, opacity: 0.45 },
-                    emphasis: { focus: 'series' },
+                    emphasis: { focus: 'series' }, // restore default dimming
                     z: 2,
-                    legendHoverLink: true
+                    legendHoverLink: true,
+                    clip: false
                 });
                 // Solid line series for event values (same name and color)
                 series.push({
@@ -394,12 +395,15 @@
                     type: 'line',
                     data: eventValues,
                     yAxisIndex: 0,
-                    showSymbol: false,
-                    connectNulls: true,
+                    showSymbol: false, // Restore to default: only show symbol on hover/emphasis
+                    symbol: 'circle',
+                    symbolSize: 10,
+                    symbolKeepAspect: true,
+                    connectNulls: true, // Connect across nulls
                     smooth: window.smoothLineEnabled === true,
                     lineStyle: { width: 2, color: eventColor, type: 'solid' },
                     itemStyle: { color: eventColor },
-                    emphasis: { focus: 'series' },
+                    emphasis: { focus: 'series' }, // restore default dimming
                     z: 3,
                     legendHoverLink: true
                 });
@@ -745,6 +749,7 @@
             });
             updateSmoothBtn();
             casinoChart.setOption(chartOption);
+            // Dimming behavior restored to default; no custom highlight logic
             // Responsive: resize chart on window resize
             window.addEventListener('resize', () => {
                 casinoChart.resize();
