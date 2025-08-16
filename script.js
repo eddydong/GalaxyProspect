@@ -466,7 +466,9 @@
                             let eventList = data.events[date].events.map(ev => {
                                 let txt = `<div style=\"margin-bottom:6px;font-size:${globalFontSize}px\">`;
                                 Object.entries(ev).forEach(([key, value]) => {
-                                    txt += `<b><span style='color:${themeColor}'>${key}</span>:</b> ${typeof value === 'object' ? JSON.stringify(value) : value}<br>`;
+                                    // Capitalize field name for display
+                                    const capKey = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                                    txt += `<b><span style='color:${themeColor}'>${capKey}</span>:</b> ${typeof value === 'object' ? JSON.stringify(value) : value}<br>`;
                                 });
                                 txt += '</div>';
                                 return txt;
@@ -493,7 +495,7 @@
                     }
                 },
                 legend: { show: false, textStyle: { fontFamily: 'MCI' } },
-                grid: { left: 52, right: 56, top: 85, bottom: 28 },
+                grid: { left: 52, right: 52, top: 85, bottom: 28 },
                 dataZoom: [
                     {
                         type: 'slider',

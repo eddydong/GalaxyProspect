@@ -9,15 +9,15 @@
 .series-categories > .category-label,
 .series-categories > .category-label:hover,
 .series-categories > .category-label:focus {
-    box-shadow: none !important;
+    box-shadow: none;
 }
 /* Disabled checkboxes: must come after checked to override border */
 .series-categories > label > input[type="checkbox"]:disabled,
 .series-categories > label > input[type="checkbox"]:disabled:checked {
-    border-color: #888a92 !important;
-    background: #232837 !important;
-    cursor: not-allowed !important;
-    box-shadow: none !important;
+    border-color: #888a92;
+    background: #232837;
+    cursor: not-allowed;
+    box-shadow: none;
 }
 /* Ensure series-categories fills parent for feature-panel height to work */
 #series-categories {
@@ -60,7 +60,7 @@
 /* Feature button selected state: 80% opaque background */
 .series-categories > label.selected {
     background: #00bcd4;
-    color: #000 !important;
+    color: #000;
     border-color: #00bcd4;
     font-family: 'MCI', sans-serif;
     font-size: 16px;
@@ -225,18 +225,18 @@ body {
 }
 
 #panel-mode .mode-btn, #panel_series .mode-btn {
-    width: 220px;
-    min-width: 220px;
-    max-width: 220px;
     color: #fff;
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
     text-align: center;
-    font-family: 'MCI' !important;
+    font-family: 'MCI';
     transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
     box-shadow: none;
     outline: none;
+    width: 220px;
+    min-width: 220px;
+    max-width: 220px;
 }
 
 .mode-btn.active, .mode-btn:active {
@@ -247,7 +247,7 @@ body {
 }
 
 #panel-mode .mode-btn.active, #panel-mode .mode-btn:active {
-    color: #000 !important;
+    color: #000;
 }
 
 .mode-btn:hover:not(.active) {
@@ -379,7 +379,7 @@ body {
 }
 .series-categories > label:hover {
     background: #2e3448;
-    color: #fff !important;
+    color: #fff;
     border-color: #00bcd4;
     box-shadow: 0 2px 8px 0 rgba(0,188,212,0.10);
 }
@@ -413,13 +413,13 @@ body {
 }
 
 #casinoChart {
-    margin-left: 0 !important;
-    padding-left: 0 !important;
-    width: 100% !important;
+    margin-left: 0;
+    padding-left: 0;
+    width: 100%;
     display: flex;
     flex: 1 1 auto;
-    min-height: 0 !important;
-    min-width: 0 !important;
+    min-height: 0;
+    min-width: 0;
     box-sizing: border-box;
     /* Ensure chart respects container padding */
 }
@@ -439,9 +439,9 @@ body {
     color: #fff;
     background: linear-gradient(90deg, #00bcd4 0%, #232837 100%);
     border-radius: 6px;
-    border: none !important;
-    box-shadow: none !important;
-    text-shadow: none !important;
+    border: none;
+    box-shadow: none;
+    text-shadow: none;
     text-transform: uppercase;
     z-index: 2;
     position: relative;
@@ -459,16 +459,16 @@ body {
 
 /* About modal styles */
 .about-modal {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    background: rgba(24,28,36,0.85) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    z-index: 2147483647 !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(24,28,36,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2147483647;
     cursor: pointer;
     opacity: 0;
     pointer-events: none;
