@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GalaxyProspect Dashboard</title>
-    <script src="./echarts.min.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <script src="/static/echarts.min.js"></script>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <aside class="sidebar">
@@ -252,27 +252,30 @@
         }
 
         async function fetchConfig() {
-            const res = await fetch('config.json');
+            const res = await fetch('/static/config.json');
             configData = await res.json();
             categorizeSymbols();
         }
 
         async function fetchData() {
-            // Fetch from new API: returns array of row objects with all fields and date
-            const res = await fetch('/api/data');
-            const rows = await res.json();
+            // Fetch all data from backend (no date range)
+            const res = await fetch('/api/daily');
+            const docs = await res.json();
             // Transform to: { symbol: { date: { 'Adj Close': value }, ... }, ... }
             const symbolData = {};
-            if (rows.length > 0) {
-                const fields = Object.keys(rows[0]).filter(f => f !== 'date');
-                fields.forEach(symbol => { symbolData[symbol] = {}; });
-                rows.forEach(row => {
-                    const date = row.date;
-                    fields.forEach(symbol => {
-                        symbolData[symbol][date] = { 'Adj Close': row[symbol] };
-                    });
+            docs.forEach(doc => {
+                const date = doc._id;
+                const data = doc.data || {};
+                Object.keys(data).forEach(symbol => {
+                    if (!symbolData[symbol]) symbolData[symbol] = {};
+                    // If the field is an object with a 'value' key, use that for charting
+                    let val = data[symbol];
+                    if (val && typeof val === 'object' && 'value' in val) {
+                        val = val.value;
+                    }
+                    symbolData[symbol][date] = { 'Adj Close': val };
                 });
-            }
+            });
             return symbolData;
         }
 
@@ -597,7 +600,7 @@
             const catCheckboxes = {};
             const categoryToCheckboxes = {};
             allCategories.forEach(cat => {
-                const syms = (symbolCategories[cat] || []).filter(sym => data[sym]);
+                const syms = symbolCategories[cat] || [];
                 if (syms.length === 0) return;
                 // Category label as direct child
                 const labelDiv = document.createElement('div');

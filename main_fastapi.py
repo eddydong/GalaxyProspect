@@ -18,51 +18,14 @@ def api_daily(
 ):
     """
     Query daily data with optional fuzzy field search and date range.
-    - If no parameters: returns a list of all unique field names.
     - If field is provided: returns matching fields (fuzzy, case-insensitive).
     - If from/to are provided: filters by date range.
+    - If no parameters: returns all data.
     """
     client = pymongo.MongoClient('mongodb://localhost:27017/')
     db = client['MOWATCH']
     collection = db['daily_fact']
-    # If no query parameters at all, return field names only
-    from fastapi import Request
-    import inspect
-    # Get the current request object
-    request = None
-    for frame in inspect.stack():
-        if 'request' in frame.frame.f_locals:
-            request = frame.frame.f_locals['request']
-            break
-    if request is None:
-        try:
-            from fastapi import Request
-            import starlette.requests
-            request = starlette.requests.Request(scope={})
-        except Exception:
-            pass
-    # Fallback: check if all parameters are None
-    has_query = False
-    try:
-        # If running in FastAPI, request.query_params will exist
-        if request and hasattr(request, 'query_params') and request.query_params:
-            has_query = bool(request.query_params)
-    except Exception:
-        pass
-    if not (field or from_date or to_date) and not has_query:
-        docs = collection.find({}, {'data': 1})
-        field_names = set()
-        for doc in docs:
-            data = doc.get('data', {})
-            for k in data:
-                field_names.add(k)
-        return sorted(field_names)
-    # Otherwise, proceed as before
     query = {}
-    if not from_date and not to_date:
-        today = datetime.today()
-        from_date = (today - timedelta(days=90)).strftime('%Y-%m-%d')
-        to_date = today.strftime('%Y-%m-%d')
     if from_date and to_date:
         query['_id'] = {'$gte': from_date, '$lte': to_date}
     elif from_date:
@@ -86,6 +49,20 @@ def api_daily(
         for doc in docs:
             doc['_id'] = str(doc['_id'])
         return docs
+
+# New endpoint to list all field names in daily_fact
+@app.get("/api/list", response_class=JSONResponse, summary="List all field names in daily_fact", tags=["Data"])
+def api_list():
+    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    db = client['MOWATCH']
+    collection = db['daily_fact']
+    docs = collection.find({}, {'data': 1})
+    field_names = set()
+    for doc in docs:
+        data = doc.get('data', {})
+        for k in data:
+            field_names.add(k)
+    return sorted(field_names)
 
 @app.get("/", response_class=HTMLResponse, include_in_schema=False)
 def serve_index():

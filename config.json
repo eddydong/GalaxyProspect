@@ -206,7 +206,7 @@
     "symbol_name": "EVENTS",
     "desc": "Macau Concerts & Events",
     "freq": "D",
-    "field_name": "Events",
+    "field_name": "events",
     "category": "Events"
   }
   ]
