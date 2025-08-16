@@ -327,13 +327,25 @@
                     symbol: 'circle',
                     symbolSize: 7,
                     symbolKeepAspect: true,
-                    symbolSize: 7,
                     connectNulls: true,
                     lineStyle: { width: 2, color: getColor(idx) },
                     itemStyle: { color: getColor(idx) },
                     emphasis: { focus: 'series' },
                     tooltip: {
                         valueFormatter: function (value, i) {
+                            // Show event details if present
+                            const date = sortedDates[i];
+                            const rawDatum = data[symbol] && data[symbol][date];
+                            if (rawDatum && typeof rawDatum === 'object' && rawDatum.events && Array.isArray(rawDatum.events) && rawDatum.events.length > 0) {
+                                let eventList = rawDatum.events.map(ev => {
+                                    let txt = '';
+                                    if (ev.title) txt += `<b>${ev.title}</b>`;
+                                    if (ev.desc) txt += `<br>${ev.desc}`;
+                                    if (ev.impact_score !== undefined) txt += `<br>Impact: ${ev.impact_score}`;
+                                    return txt;
+                                }).join('<hr style=\'margin:4px 0;opacity:0.3\'>');
+                                return `<div style='max-width:320px'>${eventList}</div>`;
+                            }
                             if ((normalized || indexed) && typeof value === 'number' && typeof actualValues[i] === 'number') {
                                 return value.toFixed(3) + ' (actual: ' + formatKMB(actualValues[i]) + ')';
                             } else if (typeof value === 'number') {
@@ -375,7 +387,35 @@
                     },
                     backgroundColor: '#232837',
                     borderColor: '#fff',
-                    textStyle: { color: '#fff', fontFamily: 'MCI' }
+                    textStyle: { color: '#fff', fontFamily: 'MCI' },
+                    formatter: function(params) {
+                        // params is an array of series data for the hovered axis value
+                        if (!params || !params.length) return '';
+                        const date = params[0].axisValue;
+                        let html = '';
+                        // Show event details if present in data.events[date]
+                        if (data.events && data.events[date] && Array.isArray(data.events[date].events) && data.events[date].events.length > 0) {
+                            let eventList = data.events[date].events.map(ev => {
+                                let txt = '<div style="margin-bottom:6px">';
+                                Object.entries(ev).forEach(([key, value]) => {
+                                    txt += `<b>${key}:</b> ${typeof value === 'object' ? JSON.stringify(value) : value}<br>`;
+                                });
+                                txt += '</div>';
+                                return txt;
+                            }).join('<hr style=\'margin:4px 0;opacity:0.3\'>');
+                            html += `<div style='max-width:420px;word-break:break-word;white-space:pre-line;overflow-wrap:anywhere;margin-bottom:8px'><b>Events:</b><br>${eventList}</div>`;
+                        }
+                        // Add the default series tooltips
+                        html += params.map(param => {
+                            let val = param.value;
+                            if (typeof val === 'number') {
+                                return `<span style='color:${param.color};font-weight:bold'>&#9679;</span> ${param.seriesName}: ${val}`;
+                            } else {
+                                return `<span style='color:${param.color};font-weight:bold'>&#9679;</span> ${param.seriesName}: N/A`;
+                            }
+                        }).join('<br>');
+                        return html;
+                    }
                 },
                 legend: { show: false, textStyle: { fontFamily: 'MCI' } },
                 grid: { left: 52, right: 56, top: 85, bottom: 28 },
