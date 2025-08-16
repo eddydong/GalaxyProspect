@@ -12,7 +12,7 @@
   {
     "server" : "DSEC",
     "symbol_name": "245",
-    "desc": "Hotel Occupancy%",
+    "desc": "Hotel Occup. Rate",
     "freq": "M",
     "field_name": "DSEC_hotel",   
     "category": "Gaming"

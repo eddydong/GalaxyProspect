@@ -113,9 +113,13 @@
             });
 
             // Mode button highlight logic
+            // Group mode buttons by their parent .mode-options or .mode-card
             document.querySelectorAll('.mode-btn').forEach(btn => {
                 btn.addEventListener('mousedown', function() {
-                    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                    // Remove .active from all .mode-btn siblings (same parent)
+                    Array.from(this.parentNode.children).forEach(b => {
+                        if (b.classList && b.classList.contains('mode-btn')) b.classList.remove('active');
+                    });
                     this.classList.add('active');
                 });
             });
@@ -615,7 +619,7 @@
                 catCheckboxes[cat] = catCheckbox;
                 labelDiv.addEventListener('click', function(e) {
                     if (e.target !== catCheckbox) {
-                        const cbs = categoryToCheckboxes[cat];
+                        const cbs = categoryToCheckboxes[cat].filter(cb => !cb.disabled);
                         const allChecked = cbs.length > 0 && cbs.every(cb => cb.checked);
                         cbs.forEach(cb => { cb.checked = !allChecked; cb.dispatchEvent(new Event('change', {bubbles:true})); });
                         updateChart();
@@ -631,6 +635,10 @@
                     cb.type = 'checkbox';
                     cb.value = sym;
                     cb.checked = false;
+                    if (!data[sym] || (Array.isArray(data[sym]) && data[sym].length === 0)) {
+                        cb.disabled = true;
+                        itemLabel.classList.add('disabled');
+                    }
                     itemLabel.appendChild(cb);
                     itemLabel.appendChild(document.createTextNode(' ' + (symbolNames[sym] || sym)));
                     itemLabel.title = sym;
@@ -643,20 +651,26 @@
                     itemLabel.addEventListener('click', function(e) {
                         if (e.target === cb) return;
                         e.preventDefault();
-                        cb.checked = !cb.checked;
-                        cb.dispatchEvent(new Event('change', {bubbles:true}));
-                        updateChart();
+                        if (!cb.disabled) {
+                            cb.checked = !cb.checked;
+                            cb.dispatchEvent(new Event('change', {bubbles:true}));
+                            updateChart();
+                        }
                     });
                     cb.addEventListener('change', function() {
                         const catCheckbox = catCheckboxes[cat];
-                        const cbs = categoryToCheckboxes[cat];
+                        const cbs = categoryToCheckboxes[cat].filter(cb2 => !cb2.disabled);
                         const checkedCount = cbs.filter(cb2 => cb2.checked).length;
-                        if (checkedCount === cbs.length && cbs.length > 0) {
+                        if (cbs.length > 0 && checkedCount === cbs.length) {
                             catCheckbox.checked = true;
+                            catCheckbox.indeterminate = false;
+                        } else if (checkedCount === 0) {
+                            catCheckbox.checked = false;
+                            catCheckbox.indeterminate = false;
                         } else {
                             catCheckbox.checked = false;
+                            catCheckbox.indeterminate = true;
                         }
-                        catCheckbox.indeterminate = false;
                         updateChart();
                     });
                 });
@@ -843,13 +857,9 @@
             function updateModeBtns() {
                 modeBtns.forEach(btn => {
                     if (btn.getAttribute('data-mode') === currentMode) {
-                        btn.style.background = '#00bcd4';
-                        btn.style.color = '#181c24';
-                        btn.style.borderColor = '#00bcd4';
+                        btn.classList.add('active');
                     } else {
-                        btn.style.background = '#232837';
-                        btn.style.color = '#fff';
-                        btn.style.borderColor = '#2e3448';
+                        btn.classList.remove('active');
                     }
                 });
             }
