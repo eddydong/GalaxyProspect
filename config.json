@@ -2,6 +2,14 @@
   "startDate": "2005-01-01",
   "symbols": [
   {
+    "server": "AI",
+    "symbol_name": "EVENTS",
+    "desc": "Macau Concerts & Events",
+    "freq": "D",
+    "field_name": "events",
+    "category": "Events"
+  },
+  {
     "server" : "DSEC",
     "symbol_name": "1216",
     "desc": "Macau GGR",
@@ -200,14 +208,6 @@
     "freq": "M",
     "field_name": "FRED_mfg_tendency",
     "category": "China Macro"
-  },
-  {
-    "server": "AI",
-    "symbol_name": "EVENTS",
-    "desc": "Macau Concerts & Events",
-    "freq": "D",
-    "field_name": "events",
-    "category": "Events"
   }
   ]
 }

@@ -12,4 +12,6 @@
 
 7. fetch_YF_FRED.py => YF_FRED (various finance & economic indicator) collection in MongoDB
 
-8. 
+8. main_fastapi.py => run server
+
+9. visit 127.0.0.1:8000 from browser

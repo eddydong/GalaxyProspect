@@ -269,100 +269,148 @@
                     yMax = null;
                 }
             }
-            // Prepare series for each symbol
-            const series = selectedSymbols.map((symbol, idx) => {
-                if (!data[symbol]) return null; // skip if data missing
-                const entries = Object.entries(data[symbol]);
-                const dateToValue = Object.fromEntries(entries.map(([date, v]) => [date, v['value'] ?? null]));
-                let values = sortedDates.map(date => dateToValue[date] ?? null);
-                let actualValues = values.slice();
-                if (normalized && values.filter(v => v != null).length > 0) {
-                    // Min-max normalization: (value - min) / (max - min) within zoom window
-                    let min, max, range;
-                    if (opts.windowRange) {
-                        const [start, end] = opts.windowRange;
-                        const windowVals = values.slice(start, end + 1).filter(v => v != null);
-                        min = windowVals.length ? Math.min(...windowVals) : 0;
-                        max = windowVals.length ? Math.max(...windowVals) : 0;
-                        range = max - min;
-                        // Store actual values for tooltip
-                        actualValues = values.slice();
-                        values = values.map((v, i) => {
-                            if (v == null) return null;
-                            if (i < start || i > end) return null;
-                            // Always return a number for real data, null for missing
-                            return range === 0 ? 0 : (v - min) / range;
-                        });
-                    } else {
-                        const valid = values.filter(v => v != null);
-                        min = Math.min(...valid);
-                        max = Math.max(...valid);
-                        range = max - min;
-                        // Store actual values for tooltip
-                        actualValues = values.slice();
-                        values = values.map((v, i) => v == null ? null : (range === 0 ? 0 : (v - min) / range));
-                    }
-                } else if (indexed && values.filter(v => v != null).length > 0 && opts.windowRange) {
-                    // Indexed mode: divide by first non-null value in the current window
-                    const [start, end] = opts.windowRange;
-                    const windowVals = values.slice(start, end + 1);
-                    const firstIdxInWindow = windowVals.findIndex(v => v != null);
-                    const base = firstIdxInWindow !== -1 ? windowVals[firstIdxInWindow] : null;
-                    // Store actual values for tooltip
-                    actualValues = values.slice();
-                    values = values.map((v, i) => {
-                        if (v == null) return null;
-                        if (base == null) return null;
-                        // Always return a number for real data, null for missing
-                        return i >= start && i <= end ? v / base : null;
-                    });
-                }
-                return {
-                    name: symbolNames[symbol] + ' (' + symbol + ')',
-                    type: 'line',
-                    smooth: window.smoothLineEnabled === true,
-                    data: values,
-                    yAxisIndex: 0,
-                    showSymbol: true,
-                    symbol: 'circle',
-                    symbolSize: 7,
-                    symbolKeepAspect: true,
-                    connectNulls: true,
-                    lineStyle: { width: 2, color: getColor(idx) },
-                    itemStyle: { color: getColor(idx) },
-                    emphasis: { focus: 'series' },
-                    tooltip: {
-                        valueFormatter: function (value, i) {
-                            // Show event details if present
-                            const date = sortedDates[i];
-                            const rawDatum = data[symbol] && data[symbol][date];
-                            if (rawDatum && typeof rawDatum === 'object' && rawDatum.events && Array.isArray(rawDatum.events) && rawDatum.events.length > 0) {
-                                let eventList = rawDatum.events.map(ev => {
-                                    let txt = '';
-                                    if (ev.title) txt += `<b>${ev.title}</b>`;
-                                    if (ev.desc) txt += `<br>${ev.desc}`;
-                                    if (ev.impact_score !== undefined) txt += `<br>Impact: ${ev.impact_score}`;
-                                    return txt;
-                                }).join('<hr style=\'margin:4px 0;opacity:0.3\'>');
-                                return `<div style='max-width:320px'>${eventList}</div>`;
+            // Prepare series for each symbol, but skip 'events' (handled separately)
+            const series = selectedSymbols
+                .filter(symbol => symbol !== 'events')
+                .map((symbol, idx) => {
+                    if (!data[symbol]) return null; // skip if data missing
+                    const entries = Object.entries(data[symbol]);
+                    const dateToValue = Object.fromEntries(entries.map(([date, v]) => [date, v['value'] ?? null]));
+                    let values = sortedDates.map(date => dateToValue[date] ?? null);
+                    let actualValues = values.slice();
+                    if (normalized && values.filter(v => v != null).length > 0) {
+                        // Normalize to [0,1] based on min/max in the window
+                        let windowRange = opts.windowRange || [0, sortedDates.length - 1];
+                        let windowValues = values.slice(windowRange[0], windowRange[1] + 1).filter(v => v != null && isFinite(v));
+                        let min = Math.min(...windowValues);
+                        let max = Math.max(...windowValues);
+                        if (min === max) {
+                            min = min * 0.98;
+                            max = max * 1.02;
+                        }
+                        values = values.map(v => (v == null || !isFinite(v)) ? null : (v - min) / (max - min));
+                    } else if (indexed && values.filter(v => v != null).length > 0 && opts.windowRange) {
+                        // Index to 1 at the left edge of the window
+                        let windowRange = opts.windowRange;
+                        let baseIdx = windowRange[0];
+                        let base = values[baseIdx];
+                        if (base == null || !isFinite(base)) {
+                            // Find first non-null value in window
+                            for (let i = baseIdx; i <= windowRange[1]; ++i) {
+                                if (values[i] != null && isFinite(values[i])) {
+                                    base = values[i];
+                                    baseIdx = i;
+                                    break;
+                                }
                             }
-                            if ((normalized || indexed) && typeof value === 'number' && typeof actualValues[i] === 'number') {
-                                return value.toFixed(3) + ' (actual: ' + formatKMB(actualValues[i]) + ')';
-                            } else if (typeof value === 'number') {
-                                return formatKMB(value);
-                            } else {
-                                return 'N/A';
+                        }
+                        if (base != null && isFinite(base) && base !== 0) {
+                            values = values.map(v => (v == null || !isFinite(v)) ? null : v / base);
+                        }
+                    }
+                    return {
+                        name: symbolNames[symbol] + ' (' + symbol + ')',
+                        type: 'line',
+                        smooth: window.smoothLineEnabled === true,
+                        data: values,
+                        yAxisIndex: 0,
+                        showSymbol: true,
+                        symbol: 'circle',
+                        symbolSize: 18, // always large
+                        symbolKeepAspect: true,
+                        connectNulls: true,
+                        lineStyle: { width: 2, color: getColor(idx) },
+                        itemStyle: { color: getColor(idx) },
+                        emphasis: { focus: 'series' },
+                        tooltip: {
+                            valueFormatter: function (value, i) {
+                                if ((normalized || indexed) && typeof value === 'number' && typeof actualValues[i] === 'number') {
+                                    return value.toFixed(3) + ' (actual: ' + formatKMB(actualValues[i]) + ')';
+                                } else if (typeof value === 'number') {
+                                    return formatKMB(value);
+                                } else {
+                                    return 'N/A';
+                                }
+                            }
+                        }
+                    };
+                })
+                .filter(Boolean);
+
+            // Only add event bar + dotted line series if 'events' is selected
+            if (selectedSymbols.includes('events') && data.events) {
+                // Build event value array for all sortedDates
+                let eventValues = sortedDates.map(date => {
+                    const ev = data.events[date];
+                    if (ev && typeof ev.value === 'number') return ev.value;
+                    return null;
+                });
+                // Apply normalization/indexing to eventValues if needed
+                if (normalized && eventValues.filter(v => v != null).length > 0) {
+                    let windowRange = opts.windowRange || [0, sortedDates.length - 1];
+                    let windowVals = eventValues.slice(windowRange[0], windowRange[1] + 1).filter(v => v != null && isFinite(v));
+                    let min = Math.min(...windowVals);
+                    let max = Math.max(...windowVals);
+                    if (min === max) {
+                        min = min * 0.98;
+                        max = max * 1.02;
+                    }
+                    eventValues = eventValues.map(v => (v == null || !isFinite(v)) ? null : (v - min) / (max - min));
+                } else if (indexed && eventValues.filter(v => v != null).length > 0 && opts.windowRange) {
+                    let windowRange = opts.windowRange;
+                    let baseIdx = windowRange[0];
+                    let base = eventValues[baseIdx];
+                    if (base == null || !isFinite(base)) {
+                        for (let i = baseIdx; i <= windowRange[1]; ++i) {
+                            if (eventValues[i] != null && isFinite(eventValues[i])) {
+                                base = eventValues[i];
+                                baseIdx = i;
+                                break;
                             }
                         }
                     }
-                };
-            }).filter(Boolean);
+                    if (base != null && isFinite(base) && base !== 0) {
+                        eventValues = eventValues.map(v => (v == null || !isFinite(v)) ? null : v / base);
+                    }
+                }
+                // Use a single color for both bar and line
+                const eventColor = '#00bcd4';
+                // Bar series for event values
+                series.push({
+                    name: 'Event Impact',
+                    type: 'bar',
+                    data: eventValues,
+                    yAxisIndex: 0,
+                    barMinWidth: 8,
+                    barMaxWidth: 24,
+                    itemStyle: { color: eventColor, opacity: 0.45 },
+                    emphasis: { focus: 'series' },
+                    z: 2,
+                    legendHoverLink: true
+                });
+                // Solid line series for event values (same name and color)
+                series.push({
+                    name: 'Event Impact',
+                    type: 'line',
+                    data: eventValues,
+                    yAxisIndex: 0,
+                    showSymbol: false,
+                    connectNulls: true,
+                    smooth: window.smoothLineEnabled === true,
+                    lineStyle: { width: 2, color: eventColor, type: 'solid' },
+                    itemStyle: { color: eventColor },
+                    emphasis: { focus: 'series' },
+                    z: 3,
+                    legendHoverLink: true
+                });
+            }
             // No volume data handling
             // No volume data handling
             // Default to last 36 months (about 756 trading days)
             const defaultMonths = 36;
             const defaultDays = defaultMonths * 21; // ~21 trading days per month
             const defaultWindow = sortedDates.length > defaultDays ? Math.round((sortedDates.length - defaultDays) / sortedDates.length * 100) : 0;
+            const globalFontSize = 16;
             return {
                 animation: false,
                 tooltip: {
@@ -379,7 +427,7 @@
                             borderColor: '#00bcd4',
                             borderWidth: 1,
                             fontWeight: 'bold',
-                            fontSize: 16,
+                            fontSize: globalFontSize,
                             fontFamily: 'MCI',
                             padding: [6, 16],
                             margin: 0
@@ -387,31 +435,39 @@
                     },
                     backgroundColor: '#232837',
                     borderColor: '#fff',
-                    textStyle: { color: '#fff', fontFamily: 'MCI' },
+                    textStyle: { color: '#fff', fontFamily: 'MCI', fontSize: globalFontSize },
                     formatter: function(params) {
                         // params is an array of series data for the hovered axis value
                         if (!params || !params.length) return '';
                         const date = params[0].axisValue;
                         let html = '';
-                        // Show event details if present in data.events[date]
-                        if (data.events && data.events[date] && Array.isArray(data.events[date].events) && data.events[date].events.length > 0) {
+                        // Show event details only if 'events' series is selected (visible)
+                        if (selectedSymbols.includes('events') && data.events && data.events[date] && Array.isArray(data.events[date].events) && data.events[date].events.length > 0) {
+                            const themeColor = '#00bcd4';
                             let eventList = data.events[date].events.map(ev => {
-                                let txt = '<div style="margin-bottom:6px">';
+                                let txt = `<div style=\"margin-bottom:6px;font-size:${globalFontSize}px\">`;
                                 Object.entries(ev).forEach(([key, value]) => {
-                                    txt += `<b>${key}:</b> ${typeof value === 'object' ? JSON.stringify(value) : value}<br>`;
+                                    txt += `<b><span style='color:${themeColor}'>${key}</span>:</b> ${typeof value === 'object' ? JSON.stringify(value) : value}<br>`;
                                 });
                                 txt += '</div>';
                                 return txt;
                             }).join('<hr style=\'margin:4px 0;opacity:0.3\'>');
-                            html += `<div style='max-width:420px;word-break:break-word;white-space:pre-line;overflow-wrap:anywhere;margin-bottom:8px'><b>Events:</b><br>${eventList}</div>`;
+                            html += `<div style='max-width:420px;word-break:break-word;white-space:pre-line;overflow-wrap:anywhere;margin-bottom:8px;font-size:${globalFontSize}px'><b>Events:</b><br>${eventList}</div>`;
                         }
-                        // Add the default series tooltips
-                        html += params.map(param => {
+                        // Add the default series tooltips, but avoid duplicate 'Event Impact' lines
+                        const seen = new Set();
+                        html += params.filter(param => {
+                            // Only show the first occurrence of each seriesName+value combo
+                            const key = param.seriesName + '|' + param.value;
+                            if (seen.has(key)) return false;
+                            seen.add(key);
+                            return true;
+                        }).map(param => {
                             let val = param.value;
                             if (typeof val === 'number') {
-                                return `<span style='color:${param.color};font-weight:bold'>&#9679;</span> ${param.seriesName}: ${val}`;
+                                return `<span style='color:${param.color};font-weight:bold;font-size:${globalFontSize}px'>&#9679;</span> <span style='font-size:${globalFontSize}px'>${param.seriesName}: ${val}</span>`;
                             } else {
-                                return `<span style='color:${param.color};font-weight:bold'>&#9679;</span> ${param.seriesName}: N/A`;
+                                return `<span style='color:${param.color};font-weight:bold;font-size:${globalFontSize}px'>&#9679;</span> <span style='font-size:${globalFontSize}px'>${param.seriesName}: N/A</span>`;
                             }
                         }).join('<br>');
                         return html;
