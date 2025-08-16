@@ -1,5 +1,4 @@
-
-    // Disable all default scroll, selection, and drag for the whole page
+// Disable all default scroll, selection, and drag for the whole page
     document.addEventListener('wheel', function(e) { e.preventDefault(); }, { passive: false });
     document.addEventListener('selectstart', function(e) { e.preventDefault(); });
     document.addEventListener('dragstart', function(e) { e.preventDefault(); });
@@ -273,80 +272,78 @@
                     yMax = null;
                 }
             }
-            // Prepare series for each symbol, but skip 'events' (handled separately)
-            const series = selectedSymbols
-                .filter(symbol => symbol !== 'events')
-                .map((symbol, idx) => {
-                    if (!data[symbol]) return null; // skip if data missing
-                    // Determine if this symbol is in the EVENTS category
-                    const isEventFeature = (configData.symbols || []).some(item => item.field_name === symbol && (item.category || '').toUpperCase() === 'EVENTS');
-                    const entries = Object.entries(data[symbol]);
-                    const dateToValue = Object.fromEntries(entries.map(([date, v]) => [date, v['value'] ?? null]));
-                    let values = sortedDates.map(date => dateToValue[date] ?? null);
-                    let actualValues = values.slice();
-                    // If in EVENTS category, always use raw mode and right y-axis
-                    let useNormalized = !isEventFeature && normalized;
-                    let useIndexed = !isEventFeature && indexed;
-                    let yAxisIndex = isEventFeature ? 1 : 0;
-                    if (useNormalized && values.filter(v => v != null).length > 0) {
-                        // Normalize to [0,1] based on min/max in the window
-                        let windowRange = opts.windowRange || [0, sortedDates.length - 1];
-                        let windowValues = values.slice(windowRange[0], windowRange[1] + 1).filter(v => v != null && isFinite(v));
-                        let min = Math.min(...windowValues);
-                        let max = Math.max(...windowValues);
-                        if (min === max) {
-                            min = min * 0.98;
-                            max = max * 1.02;
-                        }
-                        values = values.map(v => (v == null || !isFinite(v)) ? null : (v - min) / (max - min));
-                    } else if (useIndexed && values.filter(v => v != null).length > 0 && opts.windowRange) {
-                        // Index to 1 at the left edge of the window
-                        let windowRange = opts.windowRange;
-                        let baseIdx = windowRange[0];
-                        let base = values[baseIdx];
-                        if (base == null || !isFinite(base)) {
-                            // Find first non-null value in window
-                            for (let i = baseIdx; i <= windowRange[1]; ++i) {
-                                if (values[i] != null && isFinite(values[i])) {
-                                    base = values[i];
-                                    baseIdx = i;
-                                    break;
-                                }
+            // Prepare persistent series for all possible symbols (except 'events')
+            const allSymbols = (configData.symbols || []).map(item => item.field_name).filter(s => s !== 'events');
+            const series = allSymbols.map((symbol, idx) => {
+                if (!data[symbol]) return null;
+                // Determine if this symbol is in the EVENTS category
+                const isEventFeature = (configData.symbols || []).some(item => item.field_name === symbol && (item.category || '').toUpperCase() === 'EVENTS');
+                const entries = Object.entries(data[symbol]);
+                const dateToValue = Object.fromEntries(entries.map(([date, v]) => [date, v['value'] ?? null]));
+                let values = sortedDates.map(date => dateToValue[date] ?? null);
+                let actualValues = values.slice();
+                // If in EVENTS category, always use raw mode and right y-axis
+                let useNormalized = !isEventFeature && normalized;
+                let useIndexed = !isEventFeature && indexed;
+                let yAxisIndex = isEventFeature ? 1 : 0;
+                if (useNormalized && values.filter(v => v != null).length > 0) {
+                    let windowRange = opts.windowRange || [0, sortedDates.length - 1];
+                    let windowValues = values.slice(windowRange[0], windowRange[1] + 1).filter(v => v != null && isFinite(v));
+                    let min = Math.min(...windowValues);
+                    let max = Math.max(...windowValues);
+                    if (min === max) {
+                        min = min * 0.98;
+                        max = max * 1.02;
+                    }
+                    values = values.map(v => (v == null || !isFinite(v)) ? null : (v - min) / (max - min));
+                } else if (useIndexed && values.filter(v => v != null).length > 0 && opts.windowRange) {
+                    let windowRange = opts.windowRange;
+                    let baseIdx = windowRange[0];
+                    let base = values[baseIdx];
+                    if (base == null || !isFinite(base)) {
+                        for (let i = baseIdx; i <= windowRange[1]; ++i) {
+                            if (values[i] != null && isFinite(values[i])) {
+                                base = values[i];
+                                baseIdx = i;
+                                break;
                             }
-                        }
-                        if (base != null && isFinite(base) && base !== 0) {
-                            values = values.map(v => (v == null || !isFinite(v)) ? null : v / base);
                         }
                     }
-                    return {
-                        name: symbolNames[symbol] + ' (' + symbol + ')',
-                        type: 'line',
-                        smooth: window.smoothLineEnabled === true,
-                        data: values,
-                        yAxisIndex: yAxisIndex,
-                        showSymbol: true,
-                        symbol: 'circle',
-                        symbolSize: 10, // match 'events' line dot size
-                        symbolKeepAspect: true,
-                        connectNulls: true,
-                        lineStyle: { width: 2, color: getColor(idx) },
-                        itemStyle: { color: getColor(idx) },
-                        emphasis: { focus: 'series' },
-                        clip: false,
-                        tooltip: {
-                            valueFormatter: function (value, i) {
-                                if ((useNormalized || useIndexed) && typeof value === 'number' && typeof actualValues[i] === 'number') {
-                                    return value.toFixed(3) + ' (actual: ' + formatKMB(actualValues[i]) + ')';
-                                } else if (typeof value === 'number') {
-                                    return formatKMB(value);
-                                } else {
-                                    return 'N/A';
-                                }
+                    if (base != null && isFinite(base) && base !== 0) {
+                        values = values.map(v => (v == null || !isFinite(v)) ? null : v / base);
+                    }
+                }
+                // If not selected, hide series by setting data to []
+                const isSelected = selectedSymbols.includes(symbol);
+                return {
+                    name: symbolNames[symbol] + ' (' + symbol + ')',
+                    type: 'line',
+                    smooth: window.smoothLineEnabled === true,
+                    data: isSelected ? values : [],
+                    yAxisIndex: yAxisIndex,
+                    showSymbol: true,
+                    symbol: 'circle',
+                    symbolSize: 10,
+                    symbolKeepAspect: true,
+                    connectNulls: true,
+                    lineStyle: { width: 2, color: getColor(idx) },
+                    itemStyle: { color: getColor(idx) },
+                    emphasis: { focus: 'series' },
+                    clip: false,
+                    tooltip: {
+                        valueFormatter: function (value, i) {
+                            if ((useNormalized || useIndexed) && typeof value === 'number' && typeof actualValues[i] === 'number') {
+                                return value.toFixed(3) + ' (actual: ' + formatKMB(actualValues[i]) + ')';
+                            } else if (typeof value === 'number') {
+                                return formatKMB(value);
+                            } else {
+                                return 'N/A';
                             }
                         }
-                    };
-                })
-                .filter(Boolean);
+                    },
+                    universalTransition: { enabled: true, seriesKey: 'name' }
+                };
+            }).filter(Boolean);
 
             // Only add event bar + dotted line series if 'events' is selected
             if (selectedSymbols.includes('events') && data.events) {
@@ -390,7 +387,7 @@
                 series.push({
                     name: 'Event Impact',
                     type: 'bar',
-                    data: eventValues,
+                    data: selectedSymbols.includes('events') ? eventValues : [],
                     yAxisIndex: 1,
                     barMinWidth: 8,
                     barMaxWidth: 24,
@@ -398,13 +395,14 @@
                     emphasis: { focus: 'series' },
                     z: 2,
                     legendHoverLink: true,
-                    clip: false
+                    clip: false,
+                    universalTransition: { enabled: true, seriesKey: 'name' }
                 });
                 // Solid line series for event values (same name and color, always right y-axis, always raw mode)
                 series.push({
                     name: 'Event Impact',
                     type: 'line',
-                    data: eventValues,
+                    data: selectedSymbols.includes('events') ? eventValues : [],
                     yAxisIndex: 1,
                     showSymbol: false, // Restore to default: only show symbol on hover/emphasis
                     symbol: 'circle',
@@ -417,7 +415,8 @@
                     emphasis: { focus: 'series' },
                     z: 3,
                     legendHoverLink: true,
-                    clip: false
+                    clip: false,
+                    universalTransition: { enabled: true, seriesKey: 'name' }
                 });
             }
             // No volume data handling
@@ -428,7 +427,11 @@
             const defaultWindow = sortedDates.length > defaultDays ? Math.round((sortedDates.length - defaultDays) / sortedDates.length * 100) : 0;
             const globalFontSize = 16;
             return {
-                animation: false,
+                animation: opts.disableAnim ? false : true,
+                animationEasing: 'cubicOut',
+                animationDuration: opts.disableAnim ? 0 : 600,
+                animationEasingUpdate: 'cubicOut',
+                animationDurationUpdate: opts.disableAnim ? 0 : 300,
                 tooltip: {
                     trigger: 'axis',
                     axisPointer: {
@@ -828,7 +831,13 @@
                 const { normalized, indexed } = getModeStates();
                 // Always get the current window range for all modes
                 let windowRange = getCurrentWindowRange();
-                const newOption = prepareEChartsOption(selected, data, normalized, !normalized && indexed, { windowRange });
+                // Detect if this update is due to a dataZoom event
+                let disableAnim = false;
+                if (window._disableNextAnim) {
+                    disableAnim = true;
+                    window._disableNextAnim = false;
+                }
+                const newOption = prepareEChartsOption(selected, data, normalized, !normalized && indexed, { windowRange, disableAnim });
                 // Always preserve the current dataZoom window
                 const option = casinoChart.getOption();
                 if (option.dataZoom && option.dataZoom[0]) {
@@ -837,8 +846,8 @@
                 }
                 // Hide tooltip before updating chart to avoid DOM errors
                 try { casinoChart.dispatchAction({ type: 'hideTip' }); } catch (e) {}
-                casinoChart.clear();
-                casinoChart.setOption(newOption, { notMerge: true, replaceMerge: ['series'] });
+                // No clear; let ECharts animate series in/out
+                casinoChart.setOption(newOption, { notMerge: false });
                 updateCheckboxColors();
                 // Sync all category checkboxes after chart update
                 Object.values(syncCatCheckboxFns).forEach(fn => fn());
@@ -846,6 +855,7 @@
             // Listen for zoom events to update rebasing
             let chartReady = false;
             casinoChart.on('dataZoom', function() {
+                window._disableNextAnim = true;
                 if (chartReady) updateChart();
             });
             chartReady = true;
