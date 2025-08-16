@@ -12,9 +12,9 @@
 }
 /* Feature panel: 50% window height */
 .feature-panel {
-    height: 100%;
-    min-height: unset;
-    max-height: unset;
+    height: 95vh;
+    min-height: 400px;
+    max-height: 100vh;
     overflow-y: auto;
 }
 /* Ensure active style takes precedence over hover for mode buttons */
@@ -23,7 +23,7 @@
     background: #232837;
     border-radius: 12px;
     box-shadow: 0 2px 8px 0 rgba(0,188,212,0.10);
-    padding: 0.5em 1.2em 0.5em 1.2em;
+    padding: 0.5em 1.2em 0.8em 1.2em;
     margin-bottom: 0.4em;
     border: 1.2px solid #2e3448;
     width: fit-content;
@@ -63,10 +63,11 @@
 
 #panel-series {
     padding: 1.2em 1.5em;
-    border-radius: 18px;
-    height: 50vh;
+    border-radius: 4px;
+    height: 98vh;
     min-height: 180px;
-    max-height: 80vh;
+    max-height: 100vh;
+    margin: 0;
 }
 #panel-mode {
     padding: 1.0em 1.2em 0.6em 1.2em;
