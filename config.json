@@ -3,11 +3,94 @@
   "symbols": [
   {
     "server": "AI",
-    "symbol_name": "EVENTS",
-    "desc": "Macau Concerts & Events",
+    "desc": "Macau Events ALL",
     "freq": "D",
     "field_name": "events",
     "category": "Events"
+  },
+  {
+    "server": "AI",
+    "desc": "Macau Events Galaxy",
+    "freq": "D",
+    "field_name": "events_galaxy",
+    "category": "Events"
+  },
+  {
+    "server": "AI",
+    "desc": "Macau Events Wynn",
+    "freq": "D",
+    "field_name": "events_wynn",
+    "category": "Events"
+  },
+  {
+    "server": "AI",
+    "desc": "Macau Events Sands",
+    "freq": "D",
+    "field_name": "events_sands",
+    "category": "Events"
+  },
+  {
+    "server": "AI",
+    "desc": "Macau Events SJM",
+    "freq": "D",
+    "field_name": "events_sjm",
+    "category": "Events"
+  },
+  {
+    "server": "AI",
+    "desc": "Macau Events MGM",
+    "freq": "D",
+    "field_name": "events_mgm",
+    "category": "Events"
+  },
+  {
+    "server": "AI",
+    "desc": "Macau Events Melco",
+    "freq": "D",
+    "field_name": "events_melco",
+    "category": "Events"
+  },
+  {
+    "server": "AI",
+    "desc": "Extreme Weather",
+    "freq": "D",
+    "field_name": "weather",
+    "category": "Events"
+  },
+  {
+    "server": "AI",
+    "desc": "G. China Holidays",
+    "freq": "D",
+    "field_name": "holiday",
+    "category": "Events"
+  },
+  {
+    "server": "AI",
+    "desc": "China Weibo",
+    "freq": "D",
+    "field_name": "weibo",
+    "category": "Sentiment"
+  },
+  {
+    "server": "AI",
+    "desc": "China Douyin",
+    "freq": "D",
+    "field_name": "douyin",
+    "category": "Sentiment"
+  },
+  {
+    "server": "AI",
+    "desc": "China Bilibili",
+    "freq": "D",
+    "field_name": "bilibili",
+    "category": "Sentiment"
+  },
+  {
+    "server": "AI",
+    "desc": "China Webpages",
+    "freq": "D",
+    "field_name": "webpages",
+    "category": "Sentiment"
   },
   {
     "server" : "DSEC",
@@ -15,7 +98,7 @@
     "desc": "Macau GGR",
     "freq": "M",
     "field_name": "DSEC_ggr",
-    "category": "Macau Gaming"
+    "category": "Gaming"
   },
   {
     "server" : "DSEC",
@@ -23,7 +106,7 @@
     "desc": "Macau Hotel Occupancy",
     "freq": "M",
     "field_name": "DSEC_hotel",   
-    "category": "Macau Gaming"
+    "category": "Gaming"
   },
   {
     "server" : "DSEC",
@@ -31,7 +114,7 @@
     "desc": "Macau Visitation",
     "freq": "M",
     "field_name": "DSEC_visitation",
-    "category": "Macau Gaming"
+    "category": "Gaming"
   },
   {
     "server": "YF",
@@ -39,7 +122,7 @@
     "desc": "Galaxy",
     "freq": "D",
     "field_name": "YF_galaxy",
-    "category": "Stock Price"
+    "category": "Stock"
   },
   {
     "server": "YF",
@@ -47,7 +130,7 @@
     "desc": "SJM",
     "freq": "D",
     "field_name": "YF_sjm",
-    "category": "Stock Price"
+    "category": "Stock"
   },
   {
     "server": "YF",
@@ -55,7 +138,7 @@
     "desc": "Wynn",
     "freq": "D",
     "field_name": "YF_wynn",
-    "category": "Stock Price"
+    "category": "Stock"
   },
   {
     "server": "YF",
@@ -63,7 +146,7 @@
     "desc": "Sands",
     "freq": "D",
     "field_name": "YF_sands",
-    "category": "Stock Price"
+    "category": "Stock"
   },
   {
     "server": "YF",
@@ -71,7 +154,7 @@
     "desc": "MGM",
     "freq": "D",
     "field_name": "YF_mgm",
-    "category": "Stock Price"
+    "category": "Stock"
   },
   {
     "server": "YF",
@@ -79,7 +162,7 @@
     "desc": "Melco",
     "freq": "D",
     "field_name": "YF_melco",
-    "category": "Stock Price"
+    "category": "Stock"
   },
   {
     "server": "YF",
@@ -87,7 +170,7 @@
     "desc": "Hang Seng",
     "freq": "D",
     "field_name": "YF_hang_seng",
-    "category": "Market Index"
+    "category": "Market"
   },
   {
     "server": "YF",
@@ -95,7 +178,7 @@
     "desc": "Shanghai",
     "freq": "D",
     "field_name": "YF_shanghai",
-    "category": "Market Index"
+    "category": "Market"
   },
   {
     "server": "YF",
@@ -103,7 +186,7 @@
     "desc": "Shenzhen",
     "freq": "D",
     "field_name": "YF_shenzhen",
-    "category": "Market Index"
+    "category": "Market"
   },
   {
     "server": "YF",
@@ -135,7 +218,7 @@
     "desc": "Gold",
     "freq": "D",
     "field_name": "YF_gold",
-    "category": "Commodity"
+    "category": "Risk"
   },
   {
     "server": "YF",
@@ -143,8 +226,16 @@
     "desc": "Silver",
     "freq": "D",
     "field_name": "YF_silver",
-    "category": "Commodity"
+    "category": "Risk"
   },
+  {
+    "server": "YF",
+    "symbol_name": "SI=F",
+    "desc": "BTC/USD",
+    "freq": "D",
+    "field_name": "YF_btc_usd",
+    "category": "Risk"
+  },  
   {
     "server": "FRED",
     "symbol_name": "CHNCPIALLMINMEI",

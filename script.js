@@ -274,11 +274,17 @@
                 .filter(symbol => symbol !== 'events')
                 .map((symbol, idx) => {
                     if (!data[symbol]) return null; // skip if data missing
+                    // Determine if this symbol is in the EVENTS category
+                    const isEventFeature = (configData.symbols || []).some(item => item.field_name === symbol && (item.category || '').toUpperCase() === 'EVENTS');
                     const entries = Object.entries(data[symbol]);
                     const dateToValue = Object.fromEntries(entries.map(([date, v]) => [date, v['value'] ?? null]));
                     let values = sortedDates.map(date => dateToValue[date] ?? null);
                     let actualValues = values.slice();
-                    if (normalized && values.filter(v => v != null).length > 0) {
+                    // If in EVENTS category, always use raw mode and right y-axis
+                    let useNormalized = !isEventFeature && normalized;
+                    let useIndexed = !isEventFeature && indexed;
+                    let yAxisIndex = isEventFeature ? 1 : 0;
+                    if (useNormalized && values.filter(v => v != null).length > 0) {
                         // Normalize to [0,1] based on min/max in the window
                         let windowRange = opts.windowRange || [0, sortedDates.length - 1];
                         let windowValues = values.slice(windowRange[0], windowRange[1] + 1).filter(v => v != null && isFinite(v));
@@ -289,7 +295,7 @@
                             max = max * 1.02;
                         }
                         values = values.map(v => (v == null || !isFinite(v)) ? null : (v - min) / (max - min));
-                    } else if (indexed && values.filter(v => v != null).length > 0 && opts.windowRange) {
+                    } else if (useIndexed && values.filter(v => v != null).length > 0 && opts.windowRange) {
                         // Index to 1 at the left edge of the window
                         let windowRange = opts.windowRange;
                         let baseIdx = windowRange[0];
@@ -313,7 +319,7 @@
                         type: 'line',
                         smooth: window.smoothLineEnabled === true,
                         data: values,
-                        yAxisIndex: 0,
+                        yAxisIndex: yAxisIndex,
                         showSymbol: true,
                         symbol: 'circle',
                         symbolSize: 10, // match 'events' line dot size
@@ -321,10 +327,11 @@
                         connectNulls: true,
                         lineStyle: { width: 2, color: getColor(idx) },
                         itemStyle: { color: getColor(idx) },
-                        emphasis: { focus: 'series' }, // restore default dimming
+                        emphasis: { focus: 'series' },
+                        clip: false,
                         tooltip: {
                             valueFormatter: function (value, i) {
-                                if ((normalized || indexed) && typeof value === 'number' && typeof actualValues[i] === 'number') {
+                                if ((useNormalized || useIndexed) && typeof value === 'number' && typeof actualValues[i] === 'number') {
                                     return value.toFixed(3) + ' (actual: ' + formatKMB(actualValues[i]) + ')';
                                 } else if (typeof value === 'number') {
                                     return formatKMB(value);
@@ -375,26 +382,26 @@
                 }
                 // Use a single color for both bar and line
                 const eventColor = '#00bcd4';
-                // Bar series for event values
+                // Bar series for event values (always right y-axis, always raw mode)
                 series.push({
                     name: 'Event Impact',
                     type: 'bar',
                     data: eventValues,
-                    yAxisIndex: 0,
+                    yAxisIndex: 1,
                     barMinWidth: 8,
                     barMaxWidth: 24,
                     itemStyle: { color: eventColor, opacity: 0.45 },
-                    emphasis: { focus: 'series' }, // restore default dimming
+                    emphasis: { focus: 'series' },
                     z: 2,
                     legendHoverLink: true,
                     clip: false
                 });
-                // Solid line series for event values (same name and color)
+                // Solid line series for event values (same name and color, always right y-axis, always raw mode)
                 series.push({
                     name: 'Event Impact',
                     type: 'line',
                     data: eventValues,
-                    yAxisIndex: 0,
+                    yAxisIndex: 1,
                     showSymbol: false, // Restore to default: only show symbol on hover/emphasis
                     symbol: 'circle',
                     symbolSize: 10,
@@ -403,9 +410,10 @@
                     smooth: window.smoothLineEnabled === true,
                     lineStyle: { width: 2, color: eventColor, type: 'solid' },
                     itemStyle: { color: eventColor },
-                    emphasis: { focus: 'series' }, // restore default dimming
+                    emphasis: { focus: 'series' },
                     z: 3,
-                    legendHoverLink: true
+                    legendHoverLink: true,
+                    clip: false
                 });
             }
             // No volume data handling
@@ -560,15 +568,14 @@
                     },
                     {
                         type: 'value',
-                        name: '',
+                        name: 'Events',
                         position: 'right',
                         axisLine: { show: true, lineStyle: { color: 'rgba(255,255,255,0.8)' } },
-                        axisLabel: { formatter: v => normalized ? v.toFixed(3) : (typeof v === 'number' ? formatKMB(v) : v), color: 'rgba(255,255,255,0.8)', fontWeight: 500, fontFamily: 'MCI', letterSpacing: 2, fontSize: 16, margin: 8 },
+                        axisLabel: { formatter: v => typeof v === 'number' ? v.toFixed(2) : v, color: 'rgba(255,255,255,0.8)', fontWeight: 500, fontFamily: 'MCI', letterSpacing: 2, fontSize: 16, margin: 8 },
                         nameTextStyle: { color: 'rgba(255,255,255,0.8)', fontWeight: 600, fontFamily: 'MCI', letterSpacing: 2, fontSize: 16 },
                         nameGap: 16,
                         splitLine: { show: false },
-                        min: yMin,
-                        max: yMax,
+                        // min/max dynamic for right y-axis
                         axisPointer: { label: { margin: -8, padding: [6, 8] } }
                     }
                 ],

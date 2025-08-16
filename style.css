@@ -1,3 +1,10 @@
+/* Feature panel: 50% window height */
+.feature-panel {
+    height: 50vh;
+    min-height: 180px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
 /* Ensure active style takes precedence over hover for mode buttons */
 .mode-btn.active:hover, .mode-btn:active:hover {
     background: #00bcd4 !important;
@@ -49,8 +56,8 @@
 #panel-series {
     padding: 1.2em 1.5em;
     border-radius: 18px;
-    height: 26vh;
-    min-height: 120px;
+    /* height removed to allow .feature-panel to control height */
+    /* min-height removed to allow .feature-panel to control height */
 }
 #panel-mode {
     padding: 1.0em 1.2em 0.6em 1.2em;
