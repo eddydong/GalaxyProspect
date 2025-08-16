@@ -18,9 +18,9 @@
 /* Feature panel: 50% window height */
 .feature-panel {
     box-sizing: border-box;
-    height: 60vh;
+    height: 75vh;
     min-height: 300px;
-    max-height: 80vh;
+    max-height: 90vh;
     overflow-y: auto;
 }
 /* Ensure active style takes precedence over hover for mode buttons */
@@ -29,7 +29,7 @@
     background: #232837;
     border-radius: 12px;
     box-shadow: 0 2px 8px 0 rgba(0,188,212,0.10);
-    padding: 0.5em 1.2em 0.8em 1.2em;
+    padding: 0.5em 0.7em 0.8em 0.7em;
     margin-bottom: 0.4em;
     border: 1.2px solid #2e3448;
     width: fit-content;
@@ -52,7 +52,7 @@
 /* Feature button selected state: 80% opaque background */
 .series-categories > label.selected {
     background: #00bcd4;
-    color: #232837;
+    color: #000 !important;
     border-color: #00bcd4;
     font-family: 'MCI', sans-serif;
     font-size: 16px;
@@ -241,6 +241,10 @@ body {
     box-shadow: 0 2px 8px 0 rgba(0,188,212,0.18);
 }
 
+#panel-mode .mode-btn.active, #panel-mode .mode-btn:active {
+    color: #000 !important;
+}
+
 .mode-btn:hover:not(.active) {
     background: #2e3448;
     color: #fff;
@@ -280,7 +284,7 @@ body {
     text-align: left;
     display: flex;
     align-items: center;
-    margin-bottom: 0.05em;
+    margin-bottom: 0.5em;
     font-size: 16px;
     font-weight: 700;
     color: #fff;
@@ -307,9 +311,9 @@ body {
     width: max-content;
     min-width: unset;
     max-width: unset;
-    height: 60vh;
+    height: 75vh;
     min-height: 300px;
-    max-height: 80vh;
+    max-height: 90vh;
     overflow-x: auto;
 }
 
@@ -335,9 +339,9 @@ body {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    width: 210px;
-    min-width: 210px;
-    max-width: 210px;
+    width: 260px;
+    min-width: 260px;
+    max-width: 260px;
     margin-bottom: 0.5em;
     break-inside: avoid-column;
 }
@@ -428,9 +432,9 @@ body {
     font-weight: 700;
     letter-spacing: 1.5px;
     color: #fff;
-    background: #00bcd4;
+    background: linear-gradient(90deg, #00bcd4 0%, #232837 100%);
     border-radius: 6px;
-    border: 1.2px solid #2e3448;
+    border: none !important;
     box-shadow: none !important;
     text-shadow: none !important;
     text-transform: uppercase;
@@ -442,7 +446,9 @@ body {
     max-height: 30px;
     margin-bottom: 0.4em;
     margin-top: 0;
-    padding: 0.18em 0.6em 0.18em 0.4em;
+    width: 102%;
+    box-sizing: border-box;
+    padding: 0.18em 0.4em 0.18em 0.4em;
     cursor: pointer;
 }
 
