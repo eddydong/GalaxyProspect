@@ -2,6 +2,30 @@
   "startDate": "2005-01-01",
   "symbols": [
   {
+    "server" : "DSEC",
+    "symbol_name": "1216",
+    "desc": "Macau GGR",
+    "freq": "M",
+    "field_name": "DSEC_ggr",
+    "category": "Gaming"
+  },
+  {
+    "server" : "DSEC",
+    "symbol_name": "245",
+    "desc": "Hotel Occupancy%",
+    "freq": "M",
+    "field_name": "DSEC_hotel",   
+    "category": "Gaming"
+  },
+  {
+    "server" : "DSEC",
+    "symbol_name": "243",
+    "desc": "Macau Visitation",
+    "freq": "M",
+    "field_name": "DSEC_visitation",
+    "category": "Gaming"
+  },
+  {
     "server": "AI",
     "desc": "Macau Events ALL",
     "freq": "D",
@@ -52,9 +76,9 @@
   },
   {
     "server": "AI",
-    "desc": "Extreme Weather",
+    "desc": "Geopolitics",
     "freq": "D",
-    "field_name": "weather",
+    "field_name": "geopolitics",
     "category": "Events"
   },
   {
@@ -66,55 +90,59 @@
   },
   {
     "server": "AI",
-    "desc": "China Weibo",
+    "desc": "Extreme Weather",
     "freq": "D",
-    "field_name": "weibo",
+    "field_name": "weather",
+    "category": "Events"
+  },  
+  {
+    "server": "AI",
+    "desc": "Topic_Macau",
+    "freq": "D",
+    "field_name": "senti_macau",
     "category": "Sentiment"
   },
   {
     "server": "AI",
-    "desc": "China Douyin",
+    "desc": "Topic_Galaxy",
     "freq": "D",
-    "field_name": "douyin",
+    "field_name": "senti_galaxy",
     "category": "Sentiment"
   },
   {
     "server": "AI",
-    "desc": "China Bilibili",
+    "desc": "Topic_Wynn",
     "freq": "D",
-    "field_name": "bilibili",
+    "field_name": "senti_wynn",
     "category": "Sentiment"
   },
   {
     "server": "AI",
-    "desc": "China Webpages",
+    "desc": "Topic_Sands",
     "freq": "D",
-    "field_name": "webpages",
+    "field_name": "senti_sands",
     "category": "Sentiment"
   },
   {
-    "server" : "DSEC",
-    "symbol_name": "1216",
-    "desc": "Macau GGR",
-    "freq": "M",
-    "field_name": "DSEC_ggr",
-    "category": "Gaming"
+    "server": "AI",
+    "desc": "Topic_MGM",
+    "freq": "D",
+    "field_name": "senti_mgm",
+    "category": "Sentiment"
   },
   {
-    "server" : "DSEC",
-    "symbol_name": "245",
-    "desc": "Macau Hotel Occupancy",
-    "freq": "M",
-    "field_name": "DSEC_hotel",   
-    "category": "Gaming"
+    "server": "AI",
+    "desc": "Topic_SJM",
+    "freq": "D",
+    "field_name": "senti_sjm",
+    "category": "Sentiment"
   },
   {
-    "server" : "DSEC",
-    "symbol_name": "243",
-    "desc": "Macau Visitation",
-    "freq": "M",
-    "field_name": "DSEC_visitation",
-    "category": "Gaming"
+    "server": "AI",
+    "desc": "Topic_Melco",
+    "freq": "D",
+    "field_name": "senti_melco",
+    "category": "Sentiment"
   },
   {
     "server": "YF",

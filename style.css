@@ -1,8 +1,12 @@
+/* Ensure series-categories fills parent for feature-panel height to work */
+#series-categories {
+    height: 100%;
+}
 /* Feature panel: 50% window height */
 .feature-panel {
-    height: 50vh;
-    min-height: 180px;
-    max-height: 80vh;
+    height: 100%;
+    min-height: unset;
+    max-height: unset;
     overflow-y: auto;
 }
 /* Ensure active style takes precedence over hover for mode buttons */
@@ -56,8 +60,9 @@
 #panel-series {
     padding: 1.2em 1.5em;
     border-radius: 18px;
-    /* height removed to allow .feature-panel to control height */
-    /* min-height removed to allow .feature-panel to control height */
+    height: 50vh;
+    min-height: 180px;
+    max-height: 80vh;
 }
 #panel-mode {
     padding: 1.0em 1.2em 0.6em 1.2em;
@@ -295,10 +300,11 @@ body {
     min-width: 420px;
     width: max-content;
     clear: both;
-    overflow-x: hidden;
-    padding-left: 0.5em;
+        height: 100%;
+        min-height: unset;
+        max-height: unset;
+        overflow-y: auto;
 }
-.category-block,
 .category-block label,
 .category-label {
     width: 100%;
@@ -476,4 +482,3 @@ body {
     margin: 0 auto;
     filter: drop-shadow(0 2px 8px rgba(0,0,0,0.18));
 }
-
