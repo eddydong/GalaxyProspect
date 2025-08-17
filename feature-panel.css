@@ -1,7 +1,0 @@
-/* Feature panel: 50% window height */
-.feature-panel {
-    height: 50vh;
-    min-height: 180px;
-    max-height: 80vh;
-    overflow-y: auto;
-}

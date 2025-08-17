@@ -5,6 +5,9 @@
     font-style: normal;
 }
 
+:root {
+    --theme-color: #00bcd4;
+}
 
 .series-categories > .category-label,
 .series-categories > .category-label:hover,
@@ -59,9 +62,9 @@
 /* Feature button selected state: 80% opaque background */
 /* Feature button selected state: 80% opaque background */
 .series-categories > label.selected {
-    background: #00bcd4;
+    background: var(--theme-color);
     color: #000;
-    border-color: #00bcd4;
+    border-color: var(--theme-color);
     font-family: 'MCI', sans-serif;
     font-size: 16px;
     font-weight: 500;
@@ -96,7 +99,7 @@
     -webkit-appearance: none;
     width: 1.15em;
     height: 1.15em;
-    border: 2.2px solid #00bcd4;
+    border: 2.2px solid var(--theme-color);
     border-radius: 5px;
     background: #232837;
     outline: none;
@@ -114,7 +117,7 @@
 .category-block label input[type="checkbox"]:checked,
 .category-label input[type="checkbox"]:checked,
 .series-categories > label > input[type="checkbox"]:checked {
-    border-color: #00bcd4;
+    border-color: var(--theme-color);
     background: #fff;
 }
 
@@ -130,8 +133,8 @@ body {
     display: none;
     position: fixed;
     border-radius: 12px;
-    /* border: 2px solid #00bcd4; */
-    box-shadow: 0 4px 24px 0 rgba(0,188,212,0.22), 0 1px 0 #00bcd4 inset;
+    /* border: 2px solid var(--theme-color); */
+    box-shadow: 0 4px 24px 0 rgba(0,188,212,0.22), 0 1px 0 var(--theme-color) inset;
     padding: 18px 28px;
     z-index: 9999;
     pointer-events: auto;
@@ -198,9 +201,9 @@ body {
 /* Remove margin-bottom from last sidebar icon (help) and add margin-bottom to ensure bottom margin matches top */
 .sidebar-icon:hover, .sidebar-icon.active {
     background: linear-gradient(135deg, #e0e0e0 80%, #bdbdbd 100%);
-    color: #00bcd4;
+    color: var(--theme-color);
     box-shadow: 0 2px 12px 0 rgba(136,138,146,0.13);
-    border-color: #00bcd4;
+    border-color: var(--theme-color);
     transform: scale(1.07) rotate(-12deg);
     transition: background 0.18s, color 0.18s, box-shadow 0.18s, border-color 0.18s, transform 0.18s;
 }
@@ -240,9 +243,9 @@ body {
 }
 
 .mode-btn.active, .mode-btn:active {
-    background: #00bcd4;
+    background: var(--theme-color);
     color: #232837;
-    border-color: #00bcd4;
+    border-color: var(--theme-color);
     box-shadow: 0 2px 8px 0 rgba(0,188,212,0.18);
 }
 
@@ -253,13 +256,13 @@ body {
 .mode-btn:hover:not(.active) {
     background: #2e3448;
     color: #fff;
-    border-color: #00bcd4;
+    border-color: var(--theme-color);
     box-shadow: 0 2px 8px 0 rgba(0,188,212,0.10);
 }
 .mode-btn.active:hover, .mode-btn:active:hover {
-    background: #00bcd4;
+    background: var(--theme-color);
     color: #232837;
-    border-color: #00bcd4;
+    border-color: var(--theme-color);
     box-shadow: 0 2px 8px 0 rgba(0,188,212,0.18);
 }
 
@@ -380,7 +383,7 @@ body {
 .series-categories > label:hover {
     background: #2e3448;
     color: #fff;
-    border-color: #00bcd4;
+    border-color: var(--theme-color);
     box-shadow: 0 2px 8px 0 rgba(0,188,212,0.10);
 }
 
@@ -409,7 +412,7 @@ body {
     z-index: 1;
     display: flex;
     flex-direction: column;
-    visibility: hidden;
+    visibility: visible;
 }
 
 #casinoChart {
@@ -437,7 +440,7 @@ body {
     font-weight: 700;
     letter-spacing: 1.5px;
     color: #fff;
-    background: linear-gradient(90deg, #00bcd4 0%, #232837 100%);
+    background: linear-gradient(90deg, var(--theme-color) 0%, #232837 100%);
     border-radius: 6px;
     border: none;
     box-shadow: none;
@@ -451,10 +454,14 @@ body {
     max-height: 30px;
     margin-bottom: 0.4em;
     margin-top: 0;
-    width: 102%;
+    width: 100%;
+    max-width: 220px;
+    min-width: 220px;
     box-sizing: border-box;
-    padding: 0.18em 0.4em 0.18em 0.4em;
+    padding: 0.18em 0 0.18em 0;
     cursor: pointer;
+    justify-content: flex-start;
+    text-align: left;
 }
 
 /* About modal styles */
@@ -487,8 +494,8 @@ body {
     font-size: 16px;
     font-weight: 600;
     border-radius: 12px;
-    border: 2px solid #00bcd4;
-    box-shadow: 0 4px 24px 0 rgba(0,188,212,0.22), 0 1px 0 #00bcd4 inset;
+    border: 2px solid var(--theme-color);
+    box-shadow: 0 4px 24px 0 rgba(0,188,212,0.22), 0 1px 0 var(--theme-color) inset;
     padding: 18px 28px;
     text-align: center;
     line-height: 1.7;

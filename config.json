@@ -75,6 +75,7 @@
   },
   {
     "server": "AI",
+    "symbol_name": "events",
     "desc": "Macau Events ALL",
     "freq": "D",
     "field_name": "events",
@@ -82,6 +83,7 @@
   },
   {
     "server": "AI",
+    "symbol_name": "events_galaxy",
     "desc": "Macau Events Galaxy",
     "freq": "D",
     "field_name": "events_galaxy",
@@ -89,6 +91,7 @@
   },
   {
     "server": "AI",
+    "symbol_name": "events_wynn",
     "desc": "Macau Events Wynn",
     "freq": "D",
     "field_name": "events_wynn",
@@ -96,6 +99,7 @@
   },
   {
     "server": "AI",
+    "symbol_name": "events_sands",
     "desc": "Macau Events Sands",
     "freq": "D",
     "field_name": "events_sands",
@@ -103,6 +107,7 @@
   },
   {
     "server": "AI",
+    "symbol_name": "events_sjm",
     "desc": "Macau Events SJM",
     "freq": "D",
     "field_name": "events_sjm",
@@ -110,6 +115,7 @@
   },
   {
     "server": "AI",
+    "symbol_name": "events_mgm",
     "desc": "Macau Events MGM",
     "freq": "D",
     "field_name": "events_mgm",
@@ -117,6 +123,7 @@
   },
   {
     "server": "AI",
+    "symbol_name": "events_melco",
     "desc": "Macau Events Melco",
     "freq": "D",
     "field_name": "events_melco",
@@ -124,6 +131,7 @@
   },
   {
     "server": "AI",
+    "symbol_name": "geopolitics",
     "desc": "Geopolitics",
     "freq": "D",
     "field_name": "geopolitics",
@@ -131,6 +139,7 @@
   },
   {
     "server": "AI",
+    "symbol_name": "holiday",
     "desc": "G. China Holidays",
     "freq": "D",
     "field_name": "holiday",
@@ -138,6 +147,7 @@
   },
   {
     "server": "AI",
+    "symbol_name": "weather",
     "desc": "Extreme Weather",
     "freq": "D",
     "field_name": "weather",
@@ -145,6 +155,7 @@
   },  
   {
     "server": "AI",
+    "symbol_name": "topic_macau",
     "desc": "Topic_Macau",
     "freq": "D",
     "field_name": "senti_macau",
@@ -152,6 +163,7 @@
   },
   {
     "server": "AI",
+    "symbol_name": "topic_galaxy",
     "desc": "Topic_Galaxy",
     "freq": "D",
     "field_name": "senti_galaxy",
@@ -159,6 +171,7 @@
   },
   {
     "server": "AI",
+    "symbol_name": "topic_wynn",
     "desc": "Topic_Wynn",
     "freq": "D",
     "field_name": "senti_wynn",
@@ -166,6 +179,7 @@
   },
   {
     "server": "AI",
+    "symbol_name": "topic_sands",
     "desc": "Topic_Sands",
     "freq": "D",
     "field_name": "senti_sands",
@@ -173,6 +187,7 @@
   },
   {
     "server": "AI",
+    "symbol_name": "topic_mgm",
     "desc": "Topic_MGM",
     "freq": "D",
     "field_name": "senti_mgm",
@@ -180,6 +195,7 @@
   },
   {
     "server": "AI",
+    "symbol_name": "topic_sjm",
     "desc": "Topic_SJM",
     "freq": "D",
     "field_name": "senti_sjm",
@@ -187,6 +203,7 @@
   },
   {
     "server": "AI",
+    "symbol_name": "topic_melco",
     "desc": "Topic_Melco",
     "freq": "D",
     "field_name": "senti_melco",
@@ -258,7 +275,7 @@
   },
   {
     "server": "YF",
-    "symbol_name": "SI=F",
+    "symbol_name": "BTC-USD",
     "desc": "BTC/USD",
     "freq": "D",
     "field_name": "YF_btc_usd",
