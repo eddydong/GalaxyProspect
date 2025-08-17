@@ -241,29 +241,12 @@ function prepareEChartsOption(config, data, symbolState, selectedSymbols, normal
     let dataShadowArr = null;
     const visibleSymbols = selectedSymbols.filter(symbol => symbol !== 'events' && data[symbol]);
     if (visibleSymbols.length > 0) {
-        // Always use max of forward-filled values for all visible series
-        const firstVals = {};
-        for (let symbol of visibleSymbols) {
-            const symbolData = data[symbol];
-            for (let date of sortedDates) {
-                if (symbolData[date] && symbolData[date].value != null && isFinite(symbolData[date].value)) {
-                    firstVals[symbol] = symbolData[date].value;
-                    break;
-                }
-            }
-        }
-        const lastKnown = { ...firstVals };
-        dataShadowArr = sortedDates.map((date, idx) => {
+        // Use only real values for all visible series, no forward-filling
+        dataShadowArr = sortedDates.map((date) => {
             let max = null;
             for (let symbol of visibleSymbols) {
                 const symbolData = data[symbol];
-                let val = undefined;
-                if (symbolData[date] && symbolData[date].value != null && isFinite(symbolData[date].value)) {
-                    val = symbolData[date].value;
-                    lastKnown[symbol] = val;
-                } else if (lastKnown[symbol] != null && isFinite(lastKnown[symbol])) {
-                    val = lastKnown[symbol];
-                }
+                let val = (symbolData[date] && symbolData[date].value != null && isFinite(symbolData[date].value)) ? symbolData[date].value : null;
                 if (val != null && isFinite(val)) {
                     if (max == null || val > max) max = val;
                 }
