@@ -13,7 +13,7 @@ const BASE_COLORS = [
     '#C51162', // Shanghai - Deep Pink
     '#AEEA00'  // Shenzhen - Lime
 ];
-// console.log('[chartHandler.js] loaded'); // Removed debug statement
+
 function hexToRgba(hex, alpha) {
     hex = hex.replace('#', '');
     if (hex.length === 3) hex = hex.split('').map(x => x + x).join('');
@@ -28,7 +28,6 @@ export function getColor(idx) {
 }
 
 function prepareEChartsOption(config, data, symbolState, selectedSymbols, normalized, indexed, opts = {}) {
-    console.log('[minimap][debug] ENTER prepareEChartsOption');
     // Helper for K/M/B formatting
     function formatKMB(val) {
         if (val == null || isNaN(val)) return '';
@@ -58,8 +57,6 @@ function prepareEChartsOption(config, data, symbolState, selectedSymbols, normal
         for (let d = new Date(minDate); d <= maxDate; d.setDate(d.getDate() + 1)) {
             sortedDates.push(formatDate(d));
         }
-    // Debug log after sortedDates is populated
-    console.log('[minimap][debug] after sortedDates populated:', sortedDates);
     }
     // Compute y-axis min/max based on visible (non-null) values in the current window for selected series
     let yMin = undefined, yMax = undefined;
@@ -100,74 +97,74 @@ function prepareEChartsOption(config, data, symbolState, selectedSymbols, normal
     // Build symbolNames lookup
     const symbolNames = {};
     (config.symbols || []).forEach(item => { symbolNames[item.field_name] = item.desc || item.field_name; });
-    const series = allSymbols.map((symbol) => {
-        if (!data[symbol]) return null;
-        const isEventFeature = (config.symbols || []).some(item => item.field_name === symbol && (item.category || '').toUpperCase() === 'EVENTS');
-        const entries = Object.entries(data[symbol]);
-        const dateToValue = Object.fromEntries(entries.map(([date, v]) => [date, v['value'] ?? null]));
-        let values = sortedDates.map(date => dateToValue[date] ?? null);
-        let actualValues = values.slice();
-        let useNormalized = !isEventFeature && normalized;
-        let useIndexed = !isEventFeature && indexed;
-        let yAxisIndex = isEventFeature ? 1 : 0;
-        if (useNormalized && values.filter(v => v != null).length > 0) {
-            let windowRange = opts.windowRange || [0, sortedDates.length - 1];
-            let windowValues = values.slice(windowRange[0], windowRange[1] + 1).filter(v => v != null && isFinite(v));
-            let min = Math.min(...windowValues);
-            let max = Math.max(...windowValues);
-            if (min === max) {
-                min = min * 0.98;
-                max = max * 1.02;
-            }
-            values = values.map(v => (v == null || !isFinite(v)) ? null : (v - min) / (max - min));
-        } else if (useIndexed && values.filter(v => v != null).length > 0 && opts.windowRange) {
-            let windowRange = opts.windowRange;
-            let baseIdx = windowRange[0];
-            let base = values[baseIdx];
-            if (base == null || !isFinite(base)) {
-                for (let i = baseIdx; i <= windowRange[1]; ++i) {
-                    if (values[i] != null && isFinite(values[i])) {
-                        base = values[i];
-                        baseIdx = i;
-                        break;
+    const series = allSymbols
+        .filter(symbol => selectedSymbols.includes(symbol) && data[symbol])
+        .map((symbol) => {
+            const isEventFeature = (config.symbols || []).some(item => item.field_name === symbol && (item.category || '').toUpperCase() === 'EVENTS');
+            const entries = Object.entries(data[symbol]);
+            const dateToValue = Object.fromEntries(entries.map(([date, v]) => [date, v['value'] ?? null]));
+            let values = sortedDates.map(date => dateToValue[date] ?? null);
+            let actualValues = values.slice();
+            let useNormalized = !isEventFeature && normalized;
+            let useIndexed = !isEventFeature && indexed;
+            let yAxisIndex = isEventFeature ? 1 : 0;
+            if (useNormalized && values.filter(v => v != null).length > 0) {
+                let windowRange = opts.windowRange || [0, sortedDates.length - 1];
+                let windowValues = values.slice(windowRange[0], windowRange[1] + 1).filter(v => v != null && isFinite(v));
+                let min = Math.min(...windowValues);
+                let max = Math.max(...windowValues);
+                if (min === max) {
+                    min = min * 0.98;
+                    max = max * 1.02;
+                }
+                values = values.map(v => (v == null || !isFinite(v)) ? null : (v - min) / (max - min));
+            } else if (useIndexed && values.filter(v => v != null).length > 0 && opts.windowRange) {
+                let windowRange = opts.windowRange;
+                let baseIdx = windowRange[0];
+                let base = values[baseIdx];
+                if (base == null || !isFinite(base)) {
+                    for (let i = baseIdx; i <= windowRange[1]; ++i) {
+                        if (values[i] != null && isFinite(values[i])) {
+                            base = values[i];
+                            baseIdx = i;
+                            break;
+                        }
                     }
                 }
-            }
-            if (base != null && isFinite(base) && base !== 0) {
-                values = values.map(v => (v == null || !isFinite(v)) ? null : v / base);
-            }
-        }
-        const isSelected = selectedSymbols.includes(symbol);
-        const colorIdx = symbolState[symbol] ? symbolState[symbol].colorIdx : 0;
-        return {
-            name: symbolNames[symbol] + ' (' + symbol + ')',
-            type: 'line',
-            smooth: window.smoothLineEnabled === true,
-            data: isSelected ? values : [],
-            yAxisIndex: yAxisIndex,
-            showSymbol: true,
-            symbol: 'circle',
-            symbolSize: 10,
-            symbolKeepAspect: true,
-            connectNulls: true,
-            lineStyle: { width: 2, color: getColor(colorIdx) },
-            itemStyle: { color: getColor(colorIdx) },
-            emphasis: { focus: 'series' },
-            clip: false,
-            tooltip: {
-                valueFormatter: function (value, i) {
-                    if ((useNormalized || useIndexed) && typeof value === 'number' && typeof actualValues[i] === 'number') {
-                        return value.toFixed(3) + ' (actual: ' + formatKMB(actualValues[i]) + ')';
-                    } else if (typeof value === 'number') {
-                        return formatKMB(value);
-                    } else {
-                        return 'N/A';
-                    }
+                if (base != null && isFinite(base) && base !== 0) {
+                    values = values.map(v => (v == null || !isFinite(v)) ? null : v / base);
                 }
-            },
-            universalTransition: { enabled: true, seriesKey: 'name' }
-        };
-    }).filter(Boolean);
+            }
+            const colorIdx = symbolState[symbol] ? symbolState[symbol].colorIdx : 0;
+            return {
+                name: symbolNames[symbol] + ' (' + symbol + ')',
+                type: 'line',
+                smooth: window.smoothLineEnabled === true,
+                data: values,
+                yAxisIndex: yAxisIndex,
+                showSymbol: true,
+                symbol: 'circle',
+                symbolSize: 10,
+                symbolKeepAspect: true,
+                connectNulls: true,
+                lineStyle: { width: 2, color: getColor(colorIdx) },
+                itemStyle: { color: getColor(colorIdx) },
+                emphasis: { focus: 'series' },
+                clip: false,
+                tooltip: {
+                    valueFormatter: function (value, i) {
+                        if ((useNormalized || useIndexed) && typeof value === 'number' && typeof actualValues[i] === 'number') {
+                            return value.toFixed(3) + ' (actual: ' + formatKMB(actualValues[i]) + ')';
+                        } else if (typeof value === 'number') {
+                            return formatKMB(value);
+                        } else {
+                            return 'N/A';
+                        }
+                    }
+                },
+                universalTransition: { enabled: true, seriesKey: 'name' }
+            };
+        });
     // Only add event bar + dotted line series if 'events' is selected
     if (selectedSymbols.includes('events') && data.events) {
         let eventValues = sortedDates.map(date => {
@@ -237,53 +234,16 @@ function prepareEChartsOption(config, data, symbolState, selectedSymbols, normal
             universalTransition: { enabled: true, seriesKey: 'name' }
         });
     }
-    // --- Minimap shadow calculation block ---
-    let dataShadowArr = null;
-    const visibleSymbols = selectedSymbols.filter(symbol => symbol !== 'events' && data[symbol]);
-    if (visibleSymbols.length > 0) {
-        // Use only real values for all visible series, no forward-filling
-        dataShadowArr = sortedDates.map((date) => {
-            let max = null;
-            for (let symbol of visibleSymbols) {
-                const symbolData = data[symbol];
-                let val = (symbolData[date] && symbolData[date].value != null && isFinite(symbolData[date].value)) ? symbolData[date].value : null;
-                if (val != null && isFinite(val)) {
-                    if (max == null || val > max) max = val;
-                }
-            }
-            return max == null ? 0 : max;
-        });
-    }
+
     const defaultMonths = 36;
     const defaultDays = defaultMonths * 21;
     const defaultWindow = sortedDates.length > defaultDays ? Math.round((sortedDates.length - defaultDays) / sortedDates.length * 100) : 0;
     const globalFontSize = 16;
 
-    console.log('[minimap][debug] dataShadowArr: ', dataShadowArr);
-    if (Array.isArray(dataShadowArr)) {
-        const isCorrectLength = dataShadowArr.length === sortedDates.length;
-        const allNumbers = dataShadowArr.every(x => typeof x === 'number' && isFinite(x));
-        const hasNull = dataShadowArr.some(x => x === null);
-        const hasUndefined = dataShadowArr.some(x => x === undefined);
-        const hasNaN = dataShadowArr.some(x => typeof x === 'number' && isNaN(x));
-        console.log('[minimap][debug] dataShadowArr checks:', {
-            isArray: true,
-            isCorrectLength,
-            allNumbers,
-            hasNull,
-            hasUndefined,
-            hasNaN,
-            length: dataShadowArr.length,
-            xAxisLength: sortedDates.length
-        });
-    } else {
-        console.log('[minimap][debug] dataShadowArr is not an array:', dataShadowArr);
-    }
-
     return {
         animation: opts.disableAnim ? false : true,
         animationEasing: 'cubicOut',
-        animationDuration: opts.disableAnim ? 0 : 600,
+        animationDuration: opts.disableAnim ? 0 : 400,
         animationEasingUpdate: 'cubicOut',
         animationDurationUpdate: opts.disableAnim ? 0 : 300,
         tooltip: {
@@ -349,34 +309,26 @@ function prepareEChartsOption(config, data, symbolState, selectedSymbols, normal
                 return html;
             }
         },
-        legend: { show: false, textStyle: { fontFamily: 'MCI' } },
         grid: { left: 52, right: 52, top: 85, bottom: 28 },
         dataZoom: [
             {
                 type: 'slider',
-                show: true,
                 xAxisIndex: 0,
                 start: defaultWindow,
                 end: 100,
                 height: 22,
-                bottom: null,
                 top: 0,
                 backgroundColor: '#232837',
                 borderColor: '#333',
                 fillerColor: 'rgba(0,188,212,0.18)',
                 handleIcon: 'M8.7,11.3v-8.6h2.6v8.6H8.7z',
-                handleSize: '120%',
-                moveHandleSize: '100%',
-                showDetail: true,
                 handleStyle: { color: '#00bcd4' },
-                textStyle: { color: '#fff' },
-                minValueSpan: 30,
-                showDataShadow: true,
-                dataShadow: dataShadowArr,
-                dataBackground: {
-                    lineStyle: { color: '#FFD600', opacity: 1 },
-                    areaStyle: { color: 'rgba(255,214,0,0.8)' }
-                }
+                textStyle: { color: '#fff', fontFamily: 'MCI', fontSize: globalFontSize },
+                filterMode : 'filter',
+                // dataBackground: {
+                //     lineStyle: { color: '#FFD600', opacity: 1 },
+                //     areaStyle: { color: 'rgba(255,214,0,0.8)' }
+                // }
             },
             {
                 type: 'inside',
@@ -446,16 +398,14 @@ function prepareEChartsOption(config, data, symbolState, selectedSymbols, normal
 
 
 export function initChart(container, config, data, symbolState, options) {
-    console.log('[minimap][debug] ENTER initChart');
     const echartsInstance = echarts.init(container);
     const chartOption = prepareEChartsOption(config, data, symbolState, options.selectedSymbols, options.normalized, options.indexed, options);
-    echartsInstance.setOption(chartOption);
+    echartsInstance.setOption(chartOption, { notMerge: true });
     return echartsInstance;
 }
 
 
 export function updateChart(chart, config, data, symbolState, options) {
-    console.log('[minimap][debug] ENTER updateChart');
     const chartOption = prepareEChartsOption(config, data, symbolState, options.selectedSymbols, options.normalized, options.indexed, options);
-    chart.setOption(chartOption, { notMerge: false });
+    chart.setOption(chartOption, { notMerge: true });
 }
