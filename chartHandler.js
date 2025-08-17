@@ -28,6 +28,7 @@ export function getColor(idx) {
 }
 
 function prepareEChartsOption(config, data, symbolState, selectedSymbols, normalized, indexed, opts = {}) {
+    console.log('[minimap][debug] ENTER prepareEChartsOption');
     // Helper for K/M/B formatting
     function formatKMB(val) {
         if (val == null || isNaN(val)) return '';
@@ -57,6 +58,8 @@ function prepareEChartsOption(config, data, symbolState, selectedSymbols, normal
         for (let d = new Date(minDate); d <= maxDate; d.setDate(d.getDate() + 1)) {
             sortedDates.push(formatDate(d));
         }
+    // Debug log after sortedDates is populated
+    console.log('[minimap][debug] after sortedDates populated:', sortedDates);
     }
     // Compute y-axis min/max based on visible (non-null) values in the current window for selected series
     let yMin = undefined, yMax = undefined;
@@ -234,10 +237,66 @@ function prepareEChartsOption(config, data, symbolState, selectedSymbols, normal
             universalTransition: { enabled: true, seriesKey: 'name' }
         });
     }
+    // --- Minimap shadow calculation block ---
+    let dataShadowArr = null;
+    const visibleSymbols = selectedSymbols.filter(symbol => symbol !== 'events' && data[symbol]);
+    if (visibleSymbols.length > 0) {
+        // Always use max of forward-filled values for all visible series
+        const firstVals = {};
+        for (let symbol of visibleSymbols) {
+            const symbolData = data[symbol];
+            for (let date of sortedDates) {
+                if (symbolData[date] && symbolData[date].value != null && isFinite(symbolData[date].value)) {
+                    firstVals[symbol] = symbolData[date].value;
+                    break;
+                }
+            }
+        }
+        const lastKnown = { ...firstVals };
+        dataShadowArr = sortedDates.map((date, idx) => {
+            let max = null;
+            for (let symbol of visibleSymbols) {
+                const symbolData = data[symbol];
+                let val = undefined;
+                if (symbolData[date] && symbolData[date].value != null && isFinite(symbolData[date].value)) {
+                    val = symbolData[date].value;
+                    lastKnown[symbol] = val;
+                } else if (lastKnown[symbol] != null && isFinite(lastKnown[symbol])) {
+                    val = lastKnown[symbol];
+                }
+                if (val != null && isFinite(val)) {
+                    if (max == null || val > max) max = val;
+                }
+            }
+            return max == null ? 0 : max;
+        });
+    }
     const defaultMonths = 36;
     const defaultDays = defaultMonths * 21;
     const defaultWindow = sortedDates.length > defaultDays ? Math.round((sortedDates.length - defaultDays) / sortedDates.length * 100) : 0;
     const globalFontSize = 16;
+
+    console.log('[minimap][debug] dataShadowArr: ', dataShadowArr);
+    if (Array.isArray(dataShadowArr)) {
+        const isCorrectLength = dataShadowArr.length === sortedDates.length;
+        const allNumbers = dataShadowArr.every(x => typeof x === 'number' && isFinite(x));
+        const hasNull = dataShadowArr.some(x => x === null);
+        const hasUndefined = dataShadowArr.some(x => x === undefined);
+        const hasNaN = dataShadowArr.some(x => typeof x === 'number' && isNaN(x));
+        console.log('[minimap][debug] dataShadowArr checks:', {
+            isArray: true,
+            isCorrectLength,
+            allNumbers,
+            hasNull,
+            hasUndefined,
+            hasNaN,
+            length: dataShadowArr.length,
+            xAxisLength: sortedDates.length
+        });
+    } else {
+        console.log('[minimap][debug] dataShadowArr is not an array:', dataShadowArr);
+    }
+
     return {
         animation: opts.disableAnim ? false : true,
         animationEasing: 'cubicOut',
@@ -277,7 +336,11 @@ function prepareEChartsOption(config, data, symbolState, selectedSymbols, normal
                         let txt = `<div style=\"margin-bottom:6px;font-size:${globalFontSize}px\">`;
                         Object.entries(ev).forEach(([key, value]) => {
                             const capKey = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-                            txt += `<b><span style='color:${themeColor}'>${capKey}</span>:</b> ${typeof value === 'object' ? JSON.stringify(value) : value}<br>`;
+                            let displayValue = value;
+                            if (typeof value === 'number') {
+                                displayValue = value.toFixed(3).replace(/\.0+$/, '').replace(/(\.[0-9]*[1-9])0+$/, '$1');
+                            }
+                            txt += `<b><span style='color:${themeColor}'>${capKey}</span>:</b> ${typeof value === 'object' ? JSON.stringify(value) : displayValue}<br>`;
                         });
                         txt += '</div>';
                         return txt;
@@ -292,8 +355,10 @@ function prepareEChartsOption(config, data, symbolState, selectedSymbols, normal
                     return true;
                 }).map(param => {
                     let val = param.value;
+                    let displayVal = val;
                     if (typeof val === 'number') {
-                        return `<span style='color:${param.color};font-weight:bold;font-size:${globalFontSize}px'>&#9679;</span> <span style='font-size:${globalFontSize}px'>${param.seriesName}: ${val}</span>`;
+                        displayVal = val.toFixed(3).replace(/\.0+$/, '').replace(/(\.[0-9]*[1-9])0+$/, '$1');
+                        return `<span style='color:${param.color};font-weight:bold;font-size:${globalFontSize}px'>&#9679;</span> <span style='font-size:${globalFontSize}px'>${param.seriesName}: ${displayVal}</span>`;
                     } else {
                         return `<span style='color:${param.color};font-weight:bold;font-size:${globalFontSize}px'>&#9679;</span> <span style='font-size:${globalFontSize}px'>${param.seriesName}: N/A</span>`;
                     }
@@ -324,9 +389,10 @@ function prepareEChartsOption(config, data, symbolState, selectedSymbols, normal
                 textStyle: { color: '#fff' },
                 minValueSpan: 30,
                 showDataShadow: true,
+                dataShadow: dataShadowArr,
                 dataBackground: {
-                    lineStyle: { color: '#00bcd4', opacity: 0.5 },
-                    areaStyle: { color: 'rgba(0,188,212,0.10)' }
+                    lineStyle: { color: '#FFD600', opacity: 1 },
+                    areaStyle: { color: 'rgba(255,214,0,0.8)' }
                 }
             },
             {
@@ -397,6 +463,7 @@ function prepareEChartsOption(config, data, symbolState, selectedSymbols, normal
 
 
 export function initChart(container, config, data, symbolState, options) {
+    console.log('[minimap][debug] ENTER initChart');
     const echartsInstance = echarts.init(container);
     const chartOption = prepareEChartsOption(config, data, symbolState, options.selectedSymbols, options.normalized, options.indexed, options);
     echartsInstance.setOption(chartOption);
@@ -405,6 +472,7 @@ export function initChart(container, config, data, symbolState, options) {
 
 
 export function updateChart(chart, config, data, symbolState, options) {
+    console.log('[minimap][debug] ENTER updateChart');
     const chartOption = prepareEChartsOption(config, data, symbolState, options.selectedSymbols, options.normalized, options.indexed, options);
     chart.setOption(chartOption, { notMerge: false });
 }

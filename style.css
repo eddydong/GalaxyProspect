@@ -128,7 +128,22 @@ body {
     background: #181c24;
     color: #f5f6fa;
     min-height: 100vh;
+    margin: 0;
 }
+    body {
+        font-family: 'MCI';
+        font-size: 16px;
+        background: #181c24;
+        color: #f5f6fa;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: row;
+        height: 100vh;
+        width: 100vw;
+        box-sizing: border-box;
+    }
 .floating-panel {
     display: none;
     position: fixed;
@@ -162,11 +177,27 @@ body {
     padding-top: 29px;
     padding-bottom: 29px;
 }
+    .sidebar {
+        width: 68px;
+        min-width: 68px;
+        max-width: 68px;
+        height: 100vh;
+        background: #181c24;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 2px 0 16px 0 rgba(0,0,0,0.12);
+        padding-top: 29px;
+        padding-bottom: 29px;
+        position: relative;
+        z-index: 10;
+    }
 
 .sidebar-bevel {
     position: absolute;
     top: 0;
-    right: -1px;
+    right: 0px;
     width: 2px;
     height: 100vh;
     background: linear-gradient(to right, #232837 60%, #444a5a 100%);
@@ -388,15 +419,15 @@ body {
 }
 
 .main-window {
-    margin-left: 60px;
+    flex: 1 1 auto;
     height: 100vh;
-    width: calc(100vw - 68px);
+    width: 100%;
     position: relative;
     overflow: hidden;
-    display: grid;
-    grid-template-rows: 1fr;
+    display: flex;
+    flex-direction: column;
     min-height: 400px;
-    margin-bottom: 40px;
+    margin: 0;
 }
 
 #chart-container {
