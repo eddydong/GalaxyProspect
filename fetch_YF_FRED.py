@@ -24,6 +24,9 @@ def fetch_yf_data(symbols, mode, existing_data):
         start_date = '2000-01-01'
         data = yf.download(symbol, start=start_date, end=today, group_by='ticker', auto_adjust=False)
         try:
+            if not isinstance(data, pd.DataFrame):
+                print(f"Skipping {symbol}: Data is not a DataFrame.")
+                continue            
             if isinstance(data.columns, pd.MultiIndex):
                 if (symbol, 'Adj Close') in data.columns:
                     cols = [(symbol, 'Adj Close')]
@@ -80,7 +83,7 @@ def main():
     yf_symbols = [item['symbol_name'] for item in symbols if item['server'] == 'YF']
     fred_symbols = [item['symbol_name'] for item in symbols if item['server'] == 'FRED']
     fred_desc = {item['symbol_name']: item['desc'] for item in symbols if item['server'] == 'FRED'}
-    field_map = {item['symbol_name']: item['field_name'] for item in symbols}
+    field_map = {item['symbol_name']: item['field_name'] for item in symbols if 'symbol_name' in item}
 
     # Always use full mode, ignore any command line args
     mode = 'full'
