@@ -51,11 +51,15 @@
     align-items: center;
     gap: 0.1em;
 }
-/* Consistent vertical spacing between mode buttons */
-.mode-btn + .mode-btn {
-    margin-top: 0.25em;
-    margin-bottom: 0;
+
+/* Y-Scale mode button style */
+.yscale-btn {
+    /* Inherit all from .mode-btn for consistency */
+    /* Only override if needed for spacing */
+    margin-bottom: 0.25em;
+    margin-top: 0;
 }
+/* .yscale-btn.active inherits .mode-btn.active */
 /* Force left alignment for category and feature labels */
 
 

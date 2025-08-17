@@ -1,3 +1,25 @@
+export function setupYScaleButtons(options, chart, config, data, symbolState, updateChart) {
+    const yscaleBtns = Array.from(document.querySelectorAll('.yscale-btn[data-yscale]'));
+    function setYScaleActive(yscale) {
+        yscaleBtns.forEach(btn => {
+            if (btn.dataset.yscale === yscale) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+    // Set initial yscale button active (global by default)
+    setYScaleActive(options.yscale === 'viewport' ? 'viewport' : 'global');
+    yscaleBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const yscale = btn.dataset.yscale;
+            options.yscale = yscale;
+            setYScaleActive(yscale);
+            updateChart(chart, config, data, symbolState, options);
+        });
+    });
+}
 // uiHandler.js
 // Handles UI population and updates (checkboxes, buttons, etc.)
 import { getColor } from './chartHandler.js';

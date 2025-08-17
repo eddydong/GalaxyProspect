@@ -58,8 +58,17 @@ function prepareEChartsOption(config, data, symbolState, selectedSymbols, normal
             sortedDates.push(formatDate(d));
         }
     }
-    // Compute y-axis min/max based on visible (non-null) values in the current window for selected series
+    // Unify windowRange for all normalization/indexing logic
     let yMin = undefined, yMax = undefined;
+    const yscaleMode = opts.yscale || 'global';
+    let windowRange = [0, sortedDates.length - 1];
+    if (yscaleMode === 'viewport') {
+        windowRange = opts.windowRange;
+        if (!windowRange && typeof opts.getCurrentWindowRange === 'function') {
+            windowRange = opts.getCurrentWindowRange();
+        }
+        if (!windowRange) windowRange = [0, sortedDates.length - 1];
+    }
     if (normalized) {
         yMin = 0;
         yMax = 1.05;
@@ -67,11 +76,6 @@ function prepareEChartsOption(config, data, symbolState, selectedSymbols, normal
         yMin = 0;
         yMax = undefined;
     } else if (selectedSymbols.length > 0) {
-        let windowRange = opts.windowRange;
-        if (!windowRange && typeof opts.getCurrentWindowRange === 'function') {
-            windowRange = opts.getCurrentWindowRange();
-        }
-        if (!windowRange) windowRange = [0, sortedDates.length - 1];
         let allVisible = [];
         selectedSymbols.filter(symbol => data[symbol]).forEach(symbol => {
             const entries = Object.entries(data[symbol]);
@@ -109,7 +113,6 @@ function prepareEChartsOption(config, data, symbolState, selectedSymbols, normal
             let useIndexed = !isEventFeature && indexed;
             let yAxisIndex = isEventFeature ? 1 : 0;
             if (useNormalized && values.filter(v => v != null).length > 0) {
-                let windowRange = opts.windowRange || [0, sortedDates.length - 1];
                 let windowValues = values.slice(windowRange[0], windowRange[1] + 1).filter(v => v != null && isFinite(v));
                 let min = Math.min(...windowValues);
                 let max = Math.max(...windowValues);
@@ -118,8 +121,7 @@ function prepareEChartsOption(config, data, symbolState, selectedSymbols, normal
                     max = max * 1.02;
                 }
                 values = values.map(v => (v == null || !isFinite(v)) ? null : (v - min) / (max - min));
-            } else if (useIndexed && values.filter(v => v != null).length > 0 && opts.windowRange) {
-                let windowRange = opts.windowRange;
+            } else if (useIndexed && values.filter(v => v != null).length > 0) {
                 let baseIdx = windowRange[0];
                 let base = values[baseIdx];
                 if (base == null || !isFinite(base)) {

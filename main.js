@@ -26,7 +26,8 @@ async function main() {
     let options = {
         selectedSymbols: Object.keys(symbolState).filter(sym => symbolState[sym].selected),
         normalized: false,
-        indexed: false
+        indexed: false,
+        yscale: 'global' // 'global' or 'viewport'
     };
 
     // Debug logs for symbol categorization and state
@@ -52,6 +53,10 @@ async function main() {
     // --- Mode and Smooth Button Logic ---
     setupModeButtons(options, chart, config, data, symbolState, updateChart);
     setupSmoothButton(chart, config, data, symbolState, options, updateChart);
+    // Y-Scale Mode
+    import('./uiHandler.js').then(mod => {
+        mod.setupYScaleButtons(options, chart, config, data, symbolState, updateChart);
+    });
 }
 
 if (document.readyState === 'loading') {
