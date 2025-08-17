@@ -2,6 +2,54 @@
   "startDate": "2005-01-01",
   "symbols": [
   {
+    "server": "YF",
+    "symbol_name": "0027.HK",
+    "desc": "Galaxy",
+    "freq": "D",
+    "field_name": "YF_galaxy",
+    "category": "Stock"
+  },
+  {
+    "server": "YF",
+    "symbol_name": "0880.HK",
+    "desc": "SJM",
+    "freq": "D",
+    "field_name": "YF_sjm",
+    "category": "Stock"
+  },
+  {
+    "server": "YF",
+    "symbol_name": "1128.HK",
+    "desc": "Wynn",
+    "freq": "D",
+    "field_name": "YF_wynn",
+    "category": "Stock"
+  },
+  {
+    "server": "YF",
+    "symbol_name": "1928.HK",
+    "desc": "Sands",
+    "freq": "D",
+    "field_name": "YF_sands",
+    "category": "Stock"
+  },
+  {
+    "server": "YF",
+    "symbol_name": "2282.HK",
+    "desc": "MGM",
+    "freq": "D",
+    "field_name": "YF_mgm",
+    "category": "Stock"
+  },
+  {
+    "server": "YF",
+    "symbol_name": "0200.HK",
+    "desc": "Melco",
+    "freq": "D",
+    "field_name": "YF_melco",
+    "category": "Stock"
+  },
+  {
     "server" : "DSEC",
     "symbol_name": "1216",
     "desc": "Macau GGR",
@@ -143,54 +191,6 @@
     "freq": "D",
     "field_name": "senti_melco",
     "category": "Sentiment"
-  },
-  {
-    "server": "YF",
-    "symbol_name": "0027.HK",
-    "desc": "Galaxy",
-    "freq": "D",
-    "field_name": "YF_galaxy",
-    "category": "Stock"
-  },
-  {
-    "server": "YF",
-    "symbol_name": "0880.HK",
-    "desc": "SJM",
-    "freq": "D",
-    "field_name": "YF_sjm",
-    "category": "Stock"
-  },
-  {
-    "server": "YF",
-    "symbol_name": "1128.HK",
-    "desc": "Wynn",
-    "freq": "D",
-    "field_name": "YF_wynn",
-    "category": "Stock"
-  },
-  {
-    "server": "YF",
-    "symbol_name": "1928.HK",
-    "desc": "Sands",
-    "freq": "D",
-    "field_name": "YF_sands",
-    "category": "Stock"
-  },
-  {
-    "server": "YF",
-    "symbol_name": "2282.HK",
-    "desc": "MGM",
-    "freq": "D",
-    "field_name": "YF_mgm",
-    "category": "Stock"
-  },
-  {
-    "server": "YF",
-    "symbol_name": "0200.HK",
-    "desc": "Melco",
-    "freq": "D",
-    "field_name": "YF_melco",
-    "category": "Stock"
   },
   {
     "server": "YF",

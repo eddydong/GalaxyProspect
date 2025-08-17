@@ -274,7 +274,7 @@
             }
             // Prepare persistent series for all possible symbols (except 'events')
             const allSymbols = (configData.symbols || []).map(item => item.field_name).filter(s => s !== 'events');
-            const series = allSymbols.map((symbol, idx) => {
+            const series = allSymbols.map((symbol) => {
                 if (!data[symbol]) return null;
                 // Determine if this symbol is in the EVENTS category
                 const isEventFeature = (configData.symbols || []).some(item => item.field_name === symbol && (item.category || '').toUpperCase() === 'EVENTS');
@@ -315,6 +315,7 @@
                 }
                 // If not selected, hide series by setting data to []
                 const isSelected = selectedSymbols.includes(symbol);
+                const colorIdx = symbolState[symbol] ? symbolState[symbol].colorIdx : 0;
                 return {
                     name: symbolNames[symbol] + ' (' + symbol + ')',
                     type: 'line',
@@ -326,8 +327,8 @@
                     symbolSize: 10,
                     symbolKeepAspect: true,
                     connectNulls: true,
-                    lineStyle: { width: 2, color: getColor(idx) },
-                    itemStyle: { color: getColor(idx) },
+                    lineStyle: { width: 2, color: getColor(colorIdx) },
+                    itemStyle: { color: getColor(colorIdx) },
                     emphasis: { focus: 'series' },
                     clip: false,
                     tooltip: {
@@ -592,6 +593,9 @@
             };
         }
 
+        // symbolState: { [symbol]: { selected: bool, colorIdx: int } }
+let symbolState = {};
+
         async function main() {
             await fetchConfig();
             const data = await fetchData();
@@ -639,7 +643,8 @@
                     const cb = document.createElement('input');
                     cb.type = 'checkbox';
                     cb.value = sym;
-                    cb.checked = false;
+                    // Set checked state from symbolState
+                    cb.checked = symbolState[sym] && symbolState[sym].selected;
                     if (!data[sym] || (Array.isArray(data[sym]) && data[sym].length === 0)) {
                         cb.disabled = true;
                         itemLabel.classList.add('disabled');
@@ -649,10 +654,6 @@
                     itemLabel.title = sym;
                     seriesCategories.appendChild(itemLabel);
                     categoryToCheckboxes[cat].push(cb);
-                    // Check the first available symbol in the first category by default
-                    if (!anyChecked && sym && data[sym]) {
-                        cb.checked = true; anyChecked = true;
-                    }
                     itemLabel.addEventListener('click', function(e) {
                         if (e.target === cb) return;
                         e.preventDefault();
@@ -663,6 +664,8 @@
                         }
                     });
                     cb.addEventListener('change', function() {
+                        // Update symbolState when checkbox changes
+                        if (symbolState[sym]) symbolState[sym].selected = cb.checked;
                         const catCheckbox = catCheckboxes[cat];
                         const cbs = categoryToCheckboxes[cat].filter(cb2 => !cb2.disabled);
                         const checkedCount = cbs.filter(cb2 => cb2.checked).length;
@@ -739,8 +742,7 @@
             });
 
             function getSelectedSymbols() {
-                // All checked series checkboxes in the flat structure
-                return Array.from(document.querySelectorAll('.series-categories > label > input[type=checkbox]:checked')).map(cb => cb.value);
+                return Object.keys(symbolState).filter(sym => symbolState[sym].selected);
             }
 
             let currentMode = 'raw';
@@ -787,10 +789,12 @@
             }, 0);
 
             function updateCheckboxColors() {
-                const selected = getSelectedSymbols();
-                selected.forEach((sym, idx) => {
+                // Only use symbolState for selection and color
+                Object.keys(symbolState).forEach(sym => {
                     const label = document.querySelector('label[data-symbol="' + sym + '"]');
-                    if (label) {
+                    if (!label) return;
+                    if (symbolState[sym].selected) {
+                        const idx = symbolState[sym].colorIdx;
                         const hex = BASE_COLORS[idx % BASE_COLORS.length].replace('#','');
                         const r = parseInt(hex.substring(0,2),16);
                         const g = parseInt(hex.substring(2,4),16);
@@ -801,21 +805,11 @@
                         const luminance = (0.299*r + 0.587*g + 0.114*b) / 255;
                         label.style.color = luminance > 0.6 ? '#181c24' : '#fff';
                         label.style.boxShadow = '0 2px 8px 0 rgba(0,0,0,0.18)';
-                    }
-                });
-                // Unselect all other symbols
-                // Get all symbols from all categories
-                let allSyms = [];
-                Object.values(symbolCategories).forEach(arr => { allSyms = allSyms.concat(arr); });
-                allSyms.forEach(sym => {
-                    if (!selected.includes(sym)) {
-                        const label = document.querySelector('label[data-symbol="' + sym + '"]');
-                        if (label) {
-                            label.style.background = '';
-                            label.style.borderColor = '';
-                            label.style.color = '#b0b4c1';
-                            label.style.boxShadow = '';
-                        }
+                    } else {
+                        label.style.background = '';
+                        label.style.borderColor = '';
+                        label.style.color = '#b0b4c1';
+                        label.style.boxShadow = '';
                     }
                 });
             }
@@ -830,6 +824,12 @@
             }
             function updateChart() {
                 const selected = getSelectedSymbols();
+                // Reassign colorIdxs so selected symbols get palette order
+                let colorIdx = 0;
+                selected.forEach(sym => {
+                    if (symbolState[sym]) symbolState[sym].colorIdx = colorIdx++;
+                });
+                // Unselected symbols keep their previous colorIdx (or you can set to -1 if you want to gray them out)
                 const { normalized, indexed } = getModeStates();
                 // Always get the current window range for all modes
                 let windowRange = getCurrentWindowRange();
@@ -839,7 +839,10 @@
                     disableAnim = true;
                     window._disableNextAnim = false;
                 }
-                const newOption = prepareEChartsOption(selected, data, normalized, !normalized && indexed, { windowRange, disableAnim });
+                // Use a different variable name to avoid redeclaration
+                const selectedSyms = getSelectedSymbols();
+                const modeStates = getModeStates();
+                const newOption = prepareEChartsOption(selectedSyms, data, modeStates.normalized, !modeStates.normalized && modeStates.indexed, { windowRange, disableAnim });
                 // Always preserve the current dataZoom window
                 const option = casinoChart.getOption();
                 if (option.dataZoom && option.dataZoom[0]) {
@@ -883,4 +886,26 @@
                 });
             });
             updateModeBtns();
+
+            // After fetching config and data
+const allSymbols = (configData.symbols || []).map(item => item.field_name).filter(s => s !== 'events');
+let colorIdx = 0;
+allSymbols.forEach(sym => {
+    symbolState[sym] = {
+        selected: false,
+        colorIdx: colorIdx++ // assign color index in order
+    };
+});
+// Optionally, select the first available symbol by default
+const firstAvailable = allSymbols.find(sym => data[sym]);
+if (firstAvailable) {
+    symbolState[firstAvailable].selected = true;
+    // Sync checkboxes in DOM to match symbolState
+    Object.keys(symbolState).forEach(sym => {
+        const cb = document.querySelector('input[type="checkbox"][value="' + sym + '"]');
+        if (cb) cb.checked = symbolState[sym].selected;
+    });
+    updateCheckboxColors();
+    updateChart();
+}
         }
